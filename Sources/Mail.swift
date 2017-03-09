@@ -8,13 +8,20 @@
 
 import Foundation
 
-struct Mail {
+public struct Mail {
     var from: User
     var to: [User]
     var subject: String
     var text: String
     
-    init(from: User, to: [User], subject: String="", text: String="") {
+    public init(from: User, to: User, subject: String = "", text: String = "") {
+        self.from = from
+        self.to = [to]
+        self.subject = subject
+        self.text = text
+    }
+    
+    public init(from: User, to: [User], subject: String = "", text: String = "") {
         self.from = from
         self.to = to
         self.subject = subject
