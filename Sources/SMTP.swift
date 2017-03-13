@@ -1,5 +1,6 @@
 import Foundation
 import Socket
+import SSLService
 
 /// Used to connect to an SMTP server and send emails.
 public class SMTP {
@@ -87,7 +88,7 @@ fileprivate extension SMTP {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
-//                return try starttls()
+                return try starttls()
             }
         }
         return try getAuthMethod(serverInfo)
@@ -95,7 +96,23 @@ fileprivate extension SMTP {
     
     private func starttls() throws -> AuthMethod {
         let _: SMTPResponse = try starttls()
-        // do STARTTLS stuff
+        
+        // Establish SSL connection
+        
+        let config = SSLService.Configuration(withChainFilePath: "/Users/quanvo/temp/cert.pfx", withPassword: "kitura", usingSelfSignedCerts: true)
+        let newSocket = try Socket.create()
+        newSocket.delegate = try SSLService(usingConfiguration: config)
+
+        socket = newSocket
+        
+        try newSocket.connect(to: hostname, port: 465)
+        _ = try readFromSocket()
+        
+        
+        
+        
+        
+        
         return try getAuthMethod(try getServerInfo())
     }
     
@@ -107,9 +124,9 @@ fileprivate extension SMTP {
                 for arg in args {
                     switch arg {
                     case "PLAIN": return AuthMethod.plain
-//                    case "CRAM-MD5": return AuthMethod.cramMD5
+                    //                    case "CRAM-MD5": return AuthMethod.cramMD5
                     case "LOGIN": return AuthMethod.login
-//                    case "XOAUTH2": return AuthMethod.xOauth2
+                    //                    case "XOAUTH2": return AuthMethod.xOauth2
                     default: break
                     }
                 }
@@ -223,6 +240,7 @@ fileprivate extension SMTP {
     }
     
     func write(_ commandText: String) throws {
+        print(commandText)
         _ = try socket.write(from: commandText + CRLF)
     }
     
@@ -232,6 +250,7 @@ fileprivate extension SMTP {
         guard let res = String(data: buf, encoding: .utf8) else {
             throw NSError("Error converting data to string: \(data)")
         }
+        print(res)
         return res
     }
     
