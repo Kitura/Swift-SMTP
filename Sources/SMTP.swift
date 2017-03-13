@@ -7,19 +7,16 @@ public class SMTP {
     
     let hostname: String
     let port: Port
-    let authMethod: AuthMethod
-    let username: String
+    let user: String
     let password: String
     let domainName: String
     fileprivate var socket: Socket
     fileprivate var loggedIn = false
-    fileprivate var features: Feature?
     
-    public init(url: String, port: Port, username: String, authMethod: AuthMethod = .plain, password: String, domainName: String = "localhost") throws {
+    public init(url: String, port: Port, user: String, password: String, domainName: String = "localhost") throws {
         self.hostname = url
         self.port = port
-        self.authMethod = authMethod
-        self.username = username
+        self.user = user
         self.password = password
         self.domainName = domainName
         socket = try Socket.create()
@@ -36,9 +33,9 @@ fileprivate extension SMTP {
     func setup() throws {
         if !isConnected() {
             try connect()
-            if !loggedIn {
-                try login()
-            }
+        }
+        if !loggedIn {
+            try login()
         }
     }
     
@@ -52,46 +49,73 @@ fileprivate extension SMTP {
     }
 }
 
+// MARK: - Authentication method for SMTP server
+extension SMTP {
+    public enum AuthMethod: String {
+        case plain = "PLAIN"
+        case cramMD5 = "CRAM-MD5"
+        case login = "LOGIN"
+        case xOauth2 = "XOAUTH2"
+    }
+}
+
 // MARK: - Login to SMTP server
 fileprivate extension SMTP {
     func login() throws {
-        try getFeatures()
-        // TODO: - Do auth stuff depending on result of EHLO/HELO
-        switch authMethod {
+        switch try starttls(try getServerInfo()) {
         case .plain:
-            _ = try auth(authMethod: .plain, credentials: CryptoEncoder.plain(user: username, password: password))
-        default:
+            _ = try auth(authMethod: .plain, credentials: CryptoEncoder.plain(user: user, password: password))
+        case .cramMD5:
+            break
+        case .login:
+            _ = try auth(authMethod: .login, credentials: "")
+            let login = CryptoEncoder.login(user: user, password: password)
+            _ = try authUser(user: login.encodedUser)
+            _ = try authPassword(password: login.encodedPassword)
+        case .xOauth2:
             break
         }
         loggedIn = true
     }
     
-    func getFeatures() throws {
-        var res = [SMTPResponse]()
-        do { res = try ehlo() }
-        catch { res = try helo() }
-        updateFeatures(res)
+    private func getServerInfo() throws -> [SMTPResponse] {
+        do { return try ehlo() }
+        catch { return try helo() }
     }
     
-    struct Feature {
-        let data: [String: Any]
-        init(_ data: [String: Any]) {
-            self.data = data
+    private func starttls(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+        for res in serverInfo {
+            let resArr = res.message.components(separatedBy: " ")
+            if resArr.first == "STARTTLS" {
+//                return try starttls()
+            }
         }
+        return try getAuthMethod(serverInfo)
     }
     
-    func updateFeatures(_ res: [SMTPResponse]) {
-        
+    private func starttls() throws -> AuthMethod {
+        let _: SMTPResponse = try starttls()
+        // do STARTTLS stuff
+        return try getAuthMethod(try getServerInfo())
     }
-}
-
-// MARK: - Authentication method for SMTP server
-extension SMTP {
-    public enum AuthMethod: String {
-        case plain = "PLAIN"
-        case login = "LOGIN"
-        case cramMD5 = "CRAM-MD5"
-        case xOauth2 = "XOAUTH2"
+    
+    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+        for res in serverInfo {
+            let resArr = res.message.components(separatedBy: " ")
+            if resArr.first == "AUTH" {
+                let args = resArr.dropFirst()
+                for arg in args {
+                    switch arg {
+                    case "PLAIN": return AuthMethod.plain
+//                    case "CRAM-MD5": return AuthMethod.cramMD5
+                    case "LOGIN": return AuthMethod.login
+//                    case "XOAUTH2": return AuthMethod.xOauth2
+                    default: break
+                    }
+                }
+            }
+        }
+        throw NSError("No supported authorization methods found on \(hostname).")
     }
 }
 
@@ -105,9 +129,12 @@ extension SMTP {
     }
     
     private func sendData(_ mail: Mail) throws {
+        let date = Date().toString()
+        
         _ = try data()
         try write("From: \"\(mail.from.name)\" <\(mail.from.email)>")
         try write("To: \"\(mail.to[0].name)\" <\(mail.to[0].email)>")
+        try write("Date: \(date)")
         try write("Subject: \(mail.subject)")
         try write("")
         try write("\(mail.text)")
@@ -131,6 +158,14 @@ fileprivate extension SMTP {
     
     func auth(authMethod: AuthMethod, credentials: String) throws -> SMTPResponse {
         return try send(.auth(authMethod, credentials))
+    }
+    
+    func authUser(user: String) throws -> SMTPResponse {
+        return try send(.authUser(user))
+    }
+    
+    func authPassword(password: String) throws -> SMTPResponse {
+        return try send(.authPassword(password))
     }
     
     func help(_ args: String? = nil) throws -> SMTPResponse {
@@ -195,7 +230,7 @@ fileprivate extension SMTP {
         var buf = Data()
         _ = try socket.read(into: &buf)
         guard let res = String(data: buf, encoding: .utf8) else {
-            throw NSError("Error converting data to string.")
+            throw NSError("Error converting data to string: \(data)")
         }
         return res
     }
@@ -213,7 +248,7 @@ fileprivate extension SMTP {
     func getResponseCode(_ response: String, command: SMTPCommand) throws -> SMTPResponseCode {
         let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
         guard let responseCode = Int(response[range]), command.expectedCodes.contains(SMTPResponseCode(responseCode)) else {
-            throw NSError("Unexpected response for command \"\(command.text)\": \(response).")
+            throw NSError("Command \"\(command.text)\" failed with response: \(response).")
         }
         return SMTPResponseCode(responseCode)
     }

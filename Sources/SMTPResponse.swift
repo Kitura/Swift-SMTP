@@ -35,8 +35,6 @@ struct SMTPResponseCode: Equatable {
     static let forAttempt = SMTPResponseCode(252)
     static let containingChallenge = SMTPResponseCode(334)
     static let startMailInput = SMTPResponseCode(354)
-    static let authNotAdvertised = SMTPResponseCode(503)
-    static let authFailed = SMTPResponseCode(535)
     
     public static func ==(lhs: SMTPResponseCode, rhs: SMTPResponseCode) -> Bool {
         return lhs.rawValue == rhs.rawValue

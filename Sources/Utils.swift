@@ -10,6 +10,20 @@ import Foundation
 
 let CRLF = "\r\n"
 
+extension DateFormatter {
+    static let smtpDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E, d MMM yyy h:mm:ss a zzz"
+        return formatter
+    }()
+}
+
+extension Date {
+    func toString() -> String {
+        return DateFormatter.smtpDateFormatter.string(from: self)
+    }
+}
+
 extension NSError {
     convenience init(_ err: String) {
         #if os(Linux)

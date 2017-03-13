@@ -14,8 +14,8 @@ enum SMTPCommand {
     case ehlo(String)
     case starttls
     case auth(SMTP.AuthMethod, String)
-    case authResponse(SMTP.AuthMethod, String)
     case authUser(String)
+    case authPassword(String)
     case help(String?)
     case rset
     case noop
@@ -33,14 +33,9 @@ enum SMTPCommand {
         case .helo(let domain): return "HELO \(domain)"
         case .ehlo(let domain): return "EHLO \(domain)"
         case .starttls: return "STARTTLS"
-        case .auth(let method, let credentials): return "AUTH \(method.rawValue) \(credentials)"
+        case .auth(let method, let credentials): return "AUTH \(method.rawValue) \(credentials)".trimmingCharacters(in: .init(charactersIn: " "))
         case .authUser(let user): return user
-        case .authResponse(let method, let credentials):
-            switch method {
-            case .cramMD5: return credentials
-            case .login: return credentials
-            default: fatalError("Can not response to a challenge.")
-            }
+        case .authPassword(let password): return password
         case .help(let args): return args != nil ? "HELP \(args!)" : "HELP"
         case .rset: return "RSET"
         case .noop: return "NOOP"
@@ -53,9 +48,7 @@ enum SMTPCommand {
         case .quit: return "QUIT"
         }
     }
-    
-    static let validAuthCodes: [SMTPResponseCode] = [.authSucceeded, .authNotAdvertised, .authFailed]
-    
+        
     var expectedCodes: [SMTPResponseCode] {
         switch self {
         case .connect: return [.serviceReady]
@@ -64,16 +57,11 @@ enum SMTPCommand {
             switch method {
             case .cramMD5: return [.containingChallenge]
             case .login: return [.containingChallenge]
-            case .plain: return SMTPCommand.validAuthCodes
-            case .xOauth2: return SMTPCommand.validAuthCodes
+            case .plain: return [.authSucceeded]
+            case .xOauth2: return [.authSucceeded]
             }
         case .authUser(_): return [.containingChallenge]
-        case .authResponse(let method, _):
-            switch method {
-            case .cramMD5: return SMTPCommand.validAuthCodes
-            case .login:   return SMTPCommand.validAuthCodes
-            default: fatalError("Can not response to a challenge.")
-            }
+        case .authPassword: return [.authSucceeded]
         case .help(_): return [.systemStatus, .helpMessage]
         case .rcpt(_): return [.commandOK, .willForward]
         case .data: return [.startMailInput]
