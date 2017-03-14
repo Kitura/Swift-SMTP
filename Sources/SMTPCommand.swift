@@ -13,7 +13,7 @@ enum SMTPCommand {
     case helo(String)
     case ehlo(String)
     case starttls
-    case auth(SMTP.AuthMethod, String)
+    case auth(SMTP.AuthMethod, String?)
     case authUser(String)
     case authPassword(String)
     case help(String?)
@@ -33,10 +33,14 @@ enum SMTPCommand {
         case .helo(let domain): return "HELO \(domain)"
         case .ehlo(let domain): return "EHLO \(domain)"
         case .starttls: return "STARTTLS"
-        case .auth(let method, let credentials): return "AUTH \(method.rawValue) \(credentials)".trimmingCharacters(in: .init(charactersIn: " "))
+        case .auth(let method, let credentials):
+            if let credentials = credentials { return "AUTH \(method.rawValue) \(credentials)" }
+            else { return "AUTH \(method.rawValue)" }
         case .authUser(let user): return user
         case .authPassword(let password): return password
-        case .help(let args): return args != nil ? "HELP \(args!)" : "HELP"
+        case .help(let args):
+            if let args = args { return "HELP \(args)" }
+            else { return "HELP" }
         case .rset: return "RSET"
         case .noop: return "NOOP"
         case .mail(let from): return "MAIL FROM: <\(from)>"

@@ -10,13 +10,13 @@ import Foundation
 import Cryptor
 
 struct AuthCredentials {
-    static func login(user: String, password: String) -> (encodedUser: String, encodedPassword: String) {
-        return (user.base64Encoded, password.base64Encoded)
-    }
-    
     static func plain(user: String, password: String) -> String {
         let text = "\u{0000}\(user)\u{0000}\(password)"
         return text.base64Encoded
+    }
+    
+    static func login(user: String, password: String) -> (encodedUser: String, encodedPassword: String) {
+        return (user.base64Encoded, password.base64Encoded)
     }
     
     static func cramMD5(challenge: String, user: String, password: String) throws -> String {
@@ -26,7 +26,7 @@ struct AuthCredentials {
         let digest = CryptoUtils.hexString(from: hmac)
         return ("\(user) \(digest)").base64Encoded
     }
-    
+
     static func xOauth2(user: String, password: String) -> String {
         let text = "user=\(user)\u{0001}auth=Bearer \(password)\u{0001}\u{0001}"
         return text.base64Encoded

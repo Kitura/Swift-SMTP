@@ -10,16 +10,19 @@ public class SMTP {
     let domainName: String
     let chainFilePath: String?
     let chainFilePassword: String?
+    let selfSignedCerts: Bool?
     fileprivate var socket: Socket
     fileprivate var loggedIn = false
+    // TODO: - UUID?
     
-    public init(url: String, user: String, password: String, domainName: String = "localhost", chainFilePath: String? = nil, chainFilePassword: String? = nil) throws {
+    public init(url: String, user: String, password: String, domainName: String = "localhost", chainFilePath: String? = nil, chainFilePassword: String? = nil, selfSignedCerts: Bool? = nil) throws {
         self.hostname = url
         self.user = user
         self.password = password
         self.domainName = domainName
         self.chainFilePath = chainFilePath
         self.chainFilePassword = chainFilePassword
+        self.selfSignedCerts = selfSignedCerts
         socket = try Socket.create()
     }
     
@@ -63,9 +66,9 @@ fileprivate extension SMTP {
 // MARK: - Authentication method for SMTP server
 extension SMTP {
     enum AuthMethod: String {
-        case plain = "PLAIN"
         case cramMD5 = "CRAM-MD5"
         case login = "LOGIN"
+        case plain = "PLAIN"
         case xOauth2 = "XOAUTH2"
     }
 }
@@ -74,20 +77,10 @@ extension SMTP {
 fileprivate extension SMTP {
     func login() throws {
         switch try starttls(try getServerInfo()) {
-        case .plain:
-            try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
-        case .cramMD5:
-            let response: SMTPResponse = try send(.auth(.cramMD5, ""))
-            let challenge = response.message
-            let responseToChallenge = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
-            try auth(authMethod: .cramMD5, credentials: responseToChallenge)
-        case .login:
-            try auth(authMethod: .login, credentials: "")
-            let login = AuthCredentials.login(user: user, password: password)
-            try authUser(user: login.encodedUser)
-            try authPassword(password: login.encodedPassword)
-        case .xOauth2:
-            try auth(authMethod: .xOauth2, credentials: AuthCredentials.xOauth2(user: user, password: password))
+        case .cramMD5: try loginCramMD5()
+        case .login: try loginLogin()
+        case .plain: try loginPlain()
+        case .xOauth2: try loginXOauth2()
         }
         loggedIn = true
     }
@@ -108,13 +101,13 @@ fileprivate extension SMTP {
     }
     
     private func starttls() throws -> AuthMethod {
-        guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword else {
+        guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword, let selfSignedCerts = selfSignedCerts else {
             throw NSError("\(hostname) offers STARTTLS. SMTP instance must be initialized with a valid Certificate Chain File path in PKCS12 format and password.")
         }
         
         let _: Void = try starttls()
         
-        let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: true)
+        let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         let newSocket = try Socket.create()
         newSocket.delegate = try SSLService(usingConfiguration: config)
         socket.close()
@@ -131,9 +124,9 @@ fileprivate extension SMTP {
                 let args = resArr.dropFirst()
                 for arg in args {
                     switch arg {
-                    case "PLAIN": return AuthMethod.plain
                     case "CRAM-MD5": return AuthMethod.cramMD5
                     case "LOGIN": return AuthMethod.login
+                    case "PLAIN": return AuthMethod.plain
                     case "XOAUTH2": return AuthMethod.xOauth2
                     default: break
                     }
@@ -141,6 +134,28 @@ fileprivate extension SMTP {
             }
         }
         throw NSError("No supported authorization methods found on \(hostname).")
+    }
+
+    private func loginCramMD5() throws {
+        let res: SMTPResponse = try auth(authMethod: .cramMD5, credentials: nil)
+        let challenge = res.message
+        let responseToChallenge = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
+        let _: Void = try auth(authMethod: .cramMD5, credentials: responseToChallenge)
+    }
+
+    private func loginLogin() throws {
+        let _: Void = try auth(authMethod: .login, credentials: nil)
+        let credentials = AuthCredentials.login(user: user, password: password)
+        try authUser(user: credentials.encodedUser)
+        try authPassword(password: credentials.encodedPassword)
+    }
+    
+    private func loginPlain() throws {
+        let _: Void = try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
+    }
+    
+    private func loginXOauth2() throws {
+        let _: Void = try auth(authMethod: .xOauth2, credentials: AuthCredentials.xOauth2(user: user, password: password))
     }
 }
 
@@ -154,11 +169,10 @@ extension SMTP {
     }
     
     private func sendData(_ mail: Mail) throws {
-        let date = Date().toString()
-        
         try data()
         try write("From: \"\(mail.from.name)\" <\(mail.from.email)>")
         try write("To: \"\(mail.to[0].name)\" <\(mail.to[0].email)>")
+        let date = Date().toString()
         try write("Date: \(date)")
         try write("Subject: \(mail.subject)")
         try write("")
@@ -181,7 +195,11 @@ fileprivate extension SMTP {
         return try send(.starttls)
     }
     
-    func auth(authMethod: AuthMethod, credentials: String) throws {
+    func auth(authMethod: AuthMethod, credentials: String?) throws {
+        return try send(.auth(authMethod, credentials))
+    }
+    
+    func auth(authMethod: AuthMethod, credentials: String?) throws -> SMTPResponse {
         return try send(.auth(authMethod, credentials))
     }
     
