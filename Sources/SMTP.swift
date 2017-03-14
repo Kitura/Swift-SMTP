@@ -4,22 +4,22 @@ import SSLService
 
 /// Used to connect to an SMTP server and send emails.
 public class SMTP {
-    public typealias Port = Int32
-    
     let hostname: String
-    let port: Port
     let user: String
     let password: String
     let domainName: String
+    let chainFilePath: String?
+    let chainFilePassword: String?
     fileprivate var socket: Socket
     fileprivate var loggedIn = false
     
-    public init(url: String, port: Port, user: String, password: String, domainName: String = "localhost") throws {
+    public init(url: String, user: String, password: String, domainName: String = "localhost", chainFilePath: String? = nil, chainFilePassword: String? = nil) throws {
         self.hostname = url
-        self.port = port
         self.user = user
         self.password = password
         self.domainName = domainName
+        self.chainFilePath = chainFilePath
+        self.chainFilePassword = chainFilePassword
         socket = try Socket.create()
     }
     
@@ -30,29 +30,39 @@ public class SMTP {
 
 // MARK: - Connect to SMTP server
 fileprivate extension SMTP {
+    typealias Port = Int32
+    
+    enum SecurityLayer {
+        case tls
+        case ssl
+        
+        var port: Port {
+            switch self {
+            case .tls: return 587
+            case .ssl: return 465
+            }
+        }
+    }
+    
     // TODO: - Add checks for if SMTP is already trying to connect
     func setup() throws {
-        if !isConnected() {
-            try connect()
+        if !socket.isConnected {
+            try connect(SecurityLayer.tls.port)
         }
         if !loggedIn {
             try login()
         }
     }
     
-    func connect() throws {
+    func connect(_ port: Port) throws {
         try socket.connect(to: hostname, port: port)
         _ = try parseResponses(try readFromSocket(), command: .connect)
-    }
-    
-    func isConnected() -> Bool {
-        return socket.isConnected
     }
 }
 
 // MARK: - Authentication method for SMTP server
 extension SMTP {
-    public enum AuthMethod: String {
+    enum AuthMethod: String {
         case plain = "PLAIN"
         case cramMD5 = "CRAM-MD5"
         case login = "LOGIN"
@@ -65,16 +75,19 @@ fileprivate extension SMTP {
     func login() throws {
         switch try starttls(try getServerInfo()) {
         case .plain:
-            _ = try auth(authMethod: .plain, credentials: CryptoEncoder.plain(user: user, password: password))
+            try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
         case .cramMD5:
-            break
+            let response: SMTPResponse = try send(.auth(.cramMD5, ""))
+            let challenge = response.message
+            let responseToChallenge = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
+            try auth(authMethod: .cramMD5, credentials: responseToChallenge)
         case .login:
-            _ = try auth(authMethod: .login, credentials: "")
-            let login = CryptoEncoder.login(user: user, password: password)
-            _ = try authUser(user: login.encodedUser)
-            _ = try authPassword(password: login.encodedPassword)
+            try auth(authMethod: .login, credentials: "")
+            let login = AuthCredentials.login(user: user, password: password)
+            try authUser(user: login.encodedUser)
+            try authPassword(password: login.encodedPassword)
         case .xOauth2:
-            break
+            try auth(authMethod: .xOauth2, credentials: AuthCredentials.xOauth2(user: user, password: password))
         }
         loggedIn = true
     }
@@ -95,23 +108,18 @@ fileprivate extension SMTP {
     }
     
     private func starttls() throws -> AuthMethod {
-        let _: SMTPResponse = try starttls()
+        guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword else {
+            throw NSError("\(hostname) offers STARTTLS. SMTP instance must be initialized with a valid Certificate Chain File path in PKCS12 format and password.")
+        }
         
-        // Establish SSL connection
+        let _: Void = try starttls()
         
-        let config = SSLService.Configuration(withChainFilePath: "/Users/quanvo/temp/cert.pfx", withPassword: "kitura", usingSelfSignedCerts: true)
+        let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: true)
         let newSocket = try Socket.create()
         newSocket.delegate = try SSLService(usingConfiguration: config)
-
+        socket.close()
         socket = newSocket
-        
-        try newSocket.connect(to: hostname, port: 465)
-        _ = try readFromSocket()
-        
-        
-        
-        
-        
+        try connect(SecurityLayer.ssl.port)
         
         return try getAuthMethod(try getServerInfo())
     }
@@ -124,9 +132,9 @@ fileprivate extension SMTP {
                 for arg in args {
                     switch arg {
                     case "PLAIN": return AuthMethod.plain
-                    //                    case "CRAM-MD5": return AuthMethod.cramMD5
+                    case "CRAM-MD5": return AuthMethod.cramMD5
                     case "LOGIN": return AuthMethod.login
-                    //                    case "XOAUTH2": return AuthMethod.xOauth2
+                    case "XOAUTH2": return AuthMethod.xOauth2
                     default: break
                     }
                 }
@@ -140,22 +148,22 @@ fileprivate extension SMTP {
 extension SMTP {
     public func send(_ mail: Mail) throws {
         try setup()
-        _ = try sendMail(mail.from.email)
-        _ = try sendTo(mail.to[0].email)
+        try sendMail(mail.from.email)
+        try sendTo(mail.to[0].email)
         try sendData(mail)
     }
     
     private func sendData(_ mail: Mail) throws {
         let date = Date().toString()
         
-        _ = try data()
+        try data()
         try write("From: \"\(mail.from.name)\" <\(mail.from.email)>")
         try write("To: \"\(mail.to[0].name)\" <\(mail.to[0].email)>")
         try write("Date: \(date)")
         try write("Subject: \(mail.subject)")
         try write("")
         try write("\(mail.text)")
-        _ = try dataEnd()
+        try dataEnd()
     }
 }
 
@@ -169,59 +177,59 @@ fileprivate extension SMTP {
         return try send(.helo(domainName))
     }
     
-    func starttls() throws -> SMTPResponse {
+    func starttls() throws {
         return try send(.starttls)
     }
     
-    func auth(authMethod: AuthMethod, credentials: String) throws -> SMTPResponse {
+    func auth(authMethod: AuthMethod, credentials: String) throws {
         return try send(.auth(authMethod, credentials))
     }
     
-    func authUser(user: String) throws -> SMTPResponse {
+    func authUser(user: String) throws {
         return try send(.authUser(user))
     }
     
-    func authPassword(password: String) throws -> SMTPResponse {
+    func authPassword(password: String) throws {
         return try send(.authPassword(password))
     }
     
-    func help(_ args: String? = nil) throws -> SMTPResponse {
+    func help(_ args: String? = nil) throws {
         return try send(.help(args))
     }
     
-    func rset() throws -> SMTPResponse {
+    func rset() throws {
         return try send(.rset)
     }
     
-    func noop() throws -> SMTPResponse {
+    func noop() throws {
         return try send(.noop)
     }
     
-    func sendMail(_ from: String) throws -> SMTPResponse {
+    func sendMail(_ from: String) throws {
         return try send(.mail(from))
     }
     
-    func sendTo(_ to: String) throws -> SMTPResponse {
+    func sendTo(_ to: String) throws {
         return try send(.rcpt(to))
     }
     
-    func data() throws -> SMTPResponse {
+    func data() throws {
         return try send(.data)
     }
     
-    func dataEnd() throws -> SMTPResponse {
+    func dataEnd() throws {
         return try send(.dataEnd)
     }
     
-    func vrfy(address: String) throws -> SMTPResponse {
+    func vrfy(address: String) throws {
         return try send(.vrfy(address))
     }
     
-    func expn(address: String) throws -> SMTPResponse {
+    func expn(address: String) throws {
         return try send(.expn(address))
     }
     
-    func quit() throws -> SMTPResponse {
+    func quit() throws {
         defer { socket.close() }
         return try send(.quit)
     }
@@ -229,6 +237,11 @@ fileprivate extension SMTP {
 
 // MARK: - Supporting functions to send commands
 fileprivate extension SMTP {
+    func send(_ command: SMTPCommand) throws {
+        try write(command.text)
+        _ = try parseResponses(try readFromSocket(), command: command)
+    }
+    
     func send(_ command: SMTPCommand) throws -> SMTPResponse {
         try write(command.text)
         return try parseResponses(try readFromSocket(), command: command)[0]
@@ -248,7 +261,7 @@ fileprivate extension SMTP {
         var buf = Data()
         _ = try socket.read(into: &buf)
         guard let res = String(data: buf, encoding: .utf8) else {
-            throw NSError("Error converting data to string: \(data)")
+            throw NSError("Error converting data to string: \(data).")
         }
         print(res)
         return res
