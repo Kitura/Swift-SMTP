@@ -6,27 +6,67 @@ class KituraSMTPTests: XCTestCase {
         return [
         ]
     }
-    
-    func test_1() throws {
-        let smtp = try SMTP(url: "smtp.gmx.com", user: "kitura@gmx.us", password: "Passw0rd", chainFilePath: "/Users/quanvo/temp/cert.pfx", chainFilePassword: "kitura", selfSignedCerts: true)
-        let from = try User(email: "kitura@gmx.us")
-        let to = try User(email: "kitura@gmx.us")
-        let mail = Mail(from: from, to: to, subject: "Hey whassup hello", text: "you my trap queen")
 
+    let from = "Dr. Light"
+    let to = "Megaman"
+    let subject = "Dr. Wily must be stopped"
+    let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
+
+    let junoSMTP = "smtp.juno.com"
+    let junoUser = "kiturasmtp@juno.com"
+    let junoPassword = "ibm123"
+    
+    let gmailSMTP = "smtp.gmail.com"
+    let gmailUser = "kiturasmtp@gmail.com"
+    let gmailPassword = "ibm12345"
+    
+    var chainFilePath: String?
+    let chainFilePassword = "kitura"
+    let selfSignedCerts = true
+    
+    func getChainFilePath() {
+        if chainFilePath != nil { return }
+        var pathToTests = #file
+        if pathToTests.hasSuffix("KituraSMTPTests.swift") {
+            pathToTests = pathToTests.replacingOccurrences(of: "KituraSMTPTests.swift", with: "")
+        }
+        chainFilePath = URL(fileURLWithPath: "\(pathToTests)\("cert.pfx")").path
+    }
+    
+    func testSendMailCramMD5() throws {
+        let smtp = try SMTP(url: junoSMTP, user: junoUser, password: junoPassword, authMethods: [.cramMD5])
+        let from = try User(name: self.from, email: junoUser)
+        let to = try User(name: self.to, email: junoUser)
+        let mail = Mail(from: from, to: to, subject: subject, text: text)
         try smtp.send(mail)
     }
     
-    func testCramMD5Encoding() {
+    func testSendMailLogin() throws {
+        getChainFilePath()
+        let smtp = try SMTP(url: gmailSMTP, user: gmailUser, password: gmailPassword, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = try User(name: self.from, email: gmailUser)
+        let to = try User(name: self.to, email: gmailUser)
+        let mail = Mail(from: from, to: to, subject: subject, text: text)
+        try smtp.send(mail)
+    }
+
+    func testSendMailPlain() throws {
+        getChainFilePath()
+        let smtp = try SMTP(url: gmailSMTP, user: gmailUser, password: gmailPassword, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = try User(name: self.from, email: gmailUser)
+        let to = try User(name: self.to, email: gmailUser)
+        let mail = Mail(from: from, to: to, subject: subject, text: text)
+        try smtp.send(mail)
+    }
+    
+    // Sending mails through XOAUTH2 has been tested and passed. This test is here in liue of having a fresh access token.
+    func testXOAuth2Encoding() {
         let user = "foo@bar.com"
-        let password = "password"
-        let challenge = "aGVsbG8="
+        let token = "token"
         
-        // Calculated by http://busylog.net/cram-md5-online-generator/
-        let expected = "Zm9vQGJhci5jb20gMjhmOGNhMDI0YjBlNjE4YWUzNWQ0NmRiODExNzU2NjM="
-        
-        do {
-            let result = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
-            XCTAssertEqual(result, expected)
-        } catch {}
+        // echo -ne "user=foo@bar.com\001auth=Bearer token\001\001"|base64
+        let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
+        let result = AuthCredentials.xoauth2(user: user, accessToken: token)
+        XCTAssertEqual(result, expected)
     }
 }

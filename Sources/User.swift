@@ -9,15 +9,12 @@
 import Foundation
 
 public struct User {
-    let name: String
+    let name: String?
     let email: String
     
-    public init(name: String = "", email: String) throws {
+    public init(name: String? = nil , email: String) throws {
         try email.validateEmail()
-        
-        if name == "" { self.name = email }
-        else { self.name = name }
-        
+        self.name = name
         self.email = email
     }
 }

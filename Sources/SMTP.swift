@@ -7,7 +7,9 @@ public class SMTP {
     let hostname: String
     let user: String
     let password: String
+    let accessToken: String?
     let domainName: String
+    let authMethods: [AuthMethod]
     let chainFilePath: String?
     let chainFilePassword: String?
     let selfSignedCerts: Bool?
@@ -15,11 +17,20 @@ public class SMTP {
     fileprivate var loggedIn = false
     // TODO: - UUID?
     
-    public init(url: String, user: String, password: String, domainName: String = "localhost", chainFilePath: String? = nil, chainFilePassword: String? = nil, selfSignedCerts: Bool? = nil) throws {
+    public enum AuthMethod: String {
+        case cramMD5 = "CRAM-MD5"
+        case login = "LOGIN"
+        case plain = "PLAIN"
+        case xoauth2 = "XOAUTH2"
+    }
+    
+    public init(url: String, user: String, password: String, accessToken: String? = nil, domainName: String = "localhost", authMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2], chainFilePath: String? = nil, chainFilePassword: String? = nil, selfSignedCerts: Bool? = nil) throws {
         self.hostname = url
         self.user = user
         self.password = password
+        self.accessToken = accessToken
         self.domainName = domainName
+        self.authMethods = authMethods
         self.chainFilePath = chainFilePath
         self.chainFilePassword = chainFilePassword
         self.selfSignedCerts = selfSignedCerts
@@ -63,16 +74,6 @@ fileprivate extension SMTP {
     }
 }
 
-// MARK: - Authentication method for SMTP server
-extension SMTP {
-    enum AuthMethod: String {
-        case cramMD5 = "CRAM-MD5"
-        case login = "LOGIN"
-        case plain = "PLAIN"
-        case xOauth2 = "XOAUTH2"
-    }
-}
-
 // MARK: - Login to SMTP server
 fileprivate extension SMTP {
     func login() throws {
@@ -80,7 +81,7 @@ fileprivate extension SMTP {
         case .cramMD5: try loginCramMD5()
         case .login: try loginLogin()
         case .plain: try loginPlain()
-        case .xOauth2: try loginXOauth2()
+        case .xoauth2: try loginXOAuth2()
         }
         loggedIn = true
     }
@@ -123,24 +124,20 @@ fileprivate extension SMTP {
             if resArr.first == "AUTH" {
                 let args = resArr.dropFirst()
                 for arg in args {
-                    switch arg {
-                    case "CRAM-MD5": return AuthMethod.cramMD5
-                    case "LOGIN": return AuthMethod.login
-                    case "PLAIN": return AuthMethod.plain
-                    case "XOAUTH2": return AuthMethod.xOauth2
-                    default: break
+                    if let authMethod = SMTP.AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
+                        return authMethod
                     }
                 }
             }
         }
-        throw NSError("No supported authorization methods found on \(hostname).")
+        throw NSError("No supported authorization methods that matched the preferred authorization methods were found on \"\(hostname)\".")
     }
 
     private func loginCramMD5() throws {
         let res: SMTPResponse = try auth(authMethod: .cramMD5, credentials: nil)
         let challenge = res.message
         let responseToChallenge = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
-        let _: Void = try auth(authMethod: .cramMD5, credentials: responseToChallenge)
+        try authPassword(password: responseToChallenge)
     }
 
     private func loginLogin() throws {
@@ -154,8 +151,11 @@ fileprivate extension SMTP {
         let _: Void = try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
     }
     
-    private func loginXOauth2() throws {
-        let _: Void = try auth(authMethod: .xOauth2, credentials: AuthCredentials.xOauth2(user: user, password: password))
+    private func loginXOAuth2() throws {
+        guard let accessToken = accessToken else {
+            throw NSError("Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token.")
+        }
+        let _: Void = try auth(authMethod: .xoauth2, credentials: AuthCredentials.xoauth2(user: user, accessToken: accessToken))
     }
 }
 
@@ -165,15 +165,17 @@ extension SMTP {
         try setup()
         try sendMail(mail.from.email)
         try sendTo(mail.to[0].email)
-        try sendData(mail)
-    }
-    
-    private func sendData(_ mail: Mail) throws {
         try data()
-        try write("From: \"\(mail.from.name)\" <\(mail.from.email)>")
-        try write("To: \"\(mail.to[0].name)\" <\(mail.to[0].email)>")
+        
+        if let name = mail.from.name { try write("From: \"\(name)\" <\(mail.from.email)>") }
+        else { try write("From: <\(mail.from.email)>") }
+        
+        if let name = mail.to[0].name { try write("To: \"\(name)\" <\(mail.to[0].email)>") }
+        else { try write("To: <\(mail.to[0].email)>") }
+        
         let date = Date().toString()
         try write("Date: \(date)")
+        
         try write("Subject: \(mail.subject)")
         try write("")
         try write("\(mail.text)")
@@ -279,7 +281,7 @@ fileprivate extension SMTP {
         var buf = Data()
         _ = try socket.read(into: &buf)
         guard let res = String(data: buf, encoding: .utf8) else {
-            throw NSError("Error converting data to string: \(data).")
+            throw NSError("Error converting data to string: \"\(data)\".")
         }
         print(res)
         return res
@@ -298,7 +300,7 @@ fileprivate extension SMTP {
     func getResponseCode(_ response: String, command: SMTPCommand) throws -> SMTPResponseCode {
         let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
         guard let responseCode = Int(response[range]), command.expectedCodes.contains(SMTPResponseCode(responseCode)) else {
-            throw NSError("Command \"\(command.text)\" failed with response: \(response).")
+            throw NSError("Command \"\(command.text)\" failed with response: \"\(response)\".")
         }
         return SMTPResponseCode(responseCode)
     }

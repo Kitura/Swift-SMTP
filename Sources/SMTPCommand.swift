@@ -62,7 +62,7 @@ enum SMTPCommand {
             case .cramMD5: return [.containingChallenge]
             case .login: return [.containingChallenge]
             case .plain: return [.authSucceeded]
-            case .xOauth2: return [.authSucceeded]
+            case .xoauth2: return [.authSucceeded]
             }
         case .authUser(_): return [.containingChallenge]
         case .authPassword: return [.authSucceeded]
