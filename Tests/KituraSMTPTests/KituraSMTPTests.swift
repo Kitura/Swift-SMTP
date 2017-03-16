@@ -9,8 +9,8 @@ class KituraSMTPTests: XCTestCase {
 
     let from = "Dr. Light"
     let to = "Megaman"
-    let subject = "Dr. Wily must be stopped"
-    let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
+    let subject = "Humans and robots living together in harmony and equality--"
+    let text = "That was my ultimate wish."
 
     let junoSMTP = "smtp.juno.com"
     let junoUser = "kitura-smtp@juno.com"
