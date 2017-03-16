@@ -16,15 +16,10 @@ enum SMTPCommand {
     case auth(SMTP.AuthMethod, String?)
     case authUser(String)
     case authPassword(String)
-    case help(String?)
-    case rset
-    case noop
     case mail(String)
     case rcpt(String)
     case data
     case dataEnd
-    case vrfy(String)
-    case expn(String)
     case quit
     
     var text: String {
@@ -38,17 +33,10 @@ enum SMTPCommand {
             else { return "AUTH \(method.rawValue)" }
         case .authUser(let user): return user
         case .authPassword(let password): return password
-        case .help(let args):
-            if let args = args { return "HELP \(args)" }
-            else { return "HELP" }
-        case .rset: return "RSET"
-        case .noop: return "NOOP"
         case .mail(let from): return "MAIL FROM: <\(from)>"
         case .rcpt(let to): return "RCPT TO: <\(to)>"
         case .data: return "DATA"
         case .dataEnd: return "\(CRLF)."
-        case .vrfy(let address): return "VRFY \(address)"
-        case .expn(let address): return "EXPN \(address)"
         case .quit: return "QUIT"
         }
     }
@@ -66,12 +54,28 @@ enum SMTPCommand {
             }
         case .authUser(_): return [.containingChallenge]
         case .authPassword: return [.authSucceeded]
-        case .help(_): return [.systemStatus, .helpMessage]
         case .rcpt(_): return [.commandOK, .willForward]
         case .data: return [.startMailInput]
-        case .vrfy(_): return [.commandOK, .willForward, .forAttempt]
         case .quit: return [.connectionClosing, .commandOK]
         default: return [.commandOK]
         }
     }
 }
+
+struct SMTPResponseCode: Equatable {
+    let rawValue: Int
+    init(_ value: Int) { rawValue = value }
+    
+    static let serviceReady = SMTPResponseCode(220)
+    static let connectionClosing = SMTPResponseCode(221)
+    static let authSucceeded = SMTPResponseCode(235)
+    static let commandOK = SMTPResponseCode(250)
+    static let willForward = SMTPResponseCode(251)
+    static let containingChallenge = SMTPResponseCode(334)
+    static let startMailInput = SMTPResponseCode(354)
+    
+    public static func ==(lhs: SMTPResponseCode, rhs: SMTPResponseCode) -> Bool {
+        return lhs.rawValue == rhs.rawValue
+    }
+}
+
