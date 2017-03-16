@@ -13,7 +13,7 @@ let CRLF = "\r\n"
 extension DateFormatter {
     static let smtpDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "E, d MMM yyy h:mm:ss a zzz"
+        formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss ZZZ"
         return formatter
     }()
 }
