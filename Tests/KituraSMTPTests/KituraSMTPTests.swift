@@ -7,11 +7,6 @@ class KituraSMTPTests: XCTestCase {
         ]
     }
 
-    let from = "Dr. Light"
-    let to = "Megaman"
-    let subject = "Humans and robots living together in harmony and equality."
-    let text = "That was my ultimate wish."
-
     let junoSMTP = "smtp.juno.com"
     let junoUser = "kitura-smtp@juno.com"
     
@@ -19,6 +14,11 @@ class KituraSMTPTests: XCTestCase {
     let gmailUser = "kiturasmtp@gmail.com"
     
     let password = "ibm12345"
+
+    let from = "Dr. Light"
+    let to = "Megaman"
+    let subject = "Humans and robots living together in harmony and equality."
+    let text = "That was my ultimate wish."
     
     var chainFilePath: String?
     let chainFilePassword = "kitura"
@@ -34,7 +34,7 @@ class KituraSMTPTests: XCTestCase {
     }
     
     var x: XCTestExpectation?
-
+    
     // NOTE: Running this test too many times will get this Juno account flagged
     //       for spamming.
 //    func testSendMailCramMD5() throws {

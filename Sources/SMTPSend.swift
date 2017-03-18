@@ -15,14 +15,14 @@ import Socket
 
 class SMTPSend {
     fileprivate var socket: SMTPSocket
-    private let login: SMTPLogin
-    private let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.queue")
-    private var pending = [Mail]()
-    private var sent = [Mail]()
-    private var failed = [(Mail, Error)]()
-    private var isSending = false
-    private var progress: ((Mail, Error?) -> Void)?
-    private var completion: (([Mail], [(mail: Mail, error: Error)]) -> Void)?
+    fileprivate let login: SMTPLogin
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.queue")
+    fileprivate var isSending = false
+    fileprivate var pending = [Mail]()
+    fileprivate var sent = [Mail]()
+    fileprivate var failed = [(Mail, Error)]()
+    fileprivate var progress: ((Mail, Error?) -> Void)?
+    fileprivate var completion: (([Mail], [(mail: Mail, error: Error)]) -> Void)?
     
     init(hostname: String, user: String, password: String, accessToken: String?, domainName: String, authMethods: [SMTP.AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) throws {
         socket = try SMTPSocket()
@@ -41,31 +41,37 @@ class SMTPSend {
     
     func send(_ mails: [Mail], progress: ((Mail, Error?) -> Void)? = nil, completion: ((_ sent: [Mail], _ failed: [(mail: Mail, error: Error)]) -> Void)? = nil) {
         queue.async {
-            if self.isSending { return }
+            if self.isSending {
+                let err = SMTPError.smtpInstanceIsSending
+                completion?([], self.pending.map({ ($0, err) }))
+                return
+            }
             
             self.isSending = true
             self.pending = mails
             self.progress = progress
             self.completion = completion
+            
             do {
                 self.socket = try self.login.login()
             } catch {
-                self.isSending = false
                 completion?([], self.pending.map({ ($0, error) }))
+                self.close()
+                self.cleanUp()
                 return
             }
             
             self.send()
         }
     }
-    
-    private func send() {
+}
+
+private extension SMTPSend {
+    func send() {
         if pending.isEmpty {
-            try? quit()
-            isSending = false
             completion?(sent, failed)
-            progress = nil
-            completion = nil
+            try? quit()
+            cleanUp()
             return
         }
         
@@ -103,6 +109,19 @@ class SMTPSend {
         try socket.write("\(mail.text)")
         try dataEnd()
     }
+    
+    func close() {
+        socket.socket.close()
+    }
+    
+    func cleanUp() {
+        pending = []
+        sent = []
+        failed = []
+        progress = nil
+        completion = nil
+        isSending = false
+    }
 }
 
 private extension SMTPSend {
@@ -123,7 +142,7 @@ private extension SMTPSend {
     }
     
     func quit() throws {
-        defer { socket.socket.close() }
+        defer { close() }
         return try socket.send(.quit)
     }
 }

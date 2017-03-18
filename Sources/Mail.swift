@@ -9,10 +9,10 @@
 import Foundation
 
 public struct Mail {
-    var from: User
-    var to: [User]
-    var subject: String
-    var text: String
+    public var from: User
+    public var to: [User]
+    public var subject: String
+    public var text: String
     
     public init(from: User, to: User, subject: String = "", text: String = "") {
         self.from = from

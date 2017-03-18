@@ -1,5 +1,7 @@
 import Foundation
 
+let CRLF = "\r\n"
+
 public class SMTP {
     let hostname: String
     let user: String
@@ -10,7 +12,7 @@ public class SMTP {
     let chainFilePath: String?
     let chainFilePassword: String?
     let selfSignedCerts: Bool?
-    fileprivate let send: SMTPSend
+    private let send: SMTPSend
     
     public enum AuthMethod: String {
         case cramMD5 = "CRAM-MD5"

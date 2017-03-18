@@ -40,7 +40,7 @@ struct SMTPSocket {
         var buf = Data()
         _ = try socket.read(into: &buf)
         guard let res = String(data: buf, encoding: .utf8) else {
-            throw NSError("Error converting data to string: \"\(buf)\".")
+            throw SMTPError(.convertDataUTF8Fail(buf))
         }
 //        print(res)
         return res
@@ -59,7 +59,7 @@ struct SMTPSocket {
     private static func getResponseCode(_ response: String, command: SMTPCommand) throws -> SMTPResponseCode {
         let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
         guard let responseCode = Int(response[range]), command.expectedCodes.contains(SMTPResponseCode(responseCode)) else {
-            throw NSError("Command \"\(command.text)\" failed with response: \"\(response)\".")
+            throw SMTPError(.badResponse(command.text, response))
         }
         return SMTPResponseCode(responseCode)
     }
