@@ -18,7 +18,7 @@ enum SMTPError: Error {
     case noSupportedAuthMethods(String)
     case noAccessToken
     
-    // SMTPSend
+    // SMTPSender
     case smtpInstanceIsSending
     
     // SMTPSocket

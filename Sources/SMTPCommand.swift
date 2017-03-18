@@ -13,7 +13,7 @@ enum SMTPCommand {
     case helo(String)
     case ehlo(String)
     case starttls
-    case auth(SMTP.AuthMethod, String?)
+    case auth(AuthMethod, String?)
     case authUser(String)
     case authPassword(String)
     case mail(String)

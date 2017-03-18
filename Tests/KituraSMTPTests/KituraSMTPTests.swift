@@ -37,12 +37,12 @@ class KituraSMTPTests: XCTestCase {
     
     // NOTE: Running this test too many times will get this Juno account flagged
     //       for spamming.
-//    func testSendMailCramMD5() throws {
+//    func testSendMailCramMD5() {
 //        x = expectation(description: "Send email through CRAM-MD5 auth.")
 //
-//        let smtp = try SMTP(hostname: junoSMTP, user: junoUser, password: password, authMethods: [.cramMD5])
-//        let from = try User(name: self.from, email: junoUser)
-//        let to = try User(name: self.to, email: junoUser)
+//        let smtp = SMTP(hostname: junoSMTP, user: junoUser, password: password, authMethods: [.cramMD5])
+//        let from = User(name: self.from, email: junoUser)
+//        let to = User(name: self.to, email: junoUser)
 //        let mail = Mail(from: from, to: to, subject: subject, text: text)
 //
 //        smtp.send(mail) { (err) in
@@ -57,13 +57,13 @@ class KituraSMTPTests: XCTestCase {
     // NOTE: Some servers like Gmail support IPv6, and if your network does not,
     //       you will first attempt to connect via IPv6, then timeout, and fall
     //       back to IPv4. You can avoid this by disabling IPv6.
-    func testSendMailLogin() throws {
+    func testSendMailLogin() {
         x = expectation(description: "Send email through LOGIN auth.")
         getChainFilePath()
         
-        let smtp = try SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        let from = try User(name: self.from, email: gmailUser)
-        let to = try User(name: self.to, email: gmailUser)
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to = User(name: self.to, email: gmailUser)
         let mail = Mail(from: from, to: to, subject: subject, text: text)
         
         smtp.send(mail) { (err) in
@@ -75,13 +75,13 @@ class KituraSMTPTests: XCTestCase {
         waitForExpectations(timeout: 5) { (_) in }
     }
 
-    func testSendMailPlain() throws {
+    func testSendMailPlain()  {
         x = expectation(description: "Send email through PLAIN auth.")
         getChainFilePath()
         
-        let smtp = try SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        let from = try User(name: self.from, email: gmailUser)
-        let to = try User(name: self.to, email: gmailUser)
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to = User(name: self.to, email: gmailUser)
         let mail = Mail(from: from, to: to, subject: subject, text: text)
         
         smtp.send(mail) { (err) in
