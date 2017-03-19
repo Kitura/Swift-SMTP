@@ -13,47 +13,38 @@ import Socket
     import Dispatch
 #endif
 
+typealias Progress = ((Mail, Error?) -> Void)?
+typealias Completion = (([Mail], [(mail: Mail, error: Error)]) -> Void)?
+
 class SMTPSender {
     fileprivate var socket: SMTPSocket
     fileprivate var config: SMTPConfig
+    fileprivate var pending: [Mail]
+    fileprivate var progress: Progress
+    fileprivate var completion: Completion
     fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.queue")
-    fileprivate var pending = [Mail]()
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
-    fileprivate var progress: ((Mail, Error?) -> Void)?
-    fileprivate var completion: (([Mail], [(mail: Mail, error: Error)]) -> Void)?
     
-    init(_ config: SMTPConfig) throws {
+    init(config: SMTPConfig, pending: [Mail], progress: Progress, completion: Completion) throws {
         socket = try SMTPSocket()
         self.config = config
+        self.pending = pending
+        self.progress = progress
+        self.completion = completion
     }
     
-    func send(_ mail: Mail, completion: ((Error?) -> Void)? = nil) {
-        send([mail]) { (_, failed) in
-            if let err = failed.first?.1 {
-                completion?(err)
-            } else {
-                completion?(nil)
-            }
-        }
-    }
-    
-    func send(_ mails: [Mail], progress: ((Mail, Error?) -> Void)? = nil, completion: ((_ sent: [Mail], _ failed: [(mail: Mail, error: Error)]) -> Void)? = nil) {
+    func resume() {
         queue.async {
-            self.pending = mails
-            self.progress = progress
-            self.completion = completion
-            
             do {
                 self.socket = try SMTPLogin(config: self.config, socket: self.socket).login()
             } catch {
-                completion?([], self.pending.map { ($0, error) })
+                self.completion?([], self.pending.map { ($0, error) })
                 self.close()
                 self.cleanUp()
                 return
             }
-            
-            self.send()
+            self.sendNext()
         }
     }
     
@@ -63,7 +54,7 @@ class SMTPSender {
 }
 
 private extension SMTPSender {
-    func send() {
+    func sendNext() {
         if pending.isEmpty {
             completion?(sent, failed)
             try? quit()
@@ -83,7 +74,7 @@ private extension SMTPSender {
             progress?(mail, error)
         }
         
-        queue.async { self.send() }
+        queue.async { self.sendNext() }
     }
     
     private func send(_ mail: Mail) throws {

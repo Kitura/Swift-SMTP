@@ -19,7 +19,7 @@ public class SMTP {
     
     public func send(_ mails: [Mail], progress: ((Mail, Error?) -> Void)? = nil, completion: ((_ sent: [Mail], _ failed: [(mail: Mail, error: Error)]) -> Void)? = nil) {
         do {
-            try SMTPSender(config).send(mails, progress: progress, completion: completion)
+            try SMTPSender(config: config, pending: mails, progress: progress, completion: completion).resume()
         } catch {
             completion?([], mails.map { ($0, error) })
         }

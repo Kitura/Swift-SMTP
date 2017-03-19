@@ -21,7 +21,6 @@ class SMTPLogin {
     fileprivate let chainFilePassword: String?
     fileprivate let selfSignedCerts: Bool?
     fileprivate var socket: SMTPSocket
-    fileprivate var loggedIn = false
     
     init(config: SMTPConfig, socket: SMTPSocket) {
         hostname = config.hostname
@@ -37,12 +36,8 @@ class SMTPLogin {
     }
     
     func login() throws -> SMTPSocket {
-        if !socket.socket.isConnected {
-            try connect(Port.tls)
-        }
-        if !loggedIn {
-            let _: Void = try login()
-        }
+        try connect(Port.tls)
+        let _: Void = try login()
         return socket
     }
 }
@@ -74,7 +69,6 @@ private extension SMTPLogin {
         case .plain: try loginPlain()
         case .xoauth2: try loginXOAuth2()
         }
-        loggedIn = true
     }
     
     private func getServerInfo() throws -> [SMTPResponse] {
@@ -125,10 +119,8 @@ private extension SMTPLogin {
     }
     
     private func loginCramMD5() throws {
-        let res: SMTPResponse = try auth(authMethod: .cramMD5, credentials: nil)
-        let challenge = res.message
-        let responseToChallenge = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
-        try authPassword(password: responseToChallenge)
+        let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
+        try authPassword(password: try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password))
     }
     
     private func loginLogin() throws {
