@@ -8,10 +8,18 @@
 
 import Foundation
 
+/// Contains the name and email for a participant in a `Mail`.
 public struct User {
     public let name: String
     public let email: String
     
+    /**
+     Initializes a `User`.
+     
+     - parameters:
+        - name: Display name for the user. Defaults to empty string.
+        - email: Email for the user.
+     */
     public init(name: String = "" , email: String) {
         self.name = name
         self.email = email
@@ -27,8 +35,6 @@ public struct User {
 }
 
 private extension String {
-    // A simple but maybe not fully compatible with RFC 2047
-    // https://tools.ietf.org/html/rfc2047
     var mimeEncoded: String? {
         guard let encoded = addingPercentEncoding(
             withAllowedCharacters: .urlQueryAllowed) else {

@@ -13,8 +13,8 @@ import Socket
     import Dispatch
 #endif
 
-typealias Progress = ((Mail, Error?) -> Void)?
-typealias Completion = (([Mail], [(mail: Mail, error: Error)]) -> Void)?
+public typealias Progress = ((Mail, Error?) -> Void)?
+public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
 class SMTPSender {
     fileprivate var socket: SMTPSocket
@@ -90,7 +90,7 @@ private extension SMTPSender {
 
 private extension SMTPSender {
     func send(_ mail: Mail) throws {
-        try SMTPSender.validateEmails(mail.to.map { $0.email })
+        try validateEmails(mail.to.map { $0.email })
         try sendMail(mail.from.email)
         try sendTo(mail.to + mail.cc + mail.bcc)
         try data()
@@ -104,7 +104,7 @@ private extension SMTPSender {
         try dataEnd()
     }
     
-    private static func validateEmails(_ emails: [String]) throws {
+    private func validateEmails(_ emails: [String]) throws {
         for email in emails {
             try email.validateEmail()
         }
