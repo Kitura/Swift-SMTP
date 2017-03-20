@@ -40,7 +40,7 @@ class SMTPSender {
                 self.socket = try SMTPLogin(config: self.config, socket: self.socket).login()
             } catch {
                 self.completion?([], self.pending.map { ($0, error) })
-                self.close()
+                self.socket.close()
                 self.cleanUp()
                 return
             }
@@ -49,7 +49,7 @@ class SMTPSender {
     }
     
     deinit {
-        close()
+        socket.close()
     }
 }
 
@@ -98,10 +98,6 @@ private extension SMTPSender {
         try dataEnd()
     }
     
-    func close() {
-        socket.socket.close()
-    }
-    
     func cleanUp() {
         progress = nil
         completion = nil
@@ -109,9 +105,10 @@ private extension SMTPSender {
 }
 
 private extension SMTPSender {
+    private static let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    private static let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+    
     static func validateEmails(_ emails: [String]) throws {
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         for email in emails {
             guard emailTest.evaluate(with: email) else {
                 throw SMTPError.invalidEmail(email)
@@ -136,7 +133,7 @@ private extension SMTPSender {
     }
     
     func quit() throws {
-        defer { close() }
+        defer { socket.close() }
         return try socket.send(.quit)
     }
 }

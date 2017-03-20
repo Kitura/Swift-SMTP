@@ -16,6 +16,10 @@ struct SMTPSocket {
         socket = try Socket.create()
     }
     
+    func close() {
+        socket.close()
+    }
+    
     func send(_ command: SMTPCommand) throws {
         try write(command.text)
         _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)

@@ -124,21 +124,21 @@ private extension SMTPLogin {
     }
     
     private func loginLogin() throws {
-        let _: Void = try auth(authMethod: .login, credentials: nil)
+        _ = try auth(authMethod: .login, credentials: nil)
         let credentials = AuthCredentials.login(user: user, password: password)
         try authUser(user: credentials.encodedUser)
         try authPassword(password: credentials.encodedPassword)
     }
     
     private func loginPlain() throws {
-        let _: Void = try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
+        _ = try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
     }
     
     private func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        let _: Void = try auth(authMethod: .xoauth2, credentials: AuthCredentials.xoauth2(user: user, accessToken: accessToken))
+        _ = try auth(authMethod: .xoauth2, credentials: AuthCredentials.xoauth2(user: user, accessToken: accessToken))
     }
 }
 
@@ -153,10 +153,6 @@ private extension SMTPLogin {
     
     func starttls() throws {
         return try socket.send(.starttls)
-    }
-    
-    func auth(authMethod: AuthMethod, credentials: String?) throws {
-        return try socket.send(.auth(authMethod, credentials))
     }
     
     func auth(authMethod: AuthMethod, credentials: String?) throws -> SMTPResponse {
