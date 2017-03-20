@@ -77,64 +77,90 @@ private extension SMTPSender {
         queue.async { self.sendNext() }
     }
     
-    private func send(_ mail: Mail) throws {
-        try SMTPSender.validateEmails(mail.to.map { $0.email })
-        try sendMail(mail.from.email)
-        try sendTo(mail.to[0].email)
-        try data()
-        
-        if let name = mail.from.name { try socket.write("From: \(name) <\(mail.from.email)>") }
-        else { try socket.write("From: <\(mail.from.email)>") }
-        
-        if let name = mail.to[0].name { try socket.write("To: \(name) <\(mail.to[0].email)>") }
-        else { try socket.write("To: <\(mail.to[0].email)>") }
-        
-        let date = Date().toString()
-        try socket.write("Date: \(date)")
-        
-        try socket.write("Subject: \(mail.subject)")
-        try socket.write("")
-        try socket.write("\(mail.text)")
-        try dataEnd()
-    }
-    
     func cleanUp() {
         progress = nil
         completion = nil
-    }
-}
-
-private extension SMTPSender {
-    private static let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-    private static let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-    
-    static func validateEmails(_ emails: [String]) throws {
-        for email in emails {
-            guard emailTest.evaluate(with: email) else {
-                throw SMTPError.invalidEmail(email)
-            }
-        }
-    }
-    
-    func sendMail(_ from: String) throws {
-        return try socket.send(.mail(from))
-    }
-    
-    func sendTo(_ to: String) throws {
-        return try socket.send(.rcpt(to))
-    }
-    
-    func data() throws {
-        return try socket.send(.data)
-    }
-    
-    func dataEnd() throws {
-        return try socket.send(.dataEnd)
     }
     
     func quit() throws {
         defer { socket.close() }
         return try socket.send(.quit)
+    }
+}
+
+private extension SMTPSender {
+    func send(_ mail: Mail) throws {
+        try SMTPSender.validateEmails(mail.to.map { $0.email })
+        try sendMail(mail.from.email)
+        try sendTo(mail.to + mail.cc + mail.bcc)
+        try data()
+        try from(mail.from.mime)
+        try to(mail.to)
+        try cc(mail.cc)
+        try date()
+        try subject(mail.subject)
+        try socket.write("")
+        try socket.write("\(mail.text)")
+        try dataEnd()
+    }
+    
+    private static func validateEmails(_ emails: [String]) throws {
+        for email in emails {
+            try email.validateEmail()
+        }
+    }
+    
+    private func sendMail(_ from: String) throws {
+        return try socket.send(.mail(from))
+    }
+    
+    private func sendTo(_ recipients: [User]) throws {
+        for user in recipients {
+            let _: Void = try socket.send(.rcpt(user.email))
+        }
+    }
+    
+    private func data() throws {
+        return try socket.send(.data)
+    }
+    
+    private func from(_ from: String) throws {
+        try socket.write("From: \(from)")
+    }
+    
+    private func to(_ to: [User]) throws {
+        let recipients = to.map { $0.mime }.joined(separator: ", ")
+        try socket.write("To: \(recipients)")
+    }
+    
+    private func cc(_ cc: [User]) throws {
+        if !cc.isEmpty {
+            let recipients = cc.map { $0.mime }.joined(separator: ", ")
+            try socket.write("Cc: \(recipients)")
+        }
+    }
+    
+    private func date() throws {
+        let date = Date().toString()
+        try socket.write("Date: \(date)")
+    }
+    
+    private func subject(_ subject: String) throws {
+        try socket.write("Subject: \(subject)")
+    }
+    
+    private func dataEnd() throws {
+        return try socket.send(.dataEnd)
+    }
+}
+
+private extension String {
+    func validateEmail() throws {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
+        guard emailTest.evaluate(with: self) else {
+            throw SMTPError(.invalidEmail(self))
+        }
     }
 }
 

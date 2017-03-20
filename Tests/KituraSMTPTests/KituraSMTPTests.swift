@@ -4,6 +4,14 @@ import XCTest
 class KituraSMTPTests: XCTestCase {
     static var allTests : [(String, (KituraSMTPTests) -> () throws -> Void)] {
         return [
+//            ("testSendMailCramMD5", testSendMailCramMD5),
+            ("testSendMailLogin", testSendMailLogin),
+            ("testSendMailPlain", testSendMailPlain),
+            ("testXOAuth2Encoding", testXOAuth2Encoding),
+            ("testSendMultipleRecipients", testSendMultipleRecipients),
+            ("testSendMailWithCc", testSendMailWithCc),
+            ("testSendMailWithBcc", testSendMailWithBcc),
+            ("testSendMultipleMails", testSendMultipleMails)
         ]
     }
 
@@ -43,11 +51,10 @@ class KituraSMTPTests: XCTestCase {
 //        let smtp = SMTP(hostname: junoSMTP, user: junoUser, password: password, authMethods: [.cramMD5])
 //        let from = User(name: self.from, email: junoUser)
 //        let to = User(name: self.to, email: junoUser)
-//        let mail = Mail(from: from, to: to, subject: subject, text: text)
+//        let mail = Mail(from: from, to: [to], subject: subject, text: text)
 //
 //        smtp.send(mail) { (err) in
 //            XCTAssertNil(err)
-//            
 //            self.x?.fulfill()
 //        }
 //        
@@ -64,11 +71,10 @@ class KituraSMTPTests: XCTestCase {
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
         let to = User(name: self.to, email: gmailUser)
-        let mail = Mail(from: from, to: to, subject: subject, text: text)
+        let mail = Mail(from: from, to: [to], subject: subject, text: text)
         
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            
             self.x?.fulfill()
         }
         
@@ -82,11 +88,10 @@ class KituraSMTPTests: XCTestCase {
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
         let to = User(name: self.to, email: gmailUser)
-        let mail = Mail(from: from, to: to, subject: subject, text: text)
+        let mail = Mail(from: from, to: [to], subject: subject, text: text)
         
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-        
             self.x?.fulfill()
         }
         
@@ -103,5 +108,80 @@ class KituraSMTPTests: XCTestCase {
         let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
         let result = AuthCredentials.xoauth2(user: user, accessToken: token)
         XCTAssertEqual(result, expected)
+    }
+    
+    func testSendMultipleRecipients() {
+        x = expectation(description: "Send mail to multiple recipients.")
+        getChainFilePath()
+        
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to1 = User(name: self.to, email: gmailUser)
+        let to2 = User(name: self.to, email: junoUser)
+        let mail = Mail(from: from, to: [to1, to2], subject: subject, text: text)
+        
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err)
+            self.x?.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (_) in }
+    }
+    
+    func testSendMailWithCc() {
+        x = expectation(description: "Send mail with Cc.")
+        getChainFilePath()
+        
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to1 = User(name: self.to, email: gmailUser)
+        let to2 = User(name: self.to, email: junoUser)
+        let mail = Mail(from: from, to: [to2], cc: [to1], subject: subject, text: text)
+        
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err)
+            self.x?.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (_) in }
+    }
+    
+    func testSendMailWithBcc() {
+        x = expectation(description: "Send mail with Bcc.")
+        getChainFilePath()
+        
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to1 = User(name: self.to, email: gmailUser)
+        let to2 = User(name: self.to, email: junoUser)
+        let mail = Mail(from: from, to: [to1], bcc: [to2], subject: subject, text: text)
+        
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err)
+            self.x?.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (_) in }
+    }
+    
+    func testSendMultipleMails() {
+        x = expectation(description: "Send multiple mails.")
+        getChainFilePath()
+        
+        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+        let from = User(name: self.from, email: gmailUser)
+        let to = User(name: self.to, email: gmailUser)
+        let mail1 = Mail(from: from, to: [to], subject: subject, text: text)
+        let mail2 = Mail(from: from, to: [to], subject: subject, text: text)
+        
+        smtp.send([mail1, mail2], progress: { (_, err) in
+            XCTAssertNil(err)
+        }) { (sent, failed) in
+            XCTAssertEqual(sent.count, 2)
+            XCTAssert(failed.isEmpty)
+            self.x?.fulfill()
+        }
+        
+        waitForExpectations(timeout: 5) { (_) in }
     }
 }

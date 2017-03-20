@@ -16,10 +16,6 @@ struct SMTPSocket {
         socket = try Socket.create()
     }
     
-    func close() {
-        socket.close()
-    }
-    
     func send(_ command: SMTPCommand) throws {
         try write(command.text)
         _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)
@@ -71,5 +67,9 @@ struct SMTPSocket {
     private static func getResponseMessage(_ response: String) -> String {
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]
+    }
+    
+    func close() {
+        socket.close()
     }
 }
