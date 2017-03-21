@@ -94,13 +94,7 @@ private extension SMTPSender {
         try sendMail(mail.from.email)
         try sendTo(mail.to + mail.cc + mail.bcc)
         try data()
-        try from(mail.from.mime)
-        try to(mail.to)
-        try cc(mail.cc)
-        try date()
-        try subject(mail.subject)
-        try socket.write("")
-        try socket.write("\(mail.text)")
+        try SMTPDataSender(mail: mail, socket: socket).send()
         try dataEnd()
     }
     
@@ -124,31 +118,6 @@ private extension SMTPSender {
         return try socket.send(.data)
     }
     
-    private func from(_ from: String) throws {
-        try socket.write("From: \(from)")
-    }
-    
-    private func to(_ to: [User]) throws {
-        let recipients = to.map { $0.mime }.joined(separator: ", ")
-        try socket.write("To: \(recipients)")
-    }
-    
-    private func cc(_ cc: [User]) throws {
-        if !cc.isEmpty {
-            let recipients = cc.map { $0.mime }.joined(separator: ", ")
-            try socket.write("Cc: \(recipients)")
-        }
-    }
-    
-    private func date() throws {
-        let date = Date().toString()
-        try socket.write("Date: \(date)")
-    }
-    
-    private func subject(_ subject: String) throws {
-        try socket.write("Subject: \(subject)")
-    }
-    
     private func dataEnd() throws {
         return try socket.send(.dataEnd)
     }
@@ -164,16 +133,4 @@ private extension String {
     }
 }
 
-private extension DateFormatter {
-    static let smtpDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss ZZZ"
-        return formatter
-    }()
-}
 
-private extension Date {
-    func toString() -> String {
-        return DateFormatter.smtpDateFormatter.string(from: self)
-    }
-}

@@ -12,34 +12,30 @@ class TestSend: XCTestCase {
         ]
     }
 
-    let junoUser = "kitura-smtp@juno.com"
     let gmailSMTP = "smtp.gmail.com"
     let gmailUser = "kiturasmtp@gmail.com"
+    let junoUser = "kitura-smtp@juno.com"
     let password = "ibm12345"
-
+    
+    var chainFilePath: String {
+        var pathToTests = #file
+        if pathToTests.hasSuffix("TestSend.swift") {
+            pathToTests = pathToTests.replacingOccurrences(of: "TestSend.swift", with: "")
+        }
+        return URL(fileURLWithPath: "\(pathToTests)\("cert.pfx")").path
+    }
+    let chainFilePassword = "kitura"
+    let selfSignedCerts = true
+    
     let from = "Dr. Light"
     let to = "Megaman"
     let subject = "Humans and robots living together in harmony and equality."
     let text = "That was my ultimate wish."
     
-    var chainFilePath: String?
-    let chainFilePassword = "kitura"
-    let selfSignedCerts = true
-    
-    func getChainFilePath() {
-        if chainFilePath != nil { return }
-        var pathToTests = #file
-        if pathToTests.hasSuffix("TestSend.swift") {
-            pathToTests = pathToTests.replacingOccurrences(of: "TestSend.swift", with: "")
-        }
-        chainFilePath = URL(fileURLWithPath: "\(pathToTests)\("cert.pfx")").path
-    }
-    
     var x: XCTestExpectation?
     
     func testSendMail() {
         x = expectation(description: "Send an email.")
-        getChainFilePath()
         
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
@@ -51,12 +47,11 @@ class TestSend: XCTestCase {
             self.x?.fulfill()
         }
         
-        waitForExpectations(timeout: 5) { (_) in }
+        waitForExpectations(timeout: 10) { (_) in }
     }
     
     func testSendMultipleRecipients() {
         x = expectation(description: "Send mail to multiple recipients.")
-        getChainFilePath()
         
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
@@ -69,12 +64,11 @@ class TestSend: XCTestCase {
             self.x?.fulfill()
         }
         
-        waitForExpectations(timeout: 5) { (_) in }
+        waitForExpectations(timeout: 10) { (_) in }
     }
     
     func testSendMailWithCc() {
         x = expectation(description: "Send mail with Cc.")
-        getChainFilePath()
         
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
@@ -87,12 +81,11 @@ class TestSend: XCTestCase {
             self.x?.fulfill()
         }
         
-        waitForExpectations(timeout: 5) { (_) in }
+        waitForExpectations(timeout: 10) { (_) in }
     }
     
     func testSendMailWithBcc() {
         x = expectation(description: "Send mail with Bcc.")
-        getChainFilePath()
         
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
@@ -105,12 +98,11 @@ class TestSend: XCTestCase {
             self.x?.fulfill()
         }
         
-        waitForExpectations(timeout: 5) { (_) in }
+        waitForExpectations(timeout: 10) { (_) in }
     }
     
     func testSendMultipleMails() {
         x = expectation(description: "Send multiple mails.")
-        getChainFilePath()
         
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
         let from = User(name: self.from, email: gmailUser)
@@ -126,6 +118,6 @@ class TestSend: XCTestCase {
             self.x?.fulfill()
         }
         
-        waitForExpectations(timeout: 5) { (_) in }
+        waitForExpectations(timeout: 10) { (_) in }
     }
 }

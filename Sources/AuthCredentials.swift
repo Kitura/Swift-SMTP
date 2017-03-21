@@ -34,10 +34,6 @@ struct AuthCredentials {
 }
 
 private extension String {
-    var base64Encoded: String {
-        return Data(utf8).base64EncodedString()
-    }
-    
     func base64Decoded() throws -> String {
         guard let data = Data(base64Encoded: self), let base64Decoded = String(data: data, encoding: .utf8) else {
             throw SMTPError(.base64DecodeFail(self))

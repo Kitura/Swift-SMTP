@@ -2,7 +2,7 @@ import Foundation
 
 /// Represents a handle to connect to and send emails through an SMTP server.
 public class SMTP {
-    let config: SMTPConfig
+    public var config: SMTPConfig
     
     /**
      Initializes an `SMTP` instance.
@@ -18,7 +18,7 @@ public class SMTP {
         - authMethods: Authentication methods to use to log in to the server.
                        Defaults to all supported ones--currently CRAM-MD5,
                        LOGIN, PLAIN, XOAUTH2.
-        - chainFilePath: Absolute path to certificate chain file in PKC12 
+        - chainFilePath: Absolute path to certificate chain .pfx file in PKC12 
                          format. Required if the SMTP server supports SSL.
         - chainFilePassword: Password for certificate chain file.
         - selfSignedCerts: `Bool` indicating if certificates are self signed.
@@ -57,8 +57,11 @@ public class SMTP {
                       `Mail`s and their corresponding `Error`s.
      
      - note:
-     If a failure is encountered when while sending multiple mails, the whole
-     sending process does not stop until all pending mails are attempted.
+        - If a failure is encountered while sending multiple mails, the whole
+          sending process does not stop until all pending mails are attempted.
+     
+        - Each call to `send` queues it's `mails` and sends them one by one. To
+          send mails concurrently, send them in separate calls to `send`.
      */
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         do {
@@ -69,16 +72,27 @@ public class SMTP {
     }
 }
 
-struct SMTPConfig {
-    let hostname: String
-    let user: String
-    let password: String
-    let accessToken: String?
-    let domainName: String
-    let authMethods: [AuthMethod]
-    let chainFilePath: String?
-    let chainFilePassword: String?
-    let selfSignedCerts: Bool?
+/// Supported authentication methods for logging into the SMTP server.
+public enum AuthMethod: String {
+    case cramMD5 = "CRAM-MD5"
+    case login = "LOGIN"
+    case plain = "PLAIN"
+    case xoauth2 = "XOAUTH2"
+    
+    static let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
+}
+
+/// Configuration of an `SMTP` instance used to connect to its SMTP server.
+public struct SMTPConfig {
+    public var hostname: String
+    public var user: String
+    public var password: String
+    public var accessToken: String?
+    public var domainName: String
+    public var authMethods: [AuthMethod]
+    public var chainFilePath: String?
+    public var chainFilePassword: String?
+    public var selfSignedCerts: Bool?
     
     init(hostname: String, user: String, password: String, accessToken: String?, domainName: String, authMethods: [AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) {
         self.hostname = hostname
@@ -95,5 +109,3 @@ struct SMTPConfig {
         self.selfSignedCerts = selfSignedCerts
     }
 }
-
-let CRLF = "\r\n"

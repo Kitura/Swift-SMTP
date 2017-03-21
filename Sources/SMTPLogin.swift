@@ -42,15 +42,6 @@ class SMTPLogin {
     }
 }
 
-public enum AuthMethod: String {
-    case cramMD5 = "CRAM-MD5"
-    case login = "LOGIN"
-    case plain = "PLAIN"
-    case xoauth2 = "XOAUTH2"
-    
-    static let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
-}
-
 private extension SMTPLogin {
     enum Port: Int32 {
         case tls = 587
@@ -96,7 +87,7 @@ private extension SMTPLogin {
         let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         let newSocket = try SMTPSocket()
         newSocket.socket.delegate = try SSLService(usingConfiguration: config)
-        socket.socket.close()
+        socket.close()
         socket = newSocket
         try connect(Port.ssl)
         

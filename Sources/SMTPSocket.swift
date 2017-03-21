@@ -31,9 +31,14 @@ struct SMTPSocket {
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
     }
     
-    func write(_ commandText: String) throws {
+    func write(_ commandText: String, withCRLF: Bool = true) throws {
         print(commandText)
-        _ = try socket.write(from: commandText + CRLF)
+        let text = withCRLF ? commandText + CRLF : commandText
+        _ = try socket.write(from: text)
+    }
+    
+    func write(_ data: Data) throws {
+        _ = try socket.write(from: data)
     }
     
     func readFromSocket() throws -> String {
