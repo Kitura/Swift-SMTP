@@ -1,14 +1,6 @@
-//
-//  Email.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/8/17.
-//
-//
-
 import Foundation
 
-/// Mail object that can be sent through an `SMTP` instance.
+/// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
     public var from: User
     public var to: [User]
@@ -25,12 +17,12 @@ public struct Mail {
      - parameters:
         - from: `User` to set the `Mail`'s sender to.
         - to: Array of `User`s to send the `Mail` to.
-        - cc: Array of `User`s to cc (optional).
-        - bcc: Array of `User`s to bcc (optional).
-        - subject: Subject of the `Mail`. Defaults to blank string.
-        - text: Text of the `Mail`. Defaults to blank string.
-        - attachments: Array of `Attachment`s for the email.
-        - additionalHeaders: Additional headers for the email.
+        - cc: Array of `User`s to cc. (optional)
+        - bcc: Array of `User`s to bcc. (optional)
+        - subject: Subject of the `Mail`. (optional)
+        - text: Text of the `Mail`. (optional)
+        - attachments: Array of `Attachment`s for the `Mail`. (optional)
+        - additionalHeaders: Additional headers for the `Mail`. (optional)
      */
     public init(from: User, to: [User], cc: [User] = [], bcc: [User] = [], subject: String = "", text: String = "", attachments: [Attachment] = [], additionalHeaders: [String: String] = [:]) {
         self.from = from
@@ -41,36 +33,6 @@ public struct Mail {
         self.text = text
         self.attachments = attachments
         self.additionalHeaders = additionalHeaders
-    }
-}
-
-extension Mail {
-    func getAttachments() -> ([Attachment], Attachment?) {
-        if !attachments.isEmpty {
-            let result = attachments.takeLast { $0.isAlternative }
-            return (result.1, result.0)
-        }
-        return ([], nil)
-    }
-}
-
-private extension Array {
-    func takeLast(where condition: (Element) -> Bool) -> (Element?, Array) {
-        var index: Int?
-        for i in (0 ..< count).reversed() {
-            if condition(self[i]) {
-                index = i
-                break
-            }
-        }
-        
-        if let index = index {
-            var array = self
-            let ele = array.remove(at: index)
-            return (ele, array)
-        } else {
-            return (nil, self)
-        }
     }
 }
 
@@ -101,9 +63,17 @@ extension Mail {
             return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
+}
+
+extension Mail {
+    var hasAttachment: Bool { return !attachments.isEmpty }
     
-    var hasAttachment: Bool {
-        return !attachments.isEmpty
+    func getAttachments() -> ([Attachment], Attachment?) {
+        if hasAttachment {
+            let result = attachments.takeLast { $0.isAlternative }
+            return (result.1, result.0)
+        }
+        return ([], nil)
     }
 }
 
@@ -119,5 +89,25 @@ private extension DateFormatter {
 private extension Date {
     var smtpFormatted: String {
         return DateFormatter.smtpDateFormatter.string(from: self)
+    }
+}
+
+private extension Array {
+    func takeLast(where condition: (Element) -> Bool) -> (Element?, Array) {
+        var index: Int?
+        for i in (0 ..< count).reversed() {
+            if condition(self[i]) {
+                index = i
+                break
+            }
+        }
+        
+        if let index = index {
+            var array = self
+            let ele = array.remove(at: index)
+            return (ele, array)
+        } else {
+            return (nil, self)
+        }
     }
 }

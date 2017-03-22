@@ -1,11 +1,3 @@
-//
-//  Utils.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/21/17.
-//
-//
-
 import Foundation
 
 let CRLF = "\r\n"

@@ -1,15 +1,6 @@
-//
-//  SMTPDataSender.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/21/17.
-//
-//
-
 import Foundation
 
 struct SMTPDataSender {
-    
     let mail: Mail
     let socket: SMTPSocket
     
@@ -60,12 +51,12 @@ private extension SMTPDataSender {
         try sendText()
         
         try send(boundary.startLine)
-        try sendAttachment(attachment: alternative)
+        try sendAttachment(alternative)
         
         try send(boundary.endLine)
     }
     
-    func sendAttachment(attachment: Attachment) throws {
+    func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
         
         if attachment.hasRelated {
@@ -75,7 +66,7 @@ private extension SMTPDataSender {
             try send(relatedBoundary.startLine)
         }
         
-        let attachmentHeader = attachment.headers + CRLF + CRLF
+        let attachmentHeader = attachment.headers + CRLF
         try send(attachmentHeader)
         
         switch attachment.type {
@@ -84,10 +75,9 @@ private extension SMTPDataSender {
         case .data(let data): try sendData(data.data)
         }
         
-        try send(CRLF)
+        try send("")
         
         if attachment.hasRelated {
-            try send("\(CRLF)\(CRLF)")
             try sendAttachments(attachment.related, boundary: relatedBoundary)
         }
     }
@@ -95,13 +85,13 @@ private extension SMTPDataSender {
     func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
         for attachement in attachments {
             try send(boundary.startLine)
-            try sendAttachment(attachment: attachement)
+            try sendAttachment(attachement)
         }
         try send(boundary.endLine)
     }
     
     func sendText() throws {
-        let text = mail.text.embededForText()
+        let text = mail.text.embeddedText()
         try send(text)
     }
     
@@ -127,7 +117,7 @@ private extension SMTPDataSender {
 
 private extension SMTPDataSender {
     func send(_ text: String) throws {
-        try socket.write(text, withCRLF: true)
+        try socket.write(text)
     }
     
     func send(_ data: Data) throws {
@@ -140,22 +130,22 @@ private extension String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
     
-    static let plainTextHeader = "Content-Type: text/plain; charset=utf-8\(CRLF)Content-Transfer-Encoding: 7bit\(CRLF)Content-Disposition: inline\(CRLF)\(CRLF)"
+    static let plainTextHeader = "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)CONTENT-DISPOSITION: inline\(CRLF)"
     
     static func mixedHeader(boundary: String) -> String {
-        return "Content-Type: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)\(CRLF)"
+        return "CONTENT-TYPE: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)"
     }
     
     static func alternativeHeader(boundary: String) -> String {
-        return "Content-Type: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)\(CRLF)"
+        return "CONTENT-TYPE: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)"
     }
     
     static func relatedHeader(boundary: String) -> String {
-        return "Content-Type: multipart/related; boundary=\"\(boundary)\"\(CRLF)\(CRLF)"
+        return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
     }
     
-    func embededForText() -> String {
-        return "\(String.plainTextHeader)\(self)\(CRLF)\(CRLF)"
+    func embeddedText() -> String {
+        return "\(String.plainTextHeader)\(CRLF)\(self)\(CRLF)"
     }
     
     var startLine: String {
@@ -163,6 +153,6 @@ private extension String {
     }
     
     var endLine: String {
-        return "\(CRLF)--\(self)--\(CRLF)\(CRLF)"
+        return "--\(self)--"
     }
 }

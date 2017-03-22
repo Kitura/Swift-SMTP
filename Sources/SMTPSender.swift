@@ -1,11 +1,3 @@
-//
-//  SMTPSend.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/16/17.
-//
-//
-
 import Foundation
 import Socket
 
@@ -18,7 +10,6 @@ public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
 class SMTPSender {
     fileprivate var socket: SMTPSocket
-    fileprivate var config: SMTPConfig
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
@@ -26,26 +17,15 @@ class SMTPSender {
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     
-    init(config: SMTPConfig, pending: [Mail], progress: Progress, completion: Completion) throws {
-        socket = try SMTPSocket()
-        self.config = config
+    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) throws {
+        self.socket = socket
         self.pending = pending
         self.progress = progress
         self.completion = completion
     }
     
     func resume() {
-        queue.async {
-            do {
-                self.socket = try SMTPLogin(config: self.config, socket: self.socket).login()
-            } catch {
-                self.completion?([], self.pending.map { ($0, error) })
-                self.socket.close()
-                self.cleanUp()
-                return
-            }
-            self.sendNext()
-        }
+        queue.async { self.sendNext() }
     }
     
     deinit {
@@ -124,10 +104,11 @@ private extension SMTPSender {
 }
 
 private extension String {
+    static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    static let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+    
     func validateEmail() throws {
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        guard emailTest.evaluate(with: self) else {
+        guard String.emailTest.evaluate(with: self) else {
             throw SMTPError(.invalidEmail(self))
         }
     }

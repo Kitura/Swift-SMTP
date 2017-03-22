@@ -1,11 +1,3 @@
-//
-//  CryptoEncoder.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/8/17.
-//
-//
-
 import Foundation
 import Cryptor
 

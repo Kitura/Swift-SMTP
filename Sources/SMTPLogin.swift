@@ -1,11 +1,3 @@
-//
-//  SMTPLogin.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/16/17.
-//
-//
-
 import Foundation
 import Socket
 import SSLService
@@ -16,23 +8,23 @@ class SMTPLogin {
     fileprivate let password: String
     fileprivate let accessToken: String?
     fileprivate let domainName: String
-    fileprivate let authMethods: [AuthMethod]
+    fileprivate let authMethods: [SMTP.AuthMethod]
     fileprivate let chainFilePath: String?
     fileprivate let chainFilePassword: String?
     fileprivate let selfSignedCerts: Bool?
     fileprivate var socket: SMTPSocket
     
-    init(config: SMTPConfig, socket: SMTPSocket) {
-        hostname = config.hostname
-        user = config.user
-        password = config.password
-        accessToken = config.accessToken
-        domainName = config.domainName
-        authMethods = config.authMethods
-        chainFilePath = config.chainFilePath
-        chainFilePassword = config.chainFilePassword
-        selfSignedCerts = config.selfSignedCerts
-        self.socket = socket
+    init(hostname: String, user: String, password: String, accessToken: String?, domainName: String, authMethods: [SMTP.AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) throws {
+        self.hostname = hostname
+        self.user = user
+        self.password = password
+        self.accessToken = accessToken
+        self.domainName = domainName
+        self.authMethods = authMethods
+        self.chainFilePath = chainFilePath
+        self.chainFilePassword = chainFilePassword
+        self.selfSignedCerts = selfSignedCerts
+        socket = try SMTPSocket()
     }
     
     func login() throws -> SMTPSocket {
@@ -67,7 +59,7 @@ private extension SMTPLogin {
         catch { return try helo() }
     }
     
-    private func starttls(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+    private func starttls(_ serverInfo: [SMTPResponse]) throws -> SMTP.AuthMethod {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
@@ -77,7 +69,7 @@ private extension SMTPLogin {
         return try getAuthMethod(serverInfo)
     }
     
-    private func starttls() throws -> AuthMethod {
+    private func starttls() throws -> SMTP.AuthMethod {
         guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword, let selfSignedCerts = selfSignedCerts else {
             throw SMTPError(.certChainFileInfoMissing(hostname))
         }
@@ -94,13 +86,13 @@ private extension SMTPLogin {
         return try getAuthMethod(try getServerInfo())
     }
     
-    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> SMTP.AuthMethod {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "AUTH" {
                 let args = resArr.dropFirst()
                 for arg in args {
-                    if let authMethod = AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
+                    if let authMethod = SMTP.AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
                         return authMethod
                     }
                 }
@@ -146,7 +138,7 @@ private extension SMTPLogin {
         return try socket.send(.starttls)
     }
     
-    func auth(authMethod: AuthMethod, credentials: String?) throws -> SMTPResponse {
+    func auth(authMethod: SMTP.AuthMethod, credentials: String?) throws -> SMTPResponse {
         return try socket.send(.auth(authMethod, credentials))
     }
     

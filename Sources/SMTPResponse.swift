@@ -1,11 +1,3 @@
-//
-//  SMTPResponse.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/9/17.
-//
-//
-
 import Foundation
 
 struct SMTPResponse {

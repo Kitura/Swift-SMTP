@@ -1,11 +1,3 @@
-//
-//  SMTPError.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/17/17.
-//
-//
-
 import Foundation
 
 enum SMTPError: Error {

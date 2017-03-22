@@ -1,11 +1,3 @@
-//
-//  SMTPSocket.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/16/17.
-//
-//
-
 import Foundation
 import Socket
 
@@ -31,13 +23,13 @@ struct SMTPSocket {
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
     }
     
-    func write(_ commandText: String, withCRLF: Bool = true) throws {
+    func write(_ commandText: String) throws {
         print(commandText)
-        let text = withCRLF ? commandText + CRLF : commandText
-        _ = try socket.write(from: text)
+        _ = try socket.write(from: commandText + CRLF)
     }
     
     func write(_ data: Data) throws {
+        print("(sending data)")
         _ = try socket.write(from: data)
     }
     

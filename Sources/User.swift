@@ -1,14 +1,6 @@
-//
-//  User.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/21/17.
-//
-//
-
 import Foundation
 
-/// Contains the name and email for a participant in a `Mail`.
+/// Represents a sender or receiver of an email.
 public struct User {
     public var name: String
     public var email: String
@@ -17,8 +9,8 @@ public struct User {
      Initializes a `User`.
      
      - parameters:
-     - name: Display name for the user. Defaults to empty string.
-     - email: Email for the user.
+        - name: Display name for the user. Defaults to empty string.
+        - email: Email for the user.
      */
     public init(name: String = "" , email: String) {
         self.name = name

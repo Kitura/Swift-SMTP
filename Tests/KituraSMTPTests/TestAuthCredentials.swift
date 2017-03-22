@@ -1,11 +1,3 @@
-//
-//  AuthCredentials.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/20/17.
-//
-//
-
 import XCTest
 @testable import KituraSMTP
 

@@ -1,11 +1,3 @@
-//
-//  SMTPCommand.swift
-//  KituraSMTP
-//
-//  Created by Quan Vo on 3/9/17.
-//
-//
-
 import Foundation
 
 enum SMTPCommand {
@@ -13,7 +5,7 @@ enum SMTPCommand {
     case helo(String)
     case ehlo(String)
     case starttls
-    case auth(AuthMethod, String?)
+    case auth(SMTP.AuthMethod, String?)
     case authUser(String)
     case authPassword(String)
     case mail(String)
