@@ -6,8 +6,8 @@ It is dependent on the [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git)
 
 ## Features
 - Connect through SSL
-- Authenticate with PLAIN, CRAM-MD5, LOGIN, or XOAUTH2
-- Send email with local file, HTML, and raw data attachments
+- Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
+- Send emails with local file, HTML, and raw data attachments
 - Asynchronous
 
 ## Usage
@@ -104,7 +104,7 @@ smtp.send([mail1, mail2],
             // `mail` is the attempted mail, `error` is the error if one occured
         },
         completion: { (sent, failed) in
-            // this optional callback gets called when all the mails have been sent
+            // this optional callback gets called after all the mails have been sent
             // `sent` is an array of the successfully sent mails
             // `failed` is an array of (Mail, Error)--the failed mails and their corresponding errors
         }
