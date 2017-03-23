@@ -2,7 +2,7 @@
 
 Swift package for sending emails to an SMTP server.
 
-It is dependent on the [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), and [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git) modules.
+Dependencies: [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git)
 
 ## Features
 - Connect securely through TLS/SSL if available
@@ -26,7 +26,7 @@ let smtp = SMTP(hostname: "smtp.gmail.com",             // SMTP server address
                 chainFilePassword: "password",          // password to certificate chain file
                 selfSignedCerts: true)                  // whether certificate is self signed
 
-                                                        // additional optional parameters available for customization
+// Additional parameters available for further customization
 ```
 
 ### Send email
@@ -43,10 +43,10 @@ let mail = Mail(from: from,
                 text: "That was my ultimate wish.")
 
 smtp.send(mail) { (err) in
-            if let err = err {
-              print(err)
-            }
-        }
+    if let err = err {
+        print(err)
+    }
+}
 ```
 
 Add Cc and Bcc:
@@ -93,7 +93,7 @@ let mail = Mail(from: from,
 
 smtp.send(mail)
 
-// Each type of attachment has various optional parameters for further customization
+// Each type of attachment has additional parameters for further customization
 ```
 
 ### Send multiple mails
