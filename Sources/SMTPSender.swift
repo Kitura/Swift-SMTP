@@ -88,7 +88,7 @@ private extension SMTPSender {
     func send(_ mail: Mail) throws {
         try validateEmails(mail.to.map { $0.email })
         try sendMail(mail.from.email)
-        try sendTo(mail.to + mail.cc + mail.bcc)
+        try sendTo(to: mail.to, cc: mail.cc, bcc: mail.bcc)
         try data()
         try SMTPDataSender(mail: mail, socket: socket).send()
         try dataEnd()
@@ -104,7 +104,14 @@ private extension SMTPSender {
         return try socket.send(.mail(from))
     }
     
-    private func sendTo(_ recipients: [User]) throws {
+    private func sendTo(to: [User], cc: [User]?, bcc: [User]?) throws {
+        var recipients = to
+        if let cc = cc {
+            recipients += cc
+        }
+        if let bcc = bcc {
+            recipients += bcc
+        }
         for user in recipients {
             let _: Void = try socket.send(.rcpt(user.email))
         }
@@ -129,5 +136,3 @@ private extension String {
         }
     }
 }
-
-

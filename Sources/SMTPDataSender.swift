@@ -48,14 +48,15 @@ private extension SMTPDataSender {
         try send(mixedHeader)
         try send(boundary.startLine)
         
-        let (attachments, alternative) = mail.getAttachments()
-        
-        if let alternative = alternative {
+        if let alternative = mail.alternative {
             try sendAlternative(alternative)
         } else {
             try sendText()
         }
-        try sendAttachments(attachments, boundary: boundary)
+        
+        if let attachments = mail.attachments {
+            try sendAttachments(attachments, boundary: boundary)
+        }
     }
     
     func sendAlternative(_ alternative: Attachment) throws {
@@ -93,8 +94,8 @@ private extension SMTPDataSender {
         
         try send("")
         
-        if attachment.hasRelated {
-            try sendAttachments(attachment.related, boundary: relatedBoundary)
+        if let related = attachment.related {
+            try sendAttachments(related, boundary: relatedBoundary)
         }
     }
     

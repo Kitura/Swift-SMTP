@@ -35,16 +35,16 @@ class TestLogin: XCTestCase {
     
     func testLoginCramMD5() throws {
         let smtp = SMTP(hostname: junoSMTP, user: junoUser, password: password, authMethods: [.cramMD5])
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
     }
     
     func testLoginLogin() throws {
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
     }
     
     func testLoginPlain() throws {
         let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
     }
 }

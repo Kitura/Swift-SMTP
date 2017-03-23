@@ -18,8 +18,8 @@ import Foundation
 
 /// Represents a sender or receiver of an email.
 public struct User {
-    public var name: String
-    public var email: String
+    public let name: String
+    public let email: String
     
     ///  Initializes a `User`.
     ///

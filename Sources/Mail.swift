@@ -18,14 +18,16 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
-    public var from: User
-    public var to: [User]
-    public var cc: [User]
-    public var bcc: [User]
-    public var subject: String
-    public var text: String
-    public var attachments: [Attachment]
-    public var additionalHeaders: [String: String]
+    public let id = UUID().uuidString + ".Kitura-SMTP"
+    public let from: User
+    public let to: [User]
+    public let cc: [User]?
+    public let bcc: [User]?
+    public let subject: String
+    public let text: String
+    public let attachments: [Attachment]?
+    public let alternative: Attachment?
+    public let additionalHeaders: [String: String]?
     
     /// Initializes a `Mail` object.
     ///
@@ -38,14 +40,23 @@ public struct Mail {
     ///     - text: Text of the `Mail`. (optional)
     ///     - attachments: Array of `Attachment`s for the `Mail`. (optional)
     ///     - additionalHeaders: Additional headers for the `Mail`. (optional)
-    public init(from: User, to: [User], cc: [User] = [], bcc: [User] = [], subject: String = "", text: String = "", attachments: [Attachment] = [], additionalHeaders: [String: String] = [:]) {
+    public init(from: User, to: [User], cc: [User]? = nil, bcc: [User]? = nil, subject: String = "", text: String = "", attachments: [Attachment]? = nil, additionalHeaders: [String: String]? = nil) {
         self.from = from
         self.to = to
         self.cc = cc
         self.bcc = bcc
         self.subject = subject
         self.text = text
-        self.attachments = attachments
+        
+        if let attachments = attachments {
+            let result = attachments.takeLast { $0.isAlternative }
+            self.alternative = result.0
+            self.attachments = result.1
+        } else {
+            self.alternative = nil
+            self.attachments = nil
+        }
+        
         self.additionalHeaders = additionalHeaders
     }
 }
@@ -53,20 +64,22 @@ public struct Mail {
 extension Mail {
     private var headersDictionary: [String: String] {
         var fields = [String: String]()
-        fields["MESSAGE-ID"] = UUID().uuidString + ".Kitura-SMTP"
+        fields["MESSAGE-ID"] = id
         fields["DATE"] = Date().smtpFormatted
         fields["FROM"] = from.mime
         fields["TO"] = to.map { $0.mime }.joined(separator: ", ")
         
-        if !cc.isEmpty {
+        if let cc = cc {
             fields["CC"] = cc.map { $0.mime }.joined(separator: ", ")
         }
         
         fields["SUBJECT"] = subject.mimeEncoded ?? ""
         fields["MIME-VERSION"] = "1.0 (SMTP-Kitura)"
         
-        for (key, value) in additionalHeaders {
-            fields[key.uppercased()] = value
+        if let additionalHeaders = additionalHeaders {
+            for (key, value) in additionalHeaders {
+                fields[key.uppercased()] = value
+            }
         }
         
         return fields
@@ -81,15 +94,7 @@ extension Mail {
 
 extension Mail {
     var hasAttachment: Bool {
-        return !attachments.isEmpty
-    }
-    
-    func getAttachments() -> ([Attachment], Attachment?) {
-        if hasAttachment {
-            let result = attachments.takeLast { $0.isAlternative }
-            return (result.1, result.0)
-        }
-        return ([], nil)
+        return attachments != nil
     }
 }
 

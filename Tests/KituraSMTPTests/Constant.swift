@@ -26,7 +26,7 @@ let chainFilePath = #file.replacingOccurrences(of: "Constant.swift", with: "cert
 let chainFilePassword = "kitura"
 let selfSignedCerts = true
 
-let smtp = SMTP(hostname: "smtp.gmail.com", user: gmailUser, password: password, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+let smtp = SMTP(hostname: "smtp.gmail.com", user: gmailUser, password: password, port: 0, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
 
 let user = User(email: gmailUser)
 let from = User(name: "Dr. Light", email: gmailUser)

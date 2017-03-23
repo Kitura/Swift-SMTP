@@ -18,22 +18,29 @@ import Foundation
 import Socket
 import SSLService
 
+enum Proto: Port {
+    case tls = 587
+    case ssl = 465
+}
+
 class SMTPLogin {
     fileprivate let hostname: String
     fileprivate let user: String
     fileprivate let password: String
+    fileprivate let port: Port
     fileprivate let accessToken: String?
     fileprivate let domainName: String
-    fileprivate let authMethods: [SMTP.AuthMethod]
+    fileprivate let authMethods: [AuthMethod]
     fileprivate let chainFilePath: String?
     fileprivate let chainFilePassword: String?
     fileprivate let selfSignedCerts: Bool?
     fileprivate var socket: SMTPSocket
     
-    init(hostname: String, user: String, password: String, accessToken: String?, domainName: String, authMethods: [SMTP.AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) throws {
+    init(hostname: String, user: String, password: String, port: Port, accessToken: String?, domainName: String, authMethods: [AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) throws {
         self.hostname = hostname
         self.user = user
         self.password = password
+        self.port = port
         self.accessToken = accessToken
         self.domainName = domainName
         self.authMethods = authMethods
@@ -44,20 +51,25 @@ class SMTPLogin {
     }
     
     func login() throws -> SMTPSocket {
-        try connect(Port.tls)
+        do {
+            try connect(port)
+            let _: Void = try login()
+            return socket
+        } catch {
+            return try loginTLS()
+        }
+    }
+    
+    private func loginTLS() throws -> SMTPSocket {
+        try connect(Proto.tls.rawValue)
         let _: Void = try login()
         return socket
     }
 }
 
 private extension SMTPLogin {
-    enum Port: Int32 {
-        case tls = 587
-        case ssl = 465
-    }
-    
     func connect(_ port: Port) throws {
-        try socket.socket.connect(to: hostname, port: port.rawValue)
+        try socket.socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
     
@@ -75,7 +87,7 @@ private extension SMTPLogin {
         catch { return try helo() }
     }
     
-    private func starttls(_ serverInfo: [SMTPResponse]) throws -> SMTP.AuthMethod {
+    private func starttls(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
@@ -85,7 +97,7 @@ private extension SMTPLogin {
         return try getAuthMethod(serverInfo)
     }
     
-    private func starttls() throws -> SMTP.AuthMethod {
+    private func starttls() throws -> AuthMethod {
         guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword, let selfSignedCerts = selfSignedCerts else {
             throw SMTPError(.certChainFileInfoMissing(hostname))
         }
@@ -97,18 +109,18 @@ private extension SMTPLogin {
         newSocket.socket.delegate = try SSLService(usingConfiguration: config)
         socket.close()
         socket = newSocket
-        try connect(Port.ssl)
+        try connect(Proto.ssl.rawValue)
         
         return try getAuthMethod(try getServerInfo())
     }
     
-    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> SMTP.AuthMethod {
+    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "AUTH" {
                 let args = resArr.dropFirst()
                 for arg in args {
-                    if let authMethod = SMTP.AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
+                    if let authMethod = AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
                         return authMethod
                     }
                 }
@@ -154,7 +166,7 @@ private extension SMTPLogin {
         return try socket.send(.starttls)
     }
     
-    func auth(authMethod: SMTP.AuthMethod, credentials: String?) throws -> SMTPResponse {
+    func auth(authMethod: AuthMethod, credentials: String?) throws -> SMTPResponse {
         return try socket.send(.auth(authMethod, credentials))
     }
     

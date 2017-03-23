@@ -19,11 +19,11 @@ import Foundation
 /// Represents a `Mail`'s attachment.
 public struct Attachment {
     let type: AttachmentType
-    public var additionalHeaders: [String: String]
-    public var related: [Attachment]
+    public var additionalHeaders: [String: String]?
+    public var related: [Attachment]?
     
     var hasRelated: Bool {
-        return !related.isEmpty
+        return related != nil
     }
     
     var isAlternative: Bool {
@@ -47,7 +47,7 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment. 
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
+    public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
         let name = name ?? NSString(string: filePath).lastPathComponent
         let fileProperty = FileProperty(path: filePath, mime: mime, name: name, inline: inline)
         self.init(type: .file(fileProperty), additionalHeaders: additionalHeaders, related: related)
@@ -64,7 +64,7 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
+    public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
         let htmlProperty = HTMLProperty(content: htmlContent, characterSet: characterSet, alternative: alternative)
         self.init(type: .html(htmlProperty), additionalHeaders: additionalHeaders, related: related)
     }
@@ -76,17 +76,17 @@ public struct Attachment {
     ///     - mime: MIME type of the data.
     ///     - name: File name which will be presented in the mail.
     ///     - inline: Indicates if attachment is inline. To embed the attachment
-    ///               in mail content, set to `true`. To send as standalone
+    ///               in mail content, set to `false`. To send as standalone
     ///               attachment, set to false. Defaults to `true`.
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
+    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
         let dataProperty = DataProperty(data: data, mime: mime, name: name, inline: inline)
         self.init(type: .data(dataProperty), additionalHeaders: additionalHeaders, related: related)
     }
     
-    init(type: AttachmentType, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
+    init(type: AttachmentType, additionalHeaders: [String: String]?, related: [Attachment]?) {
         self.type = type
         self.additionalHeaders = additionalHeaders
         self.related = related
@@ -168,8 +168,10 @@ extension Attachment {
         
         result["CONTENT-TRANSFER-ENCODING"] = "BASE64"
         
-        for (key, value) in additionalHeaders {
-            result[key.uppercased()] = value
+        if let additionalHeaders = additionalHeaders {
+            for (key, value) in additionalHeaders {
+                result[key.uppercased()] = value
+            }
         }
         
         return result

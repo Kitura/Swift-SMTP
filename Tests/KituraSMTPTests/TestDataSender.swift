@@ -71,7 +71,7 @@ class TestDataSender: XCTestCase {
     
     func testSendData() {
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-        let attachment = Attachment(data: data, mime: "text/plain", name: "file.txt")
+        let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
         let mail = Mail(from: user, to: [user], subject: "Data attachment", attachments: [attachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
