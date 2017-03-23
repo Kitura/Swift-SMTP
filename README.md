@@ -5,9 +5,10 @@ Swift package for sending emails to an SMTP server.
 It is dependent on the [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), and [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git) modules.
 
 ## Features
-- Connect through SSL
+- Connect securely through TLS/SSL if available
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
+- Add custom headers
 - Asynchronous
 
 ## Usage
@@ -24,6 +25,8 @@ let smtp = SMTP(hostname: "smtp.gmail.com",             // SMTP server address
                                                         // (required if your server uses an SSL/TLS (STARTTLS) port)
                 chainFilePassword: "password",          // password to certificate chain file
                 selfSignedCerts: true)                  // whether certificate is self signed
+
+                                                        // additional optional parameters available for customization
 ```
 
 ### Send email
@@ -46,7 +49,7 @@ smtp.send(mail) { (err) in
         }
 ```
 
-Add Cc and Bcc to your email:
+Add Cc and Bcc:
 
 ```swift
 let roll = User(name: "Roll", email: "roll@gmail.com")
@@ -89,8 +92,9 @@ let mail = Mail(from: from,
 )
 
 smtp.send(mail)
+
+// Each type of attachment has various optional parameters for further customization
 ```
-Each type of attachment has various optional parameters for further customization.
 
 ### Send multiple mails
 
