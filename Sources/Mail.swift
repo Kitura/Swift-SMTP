@@ -1,3 +1,19 @@
+/**
+ * Copyright IBM Corporation 2017
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
+
 import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
@@ -11,19 +27,17 @@ public struct Mail {
     public var attachments: [Attachment]
     public var additionalHeaders: [String: String]
     
-    /**
-     Initializes a `Mail` object.
-     
-     - parameters:
-        - from: `User` to set the `Mail`'s sender to.
-        - to: Array of `User`s to send the `Mail` to.
-        - cc: Array of `User`s to cc. (optional)
-        - bcc: Array of `User`s to bcc. (optional)
-        - subject: Subject of the `Mail`. (optional)
-        - text: Text of the `Mail`. (optional)
-        - attachments: Array of `Attachment`s for the `Mail`. (optional)
-        - additionalHeaders: Additional headers for the `Mail`. (optional)
-     */
+    /// Initializes a `Mail` object.
+    ///
+    /// - parameters:
+    ///     - from: `User` to set the `Mail`'s sender to.
+    ///     - to: Array of `User`s to send the `Mail` to.
+    ///     - cc: Array of `User`s to cc. (optional)
+    ///     - bcc: Array of `User`s to bcc. (optional)
+    ///     - subject: Subject of the `Mail`. (optional)
+    ///     - text: Text of the `Mail`. (optional)
+    ///     - attachments: Array of `Attachment`s for the `Mail`. (optional)
+    ///     - additionalHeaders: Additional headers for the `Mail`. (optional)
     public init(from: User, to: [User], cc: [User] = [], bcc: [User] = [], subject: String = "", text: String = "", attachments: [Attachment] = [], additionalHeaders: [String: String] = [:]) {
         self.from = from
         self.to = to
@@ -66,7 +80,9 @@ extension Mail {
 }
 
 extension Mail {
-    var hasAttachment: Bool { return !attachments.isEmpty }
+    var hasAttachment: Bool {
+        return !attachments.isEmpty
+    }
     
     func getAttachments() -> ([Attachment], Attachment?) {
         if hasAttachment {

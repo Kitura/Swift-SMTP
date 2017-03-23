@@ -1,8 +1,24 @@
+/**
+ * Copyright IBM Corporation 2017
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
+
 import Foundation
 
 /// Represents a `Mail`'s attachment.
 public struct Attachment {
-    public var type: AttachmentType
+    let type: AttachmentType
     public var additionalHeaders: [String: String]
     public var related: [Attachment]
     
@@ -11,115 +27,86 @@ public struct Attachment {
     }
     
     var isAlternative: Bool {
-        if case .html(let p) = type, p.alternative { return true }
+        if case .html(let p) = type, p.alternative {
+            return true
+        }
         return false
     }
     
-    /**
-     Initialize an attachment from a local file.
-     
-     - parameters:
-        - filePath: Path to the local file.
-        - mime: MIME type of the file. Default is "application/octet-stream".
-        - name: Name of the file. Defaults to the name component in its path.
-        - inline: Indicates if attachment is inline. To embed the attachment in
-                  mail content, set to true. To send as standalone attachment, 
-                  set to false. Defaults to `true`.
-        - additionalHeaders: Additional headers for the attachment. For example, 
-                             if the attachment is related to another attachment,
-                             add "CONTENT-ID": "my-id-here" to reference this
-                             attachment by "cid:my-id-here" from the other
-                             attachment. (optional)
-        - related: Related attachments of this attachment. (optional)
-     */
+    /// Initialize an attachment from a local file.
+    ///
+    /// - parameters:
+    ///     - filePath: Path to the local file.
+    ///     - mime: MIME type of the file. Default is 
+    ///             "application/octet-stream".
+    ///     - name: Name of the file. Defaults to the name component in its 
+    ///             file path.
+    ///     - inline: Indicates if attachment is inline. To embed the attachment 
+    ///               in mail content, set to `true`. To send as standalone 
+    ///               attachment, set to false. Defaults to `true`.
+    ///     - additionalHeaders: Additional headers for the attachment. 
+    ///                          (optional)
+    ///     - related: Related attachments of this attachment. (optional)
     public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
         let name = name ?? NSString(string: filePath).lastPathComponent
         let fileProperty = FileProperty(path: filePath, mime: mime, name: name, inline: inline)
         self.init(type: .file(fileProperty), additionalHeaders: additionalHeaders, related: related)
     }
     
-    /**
-     Initialize an HTML attachment.
-     
-     - parameters:
-        - htmlContent: Content string of HTML.
-        - characterSet: Character encoding of `htmlContent`. Default is "utf-8".
-        - alternative: Whether the HTML is an alternative for plain text or not.
-                       Defaults to `true`.
-        - additionalHeaders: Additional headers for the attachment. For example,
-                             if the attachment is related to another attachment,
-                             add "CONTENT-ID": "my-id-here" to reference this
-                             attachment by "cid:my-id-here" from the other
-                             attachment. (optional)
-        - related: Related attachments of this attachment. (optional)
-     */
+    /// Initialize an HTML attachment.
+    ///
+    /// - parameters:
+    ///     - htmlContent: Content string of HTML.
+    ///     - characterSet: Character encoding of `htmlContent`. Defaults to
+    ///                     "utf-8".
+    ///     - alternative: Whether the HTML is an alternative for plain text or 
+    ///                    not. Defaults to `true`.
+    ///     - additionalHeaders: Additional headers for the attachment.
+    ///                          (optional)
+    ///     - related: Related attachments of this attachment. (optional)
     public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
         let htmlProperty = HTMLProperty(content: htmlContent, characterSet: characterSet, alternative: alternative)
         self.init(type: .html(htmlProperty), additionalHeaders: additionalHeaders, related: related)
     }
     
-    /// Initilize a data attachment.
+    /// Initialize a data attachment.
     ///
-    /// - Parameters:
-    ///   - data: Raw data will be sent as attachment.
-    ///   - mime: MIME type of the data.
-    ///   - name: File name which will be presented in the mail.
-    ///   - inline: Whether the file could be inline or not. When set to `true`,
-    ///             the attachment “Content-Disposition” header will be `inline`,
-    ///             otherwise it will be `attachment`. If you want to embed the
-    ///             file in mail content, set it to `true`. Otherwise if you
-    ///             need it to be a standalone attachment, `false`.
-    ///   - additionalHeaders: Additional headers when sending current
-    ///                        attachment with a `Mail`.
-    ///   - related: Related attachments of current attachment. The `related`
-    ///              ones will be contained in a "related" boundary in the mail
-    ///              body.
+    /// - parameters:
+    ///     - data: Raw data to be sent as attachment.
+    ///     - mime: MIME type of the data.
+    ///     - name: File name which will be presented in the mail.
+    ///     - inline: Indicates if attachment is inline. To embed the attachment
+    ///               in mail content, set to `true`. To send as standalone
+    ///               attachment, set to false. Defaults to `true`.
+    ///     - additionalHeaders: Additional headers for the attachment.
+    ///                          (optional)
+    ///     - related: Related attachments of this attachment. (optional)
     public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
         let dataProperty = DataProperty(data: data, mime: mime, name: name, inline: inline)
         self.init(type: .data(dataProperty), additionalHeaders: additionalHeaders, related: related)
     }
     
-    /// Initilize an attachment with an `AttachmentType`.
-    ///
-    /// - Parameters:
-    ///   - type: The type of attachement.
-    ///   - additionalHeaders: Additional headers when sending current
-    ///                        attachment with a `Mail`.
-    ///   - related: Related attachments of current attachment. The `related`
-    ///              ones will be contained in a "related" boundary in the mail
-    ///              body.
-    public init(type: AttachmentType, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
+    init(type: AttachmentType, additionalHeaders: [String: String] = [:], related: [Attachment] = []) {
         self.type = type
         self.additionalHeaders = additionalHeaders
         self.related = related
     }
 }
 
-public extension Attachment {
-    /// Attachment type with corresponding properties.
-    public enum AttachmentType {
+extension Attachment {
+    enum AttachmentType {
         case file(FileProperty)
         case html(HTMLProperty)
         case data(DataProperty)
     }
     
-    /// Properties when the attachment is a file.
-    public struct FileProperty {
-        public let path: String
-        public let mime: String
-        public let name: String
-        public let inline: Bool
+    struct FileProperty {
+        let path: String
+        let mime: String
+        let name: String
+        let inline: Bool
         
-        /// Initilize a file property.
-        ///
-        /// - Parameters:
-        ///   - path: File path.
-        ///   - mime: MIME type of the file.
-        ///   - name: File name which will be presented in the mail.
-        ///   - inline: Whether the file could be inline or not. When set to
-        ///             `true`, the attachment “Content-Disposition” header
-        ///             will be `inline`, otherwise it will be `attachment`.
-        public init(path: String, mime: String, name: String, inline: Bool) {
+        init(path: String, mime: String, name: String, inline: Bool) {
             self.path = path
             self.mime = mime
             self.name = name
@@ -127,43 +114,25 @@ public extension Attachment {
         }
     }
     
-    /// Properties when the attachment is an HTML string.
-    public struct HTMLProperty {
-        public let content: String
-        public let characterSet: String
-        public let alternative: Bool
+    struct HTMLProperty {
+        let content: String
+        let characterSet: String
+        let alternative: Bool
         
-        /// Initilize an HTML property.
-        ///
-        /// - Parameters:
-        ///   - content: Content of the HTML string.
-        ///   - characterSet: Charater encoding set should be used.
-        ///   - alternative: Whether this HTML could be alternative for plain
-        ///     text.
-        public init(content: String, characterSet: String, alternative: Bool) {
+        init(content: String, characterSet: String, alternative: Bool) {
             self.content = content
             self.characterSet = characterSet
             self.alternative = alternative
         }
     }
     
-    /// Properties when the attachment is some raw data.
-    public struct DataProperty {
-        public let data: Data
-        public let mime: String
-        public let name: String
-        public let inline: Bool
+    struct DataProperty {
+        let data: Data
+        let mime: String
+        let name: String
+        let inline: Bool
         
-        /// Initilize a file property.
-        ///
-        /// - Parameters:
-        ///   - data: Data content.
-        ///   - mime: MIME type of the file.
-        ///   - name: File name which will be presented in the mail.
-        ///   - inline: Whether the file could be inline or not. When set to
-        ///             `true`, the attachment “Content-Disposition” header
-        ///             will be `inline`, otherwise it will be `attachment`.
-        public init(data: Data, mime: String, name: String, inline: Bool) {
+        init(data: Data, mime: String, name: String, inline: Bool) {
             self.data = data
             self.mime = mime
             self.name = name
@@ -184,7 +153,7 @@ extension Attachment {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
             result["CONTENT-DISPOSITION"] = attachmentDisposition
-
+            
         case .html(let htmlProperty):
             result["CONTENT-TYPE"] = "text/html; charset=\(htmlProperty.characterSet)"
             
