@@ -112,7 +112,7 @@ private extension SMTPLogin {
         
         #if os(Linux)
             let chainFilePath = "/etc/ssl/cert.pem"
-            let config = SSLService.Configuration(usingCertificateFile: chainFilePath)
+            let config = SSLService.Configuration(withCACertificateDirectory: nil, usingCertificateFile: chainFilePath)
         #else
             let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
             let chainFilePassword = "kitura"
