@@ -111,15 +111,16 @@ private extension SMTPLogin {
         socket.close()
         
         #if os(Linux)
-            let config = SSLService.Configuration()
-            let delegate = try SSLService(usingConfiguration: config)
+            let chainFilePath = "/etc/ssl/cert.pem"
+            let config = SSLService.Configuration(usingCertificateFile: chainFilePath)
         #else
             let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
             let chainFilePassword = "kitura"
             let selfSignedCerts = true
             let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
-            let delegate = try SSLService(usingConfiguration: config)
         #endif
+        
+        let delegate = try SSLService(usingConfiguration: config)
         
         socket = try SMTPSocket()
         socket.socket.delegate = delegate
