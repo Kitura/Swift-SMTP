@@ -64,12 +64,13 @@ class TestLogin: XCTestCase {
     }
     
     func testRandomPort() throws {
-        let maxPort: UInt32 = 65535
+        let maxPort = 65535
+        
         #if os(Linux)
-            srand(UInt32(Date().timeIntervalSince1970))
+            srand(UInt32(time(nil)))
             let randomPort = Int32(random() % maxPort) + 1
         #else
-            let randomPort = Int32(arc4random_uniform(maxPort) + 1)
+            let randomPort = Int32(arc4random_uniform(UInt32(maxPort)) + 1)
         #endif
         
         _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
