@@ -46,15 +46,20 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. Defaults to 25. On
-    ///             connection failures, tries the next port in this order:
-    ///             [user given] > 25 > 587.
+    ///     - port: Port to connect to the server on. Defaults to 587. If the
+    ///             user given port cannot connect in 1 second, closes the
+    ///             socket and tries again on 587.
     ///     - authMethods: Authentication methods to use to log in to the
     ///                    server. Defaults to all supported ones--currently
     ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
     ///     - domainName: Client domain name used when communicating with the
-    ///                  server. Defaults to "localhost".
+    ///                   server. Defaults to "localhost".
     ///     - accessToken: Access token used if logging in through XOAUTH2.
+    ///
+    /// - note:
+    ///     Some servers like Gmail support IPv6, and if your network does not, 
+    ///     you will first attempt to connect via IPv6, then timeout, and fall 
+    ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
     public init(hostname: String, user: String, password: String, port: Port = Proto.tls.rawValue, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
         self.hostname = hostname
         self.user = user
@@ -72,7 +77,7 @@ public struct SMTP {
     ///
     /// - parameters:
     ///     - mail: `Mail` object to send.
-    ///     - completion: Callback when sending finishes. `Error` is nil on 
+    ///     - completion: Callback when sending finishes. `Error` is nil on
     ///                   success.
     public func send(_ mail: Mail, completion: ((Error?) -> Void)? = nil) {
         send([mail]) { (_, failed) in
@@ -88,22 +93,25 @@ public struct SMTP {
     ///
     /// - parameters:
     ///     - mails: Array of `Mail`s to send.
-    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent. 
-    ///                 `Mail` is the `Mail` sent and `Error` is the error if it 
+    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent.
+    ///                 `Mail` is the `Mail` sent and `Error` is the error if it
     ///                 failed. (optional)
-    ///     - completion: ([`Mail`], [(`Mail`, `Error`)]) callback after all 
-    ///                   `Mail`s have been attempted. [`Mail`] is an array of 
-    ///                   successfully sent `Mail`s. [(`Mail`, `Error`)] is an 
-    ///                   array of failed `Mail`s and their corresponding 
+    ///     - completion: ([`Mail`], [(`Mail`, `Error`)]) callback after all
+    ///                   `Mail`s have been attempted. [`Mail`] is an array of
+    ///                   successfully sent `Mail`s. [(`Mail`, `Error`)] is an
+    ///                   array of failed `Mail`s and their corresponding
     ///                   `Error`s. (optional)
     ///
     /// - note:
-    ///     - If a failure is encountered while sending multiple mails, the 
+    ///     - If any of the emails in a `Mail`'s `to`, `cc`, or `bcc` are
+    ///       invalid, the entire mail will not send and return an error.
+    ///
+    ///     - If a failure is encountered while sending multiple mails, the
     ///       whole sending process will not stop until all pending mails are
     ///       attempted.
     ///
-    ///     - Each call to `send` queues it's `Mail`s and sends them one by one. 
-    ///       To send `Mail`s concurrently, send them in separate calls to 
+    ///     - Each call to `send` queues it's `Mail`s and sends them one by one.
+    ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         do {

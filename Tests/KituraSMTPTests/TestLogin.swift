@@ -17,13 +17,6 @@
 import XCTest
 @testable import KituraSMTP
 
-/**
- NOTE:
- Some servers like Gmail support IPv6, and if your network does not, you will 
- first attempt to connect via IPv6, then timeout, and fall back to IPv4. You can 
- avoid this by disabling IPv6.
- */
-
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [

@@ -18,7 +18,7 @@ import Foundation
 
 /// Represents a sender or receiver of an email.
 public struct User {
-    let name: String
+    let name: String?
     let email: String
     
     ///  Initializes a `User`.
@@ -26,13 +26,13 @@ public struct User {
     /// - parameters:
     ///     - name: Display name for the user. Defaults to empty string.
     ///     - email: Email for the user.
-    public init(name: String = "" , email: String) {
+    public init(name: String? = nil , email: String) {
         self.name = name
         self.email = email
     }
     
     var mime: String {
-        if !name.isEmpty, let nameEncoded = name.mimeEncoded {
+        if let name = name, let nameEncoded = name.mimeEncoded {
             return "\(nameEncoded) <\(email)>"
         } else {
             return email

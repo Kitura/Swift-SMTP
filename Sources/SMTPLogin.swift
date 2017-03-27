@@ -28,14 +28,14 @@ enum Proto: Port {
 }
 
 class SMTPLogin {
-    let hostname: String
-    let user: String
-    let password: String
-    let port: Port
-    let authMethods: [AuthMethod]
-    let domainName: String
-    let accessToken: String?
-    var socket: SMTPSocket
+    fileprivate let hostname: String
+    fileprivate let user: String
+    fileprivate let password: String
+    fileprivate let port: Port
+    fileprivate let authMethods: [AuthMethod]
+    fileprivate let domainName: String
+    fileprivate let accessToken: String?
+    fileprivate var socket: SMTPSocket
     
     init(hostname: String, user: String, password: String, port: Port, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname

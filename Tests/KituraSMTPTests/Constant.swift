@@ -16,10 +16,12 @@
 
 import KituraSMTP
 
-let junoSMTP = "smtp.juno.com"
-let junoUser = "kitura-smtp@juno.com"
+let timeout: Double = 10
+
 let gmailSMTP = "smtp.gmail.com"
 let gmailUser = "kiturasmtp@gmail.com"
+let junoSMTP = "smtp.juno.com"
+let junoUser = "kitura-smtp@juno.com"
 let password = "ibm12345"
 
 let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password)

@@ -86,12 +86,24 @@ private extension SMTPSender {
 
 private extension SMTPSender {
     func send(_ mail: Mail) throws {
-        try validateEmails(mail.to.map { $0.email })
+        let recipientEmails = getRecipientEmails(from: mail)
+        try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
-        try sendTo(to: mail.to, cc: mail.cc, bcc: mail.bcc)
+        try sendTo(recipientEmails)
         try data()
         try SMTPDataSender(mail: mail, socket: socket).send()
         try dataEnd()
+    }
+    
+    private func getRecipientEmails(from mail: Mail) -> [String] {
+        var recipientEmails = mail.to.map { $0.email }
+        if let cc = mail.cc {
+            recipientEmails += cc.map { $0.email }
+        }
+        if let bcc = mail.bcc {
+            recipientEmails += bcc.map { $0.email }
+        }
+        return recipientEmails
     }
     
     private func validateEmails(_ emails: [String]) throws {
@@ -104,16 +116,9 @@ private extension SMTPSender {
         return try socket.send(.mail(from))
     }
     
-    private func sendTo(to: [User], cc: [User]?, bcc: [User]?) throws {
-        var recipients = to
-        if let cc = cc {
-            recipients += cc
-        }
-        if let bcc = bcc {
-            recipients += bcc
-        }
-        for user in recipients {
-            let _: Void = try socket.send(.rcpt(user.email))
+    private func sendTo(_ emails: [String]) throws {
+        for email in emails {
+            let _: Void = try socket.send(.rcpt(email))
         }
     }
     
@@ -131,7 +136,7 @@ private extension String {
     static let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex)
     
     func validateEmail() throws {
-        guard String.emailTest.evaluate(with: self) else {
+        if !String.emailTest.evaluate(with: self) {
             throw SMTPError(.invalidEmail(self))
         }
     }

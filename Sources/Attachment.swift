@@ -156,6 +156,7 @@ extension Attachment {
             
         case .html(let htmlProperty):
             result["CONTENT-TYPE"] = "text/html; charset=\(htmlProperty.characterSet)"
+            result["CONTENT-DISPOSITION"] = "inline"
             
         case .data(let dataProperty):
             result["CONTENT-TYPE"] = dataProperty.mime

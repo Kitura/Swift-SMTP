@@ -19,9 +19,9 @@ Use the `SMTP` struct as a handle to an SMTP server:
 ```swift
 import KituraSMTP
 
-let smtp = SMTP(hostname: "smtp.gmail.com",             // SMTP server address
-                user: "user@gmail.com",                 // username to login 
-                password: "password")                   // password to login
+let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
+                user: "user@gmail.com",         // username to login 
+                password: "password")           // password to login
 
 /* Additional parameters available for further customization */
 ```

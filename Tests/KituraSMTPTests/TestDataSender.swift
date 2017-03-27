@@ -36,7 +36,7 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendFile() {
@@ -46,7 +46,7 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendHTMLAlternative() {
@@ -56,7 +56,7 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendHTML() {
@@ -66,7 +66,7 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendData() {
@@ -77,18 +77,18 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendRelatedAttachment() {
-        let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
-        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/></html>", related: [fileAttachment])
+        let fileAttachment = Attachment(filePath: imgFilePath, inline: true, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
+        let htmlAttachment = Attachment(htmlContent: "<html><p>Lorum Ipsum Blah Blah</p><img src=\"cid:megaman-pic\"/><p>Lorum Ipsum Blah Blah</p></html>", related: [fileAttachment])
         let mail = Mail(from: user, to: [user], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     func testSendMultipleAttachments() {
@@ -99,7 +99,7 @@ class TestDataSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: 10)
+        waitForExpectations(timeout: timeout)
     }
     
     var x: XCTestExpectation!
