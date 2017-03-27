@@ -110,12 +110,19 @@ private extension SMTPLogin {
         let _: Void = try starttls()
         socket.close()
         
-        let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
-        let chainFilePassword = "kitura"
-        let selfSignedCerts = true
-        let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
+        #if os(Linux)
+            let config = SSLService.Configuration()
+            let delegate = try SSLService(usingConfiguration: config)
+        #else
+            let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
+            let chainFilePassword = "kitura"
+            let selfSignedCerts = true
+            let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
+            let delegate = try SSLService(usingConfiguration: config)
+        #endif
+        
         socket = try SMTPSocket()
-        socket.socket.delegate = try SSLService(usingConfiguration: config)
+        socket.socket.delegate = delegate
         try connect(Proto.ssl.rawValue)
         
         return try getServerInfo()
