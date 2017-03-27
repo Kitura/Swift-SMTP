@@ -110,19 +110,25 @@ private extension SMTPLogin {
         let _: Void = try starttls()
         socket.close()
         
-        #if os(Linux)
-            var pathToTests = #file
-            if pathToTests.hasSuffix("SMTPLogin.swift") {
-                pathToTests = pathToTests.replacingOccurrences(of: "SMTPLogin.swift", with: "")
-            }
-            let chainFilePath = "\(pathToTests)cert.pfx"
+        #if os(Linux)    
+            let root = #file.characters
+                .split(separator: "/", omittingEmptySubsequences: false)
+                .dropLast(3)
+                .map { String($0) }
+                .joined(separator: "/")
+            
+            let cert = root + "/Certs/cert.pem"
+            let key = root + "/Certs/key.pem"
+            
+            let config = SSLService.Configuration(withCACertificateFilePath: nil, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: true)
         #else
             let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
+            let chainFilePassword = "kitura"
+            let selfSignedCerts = true
+            let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         #endif
 
-        let chainFilePassword = "kitura"
-        let selfSignedCerts = true
-        let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
+        
 
         let delegate = try SSLService(usingConfiguration: config)
         
