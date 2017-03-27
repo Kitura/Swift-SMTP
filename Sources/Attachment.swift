@@ -43,7 +43,7 @@ public struct Attachment {
     ///             file path.
     ///     - inline: Indicates if attachment is inline. To embed the attachment 
     ///               in mail content, set to `true`. To send as standalone 
-    ///               attachment, set to false. Defaults to `true`.
+    ///               attachment, set to false. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment. 
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
@@ -77,7 +77,7 @@ public struct Attachment {
     ///     - name: File name which will be presented in the mail.
     ///     - inline: Indicates if attachment is inline. To embed the attachment
     ///               in mail content, set to `false`. To send as standalone
-    ///               attachment, set to false. Defaults to `true`.
+    ///               attachment, set to false. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)

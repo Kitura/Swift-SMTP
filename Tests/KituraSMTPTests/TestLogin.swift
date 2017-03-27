@@ -60,7 +60,7 @@ class TestLogin: XCTestCase {
     }
     
     func testRandomPort() throws {
-        let randomPort = Int32(arc4random_uniform(9999) + 1)
+        let randomPort = Int32(arc4random_uniform(65535) + 1)
         _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
 }
