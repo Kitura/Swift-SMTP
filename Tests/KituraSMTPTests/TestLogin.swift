@@ -17,6 +17,10 @@
 import XCTest
 @testable import KituraSMTP
 
+#if os(Linux)
+    import Glibc
+#endif
+
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
@@ -30,7 +34,7 @@ class TestLogin: XCTestCase {
             ("testRandomPort", testRandomPort)
         ]
     }
-        
+    
     func testCramMD5() throws {
         _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
@@ -60,7 +64,14 @@ class TestLogin: XCTestCase {
     }
     
     func testRandomPort() throws {
-        let randomPort = Int32(arc4random_uniform(65535) + 1)
+        let maxPort: UInt32 = 65535
+        #if os(Linux)
+            srand(UInt32(Date().timeIntervalSince1970))
+            let randomPort = Int32(random() % maxPort) + 1
+        #else
+            let randomPort = Int32(arc4random_uniform(maxPort) + 1)
+        #endif
+        
         _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
 }
