@@ -16,6 +16,7 @@
 
 import Foundation
 import Socket
+import LoggerAPI
 
 struct SMTPSocket {
     let socket: Socket
@@ -40,12 +41,12 @@ struct SMTPSocket {
     }
     
     func write(_ commandText: String) throws {
-        print(commandText)
+        Log.debug(commandText)
         _ = try socket.write(from: commandText + CRLF)
     }
     
     func write(_ data: Data) throws {
-        print("(sending data)")
+        Log.debug("(sending data)")
         _ = try socket.write(from: data)
     }
     
@@ -55,7 +56,7 @@ struct SMTPSocket {
         guard let res = String(data: buf, encoding: .utf8) else {
             throw SMTPError(.convertDataUTF8Fail(buf))
         }
-        print(res)
+        Log.debug(res)
         return res
     }
     

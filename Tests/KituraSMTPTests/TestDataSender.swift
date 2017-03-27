@@ -103,8 +103,5 @@ class TestDataSender: XCTestCase {
     }
     
     var x: XCTestExpectation!
-    
-    override func setUp() {
-        x = expectation(description: "")
-    }
+    override func setUp() { x = expectation(description: "") }
 }

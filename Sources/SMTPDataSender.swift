@@ -41,6 +41,11 @@ private extension SMTPDataSender {
         try send(mail.headers)
     }
     
+    func sendText() throws {
+        let text = mail.text.embeddedText()
+        try send(text)
+    }
+    
     func sendMixed() throws {
         let boundary = String.createBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
@@ -73,6 +78,14 @@ private extension SMTPDataSender {
         try send(boundary.endLine)
     }
     
+    func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
+        for attachement in attachments {
+            try send(boundary.startLine)
+            try sendAttachment(attachement)
+        }
+        try send(boundary.endLine)
+    }
+    
     func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
         
@@ -99,19 +112,6 @@ private extension SMTPDataSender {
         }
     }
     
-    func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
-        for attachement in attachments {
-            try send(boundary.startLine)
-            try sendAttachment(attachement)
-        }
-        try send(boundary.endLine)
-    }
-    
-    func sendText() throws {
-        let text = mail.text.embeddedText()
-        try send(text)
-    }
-    
     func sendFile(at path: String) throws {
         guard let file = FileHandle(forReadingAtPath: path) else {
             throw SMTPError(.fileNotFound(path))
@@ -121,14 +121,14 @@ private extension SMTPDataSender {
         try send(data)
     }
     
-    func sendData(_ data: Data) throws {
-        let encodedData = data.base64EncodedData()
-        try send(encodedData)
-    }
-    
     func sendHTML(_ html: String) throws {
         let encodedHTML = html.base64Encoded
         try send(encodedHTML)
+    }
+    
+    func sendData(_ data: Data) throws {
+        let encodedData = data.base64EncodedData()
+        try send(encodedData)
     }
 }
 

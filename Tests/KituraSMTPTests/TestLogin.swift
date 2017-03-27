@@ -19,32 +19,55 @@ import XCTest
 
 /**
  NOTE:
- Some servers like Gmail support IPv6, and if your network does not, you
- will first attempt to connect via IPv6, then timeout, and fall back to
- IPv4. You can avoid this by disabling IPv6.
+ Some servers like Gmail support IPv6, and if your network does not, you will 
+ first attempt to connect via IPv6, then timeout, and fall back to IPv4. You can 
+ avoid this by disabling IPv6.
  */
 
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
-            ("testLoginCramMD5", testLoginCramMD5),
-            ("testLoginLogin", testLoginLogin),
-            ("testLoginPlain", testLoginPlain),
+            ("testCramMD5", testCramMD5),
+            ("testLogin", testLogin),
+            ("testPlain", testPlain),
+            ("testPortSSL", testPortSSL),
+            ("testPortTLS", testPortTLS),
+            ("testPort0", testPort0),
+            ("testBadPort", testBadPort),
+            ("testRandomPort", testRandomPort)
         ]
     }
-    
-    func testLoginCramMD5() throws {
-        let smtp = SMTP(hostname: junoSMTP, user: junoUser, password: password, authMethods: [.cramMD5])
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+        
+    func testCramMD5() throws {
+        _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
     
-    func testLoginLogin() throws {
-        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.login], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+    func testLogin() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
     
-    func testLoginPlain() throws {
-        let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password, authMethods: [.plain], chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, accessToken: smtp.accessToken, domainName: smtp.domainName, authMethods: smtp.authMethods, chainFilePath: smtp.chainFilePath, chainFilePassword: smtp.chainFilePassword, selfSignedCerts: smtp.selfSignedCerts).login()
+    func testPlain() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
+    
+    func testPortSSL() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.ssl.rawValue, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
+    
+    func testPortTLS() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
+    
+    func testPort0() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 0, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
+    
+    func testBadPort() throws {
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
+    
+    func testRandomPort() throws {
+        let randomPort = Int32(arc4random_uniform(9999) + 1)
+        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
 }

@@ -18,51 +18,56 @@ import Foundation
 import Socket
 import SSLService
 
+#if os(Linux)
+    import Dispatch
+#endif
+
 enum Proto: Port {
     case tls = 587
     case ssl = 465
 }
 
 class SMTPLogin {
-    fileprivate let hostname: String
-    fileprivate let user: String
-    fileprivate let password: String
-    fileprivate let port: Port
-    fileprivate let accessToken: String?
-    fileprivate let domainName: String
-    fileprivate let authMethods: [AuthMethod]
-    fileprivate let chainFilePath: String?
-    fileprivate let chainFilePassword: String?
-    fileprivate let selfSignedCerts: Bool?
-    fileprivate var socket: SMTPSocket
+    let hostname: String
+    let user: String
+    let password: String
+    let port: Port
+    let authMethods: [AuthMethod]
+    let domainName: String
+    let accessToken: String?
+    var socket: SMTPSocket
     
-    init(hostname: String, user: String, password: String, port: Port, accessToken: String?, domainName: String, authMethods: [AuthMethod], chainFilePath: String?, chainFilePassword: String?, selfSignedCerts: Bool?) throws {
+    init(hostname: String, user: String, password: String, port: Port, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
-        self.accessToken = accessToken
-        self.domainName = domainName
         self.authMethods = authMethods
-        self.chainFilePath = chainFilePath
-        self.chainFilePassword = chainFilePassword
-        self.selfSignedCerts = selfSignedCerts
+        self.domainName = domainName
+        self.accessToken = accessToken
         socket = try SMTPSocket()
     }
     
     func login() throws -> SMTPSocket {
-        do {
-            try connect(port)
-            let _: Void = try login()
-            return socket
-        } catch {
-            return try loginTLS()
+        let group = DispatchGroup()
+        let queue = OperationQueue()
+        
+        group.enter()
+        queue.addOperation {
+            do {
+                try self.connect(self.port)
+                group.leave()
+            } catch {}
         }
-    }
-    
-    private func loginTLS() throws -> SMTPSocket {
-        try connect(Proto.tls.rawValue)
-        let _: Void = try login()
+        
+        if group.wait(timeout: DispatchTime.now() + .seconds(1)) == .timedOut {
+            queue.cancelAllOperations()
+            socket.close()
+            socket = try SMTPSocket()
+            try connect(Proto.tls.rawValue)
+        }
+        
+        let _: Void = try self.login()
         return socket
     }
 }
@@ -74,7 +79,11 @@ private extension SMTPLogin {
     }
     
     func login() throws {
-        switch try starttls(try getServerInfo()) {
+        var serverInfo = try getServerInfo()
+        if try starttls(serverInfo) {
+            serverInfo = try starttls()
+        }
+        switch try getAuthMethod(serverInfo) {
         case .cramMD5: try loginCramMD5()
         case .login: try loginLogin()
         case .plain: try loginPlain()
@@ -87,22 +96,22 @@ private extension SMTPLogin {
         catch { return try helo() }
     }
     
-    private func starttls(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+    private func starttls(_ serverInfo: [SMTPResponse]) throws -> Bool {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
-                return try starttls()
+                return true
             }
         }
-        return try getAuthMethod(serverInfo)
+        return false
     }
     
-    private func starttls() throws -> AuthMethod {
-        guard let chainFilePath = chainFilePath, let chainFilePassword = chainFilePassword, let selfSignedCerts = selfSignedCerts else {
-            throw SMTPError(.certChainFileInfoMissing(hostname))
-        }
-        
+    private func starttls() throws -> [SMTPResponse] {
         let _: Void = try starttls()
+        
+        let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
+        let chainFilePassword = "kitura"
+        let selfSignedCerts = true
         
         let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         let newSocket = try SMTPSocket()
@@ -111,7 +120,7 @@ private extension SMTPLogin {
         socket = newSocket
         try connect(Proto.ssl.rawValue)
         
-        return try getAuthMethod(try getServerInfo())
+        return try getServerInfo()
     }
     
     private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {

@@ -22,11 +22,7 @@ let gmailSMTP = "smtp.gmail.com"
 let gmailUser = "kiturasmtp@gmail.com"
 let password = "ibm12345"
 
-let chainFilePath = #file.replacingOccurrences(of: "Constant.swift", with: "cert.pfx")
-let chainFilePassword = "kitura"
-let selfSignedCerts = true
-
-let smtp = SMTP(hostname: "smtp.gmail.com", user: gmailUser, password: password, port: 0, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts)
+let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password)
 
 let user = User(email: gmailUser)
 let from = User(name: "Dr. Light", email: gmailUser)

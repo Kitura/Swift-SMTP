@@ -2,10 +2,11 @@
 
 Swift package for sending emails to an SMTP server.
 
-Dependencies: [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git)
+Dependencies: [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git), [LoggerAPI](https://github.com/IBM-Swift/LoggerAPI)
 
 ## Features
-- Connect securely through TLS/SSL if available
+
+- Connect securely through SSL/TLS if available
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
@@ -20,13 +21,9 @@ import KituraSMTP
 
 let smtp = SMTP(hostname: "smtp.gmail.com",             // SMTP server address
                 user: "user@gmail.com",                 // username to login 
-                password: "password",                   // password to login
-                chainFilePath: "~/cert.pfx" ,           // local path to certificate chain file
-                                                        // (required if your server uses an SSL/TLS (STARTTLS) port)
-                chainFilePassword: "password",          // password to certificate chain file
-                selfSignedCerts: true)                  // whether certificate is self signed
+                password: "password")                   // password to login
 
-// Additional parameters available for further customization
+/* Additional parameters available for further customization */
 ```
 
 ### Send email
@@ -82,18 +79,16 @@ let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 let dataAttachment = Attachment(data: data, 
                                 mime: "application/json", 
                                 name: "file.json",
-                                inline: false // send as a standalone attachment
-)
+                                inline: false) // send as a standalone attachment
 
 let mail = Mail(from: from, 
                 to: [to], 
-                subject: "Here's a photo and JSON file!", 
-                attachments: [htmlAttachment, dataAttachment] // attachments we created earlier
-)
+                subject: "Check out this image and JSON file!", 
+                attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
 
 smtp.send(mail)
 
-// Each type of attachment has additional parameters for further customization
+/* Each type of attachment has additional parameters for further customization */
 ```
 
 ### Send multiple mails

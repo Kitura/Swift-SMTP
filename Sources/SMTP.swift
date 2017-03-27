@@ -26,59 +26,46 @@ public enum AuthMethod: String {
     case plain = "PLAIN"
     case xoauth2 = "XOAUTH2"
     
-    static let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
+    static fileprivate let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
 }
 
 /// Represents a handle to connect to and send emails through an SMTP server.
 public struct SMTP {
-    public let hostname: String
-    public let user: String
-    public let password: String
-    public let port: Port
-    public let accessToken: String?
-    public let domainName: String
-    public let authMethods: [AuthMethod]
-    public let chainFilePath: String?
-    public let chainFilePassword: String?
-    public let selfSignedCerts: Bool?
+    let hostname: String
+    let user: String
+    let password: String
+    let port: Port
+    let authMethods: [AuthMethod]
+    let domainName: String
+    let accessToken: String?
     
     /// Initializes an `SMTP` instance.
     ///
     /// - parameters:
     ///     - hostname: Hostname of the SMTP server to connect to. Should not
-    ///                include any scheme--ie `smtp.example.com` is valid.
+    ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. If server doesn't 
-    ///             recognize the given port, process will hang. If server
-    ///             responds with an error, tries the default port. Default is
-    ///             587. Uses 465 when upgrading to secure connection.
-    ///     - accessToken: Access token used if logging in through XOAUTH2.
+    ///     - port: Port to connect to the server on. Defaults to 25. On
+    ///             connection failures, tries the next port in this order:
+    ///             [user given] > 25 > 587.
+    ///     - authMethods: Authentication methods to use to log in to the
+    ///                    server. Defaults to all supported ones--currently
+    ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
     ///     - domainName: Client domain name used when communicating with the
     ///                  server. Defaults to "localhost".
-    ///     - authMethods: Authentication methods to use to log in to the 
-    ///                    server. Defaults to all supported ones--currently 
-    ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
-    ///     - chainFilePath: Absolute path to certificate chain .pfx file in 
-    ///                      PKC12 format. Required if the SMTP server supports 
-    ///                      SSL.
-    ///     - chainFilePassword: Password for certificate chain file.
-    ///     - selfSignedCerts: `Bool` indicating if certificates are self 
-    ///                        signed.
-    public init(hostname: String, user: String, password: String, port: Port = Proto.tls.rawValue, accessToken: String? = nil, domainName: String = "localhost", authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, chainFilePath: String? = nil, chainFilePassword: String? = nil, selfSignedCerts: Bool? = nil) {
+    ///     - accessToken: Access token used if logging in through XOAUTH2.
+    public init(hostname: String, user: String, password: String, port: Port = Proto.tls.rawValue, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
-        self.accessToken = accessToken
-        self.domainName = domainName
         
         if !authMethods.isEmpty { self.authMethods = authMethods }
         else { self.authMethods = AuthMethod.defaultAuthMethods }
         
-        self.chainFilePath = chainFilePath
-        self.chainFilePassword = chainFilePassword
-        self.selfSignedCerts = selfSignedCerts
+        self.domainName = domainName
+        self.accessToken = accessToken
     }
     
     /// Send an email.
@@ -112,7 +99,7 @@ public struct SMTP {
     ///
     /// - note:
     ///     - If a failure is encountered while sending multiple mails, the 
-    ///       whole sending process does not stop until all pending mails are
+    ///       whole sending process will not stop until all pending mails are
     ///       attempted.
     ///
     ///     - Each call to `send` queues it's `Mail`s and sends them one by one. 
@@ -120,7 +107,7 @@ public struct SMTP {
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         do {
-            let socket = try SMTPLogin(hostname: hostname, user: user, password: password, port: port, accessToken: accessToken, domainName: domainName, authMethods: authMethods, chainFilePath: chainFilePath, chainFilePassword: chainFilePassword, selfSignedCerts: selfSignedCerts).login()
+            let socket = try SMTPLogin(hostname: hostname, user: user, password: password, port: port, authMethods: authMethods, domainName: domainName, accessToken: accessToken).login()
             try SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
         } catch {
             completion?([], mails.map { ($0, error) })

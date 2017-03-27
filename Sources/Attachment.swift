@@ -19,8 +19,8 @@ import Foundation
 /// Represents a `Mail`'s attachment.
 public struct Attachment {
     let type: AttachmentType
-    public var additionalHeaders: [String: String]?
-    public var related: [Attachment]?
+    let additionalHeaders: [String: String]?
+    let related: [Attachment]?
     
     var hasRelated: Bool {
         return related != nil

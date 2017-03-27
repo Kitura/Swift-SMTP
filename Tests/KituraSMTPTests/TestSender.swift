@@ -16,6 +16,7 @@
 
 import XCTest
 import KituraSMTP
+import LoggerAPI
 
 #if os(Linux)
     import Dispatch
@@ -83,32 +84,29 @@ class TestSender: XCTestCase {
     }
     
     func testSendMailsConcurrently() {
-        let dispatchGroup = DispatchGroup()
-        dispatchGroup.enter()
-        dispatchGroup.enter()
+        let group = DispatchGroup()
+        group.enter()
+        group.enter()
         
         let mail1 = Mail(from: from, to: [to1], subject: "Send mails concurrently 1")
         let mail2 = Mail(from: from, to: [to1], subject: "Send mails concurrently 2")
 
         smtp.send(mail1) { (err) in
             XCTAssertNil(err)
-            dispatchGroup.leave()
+            group.leave()
         }
         
         smtp.send(mail2) { (err) in
             XCTAssertNil(err)
-            dispatchGroup.leave()
+            group.leave()
         }
         
-        dispatchGroup.wait()
+        group.wait()
         
         x.fulfill()
         waitForExpectations(timeout: 10)
     }
     
     var x: XCTestExpectation!
-    
-    override func setUp() {
-        x = expectation(description: "")
-    }
+    override func setUp() { x = expectation(description: "") }
 }
