@@ -108,7 +108,9 @@ private extension SMTPSender {
     
     private func validateEmails(_ emails: [String]) throws {
         for email in emails {
-            try email.isValidEmail()
+            if try !email.isValidEmail() {
+                throw SMTPError(.invalidEmail(email))
+            }
         }
     }
     
@@ -132,13 +134,13 @@ private extension SMTPSender {
 }
 
 private extension String {
-    func isValidEmail() throws {
-        let emailRegex: NSString = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex)
-        if !emailTest.evaluate(with: self) {
-            throw SMTPError(.invalidEmail(self))
-        }
-    }
+//    func validateEmail() throws {
+    //    let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    //    let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
+//        if !String.emailTest.evaluate(with: self) {
+//            throw SMTPError(.invalidEmail(self))
+//        }
+//    }
     
 //    func isValidEmail() -> Bool {
 //        guard !self.lowercased().hasPrefix("mailto:") else { return false }
@@ -148,17 +150,22 @@ private extension String {
 //        return matches[0].url?.scheme == "mailto"
 //    }
     
-//    func isValidEmail() throws -> Bool {
-//        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
-//        
-//        let regex = try NSRegularExpression(pattern: emailRegEx)
-//        let nsString = self as NSString
-//        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
-//        
-//        if results.isEmpty {
-//            return false
-//        }
-//        
-//        return true
-//    }
+    func isValidEmail() throws -> Bool {
+        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
+        
+        #if os(Linux)
+            let regex = try RegularExpression(pattern: emailRegEx)
+        #else
+            let regex = try NSRegularExpression(pattern: emailRegEx)
+        #endif
+        
+        let nsString = NSString.init(string: self)
+        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
+        
+        if results.isEmpty {
+            return false
+        }
+        
+        return true
+    }
 }
