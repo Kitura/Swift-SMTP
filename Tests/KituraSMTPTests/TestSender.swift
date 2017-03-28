@@ -26,7 +26,7 @@ class TestSender: XCTestCase {
         return [
             ("testSendMail", testSendMail),
             ("testSendMultipleRecipients", testSendMultipleRecipients),
-            ("testSendMailWithCc", testSendMailWithCc),
+//            ("testSendMailWithCc", testSendMailWithCc),
             ("testSendMailWithBcc", testSendMailWithBcc),
             ("testSendMultipleMails", testSendMultipleMails),
             ("testSendMailsConcurrently", testSendMailsConcurrently),
