@@ -30,7 +30,7 @@ class TestSender: XCTestCase {
             ("testSendMailWithBcc", testSendMailWithBcc),
             ("testSendMultipleMails", testSendMultipleMails),
             ("testSendMailsConcurrently", testSendMailsConcurrently),
-//            ("testBadEmail", testBadEmail),
+            ("testBadEmail", testBadEmail),
             ("testSendMultipleMailsWithFail", testSendMultipleMailsWithFail)
         ]
     }
@@ -108,15 +108,15 @@ class TestSender: XCTestCase {
         waitForExpectations(timeout: timeout)
     }
     
-//    func testBadEmail() {
-//        let user = User(email: "")
-//        let mail = Mail(from: user, to: [user])
-//        smtp.send(mail) { (err) in
-//            XCTAssertNotNil(err)
-//            self.x.fulfill()
-//        }
-//        waitForExpectations(timeout: timeout)
-//    }
+    func testBadEmail() {
+        let user = User(email: "")
+        let mail = Mail(from: user, to: [user])
+        smtp.send(mail) { (err) in
+            XCTAssertNotNil(err)
+            self.x.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
+    }
     
     func testSendMultipleMailsWithFail() {
         let badUser = User(email: "")

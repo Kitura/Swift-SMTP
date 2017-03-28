@@ -87,7 +87,7 @@ private extension SMTPSender {
 private extension SMTPSender {
     func send(_ mail: Mail) throws {
         let recipientEmails = getRecipientEmails(from: mail)
-//        try validateEmails(recipientEmails)
+        try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()
@@ -132,13 +132,8 @@ private extension SMTPSender {
 }
 
 private extension String {
-    #if os(Linux)
-        static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" as! CVarArg
-    #else
-        static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-    #endif
-    
-    static let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex)
+    static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    static let emailTest = NSPredicate(format:"SELF MATCHES %@", argumentArray: [emailRegex])
     
     func validateEmail() throws {
         if !String.emailTest.evaluate(with: self) {
