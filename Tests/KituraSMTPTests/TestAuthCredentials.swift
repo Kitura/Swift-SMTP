@@ -20,23 +20,23 @@ import XCTest
 class TestAuthCredentials: XCTestCase {
     static var allTests : [(String, (TestAuthCredentials) -> () throws -> Void)] {
         return [
-//            ("testCramMD5", testCramMD5),
+            ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
             ("testXOAuth2", testXOAuth2)
         ]
     }
     
-//    func testCramMD5() throws {
-//        let user = "foo@bar.com"
-//        let password = "password"
-//        let challenge = "aGVsbG8="
-//        
-//        // http://busylog.net/cram-md5-online-generator/
-//        let expected = "Zm9vQGJhci5jb20gMjhmOGNhMDI0YjBlNjE4YWUzNWQ0NmRiODExNzU2NjM="
-//        let result = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
-//        XCTAssertEqual(result, expected)
-//    }
+    func testCramMD5() throws {
+        let user = "foo@bar.com"
+        let password = "password"
+        let challenge = "aGVsbG8="
+        
+        // http://busylog.net/cram-md5-online-generator/
+        let expected = "Zm9vQGJhci5jb20gMjhmOGNhMDI0YjBlNjE4YWUzNWQ0NmRiODExNzU2NjM="
+        let result = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
+        XCTAssertEqual(result, expected)
+    }
     
     func testLogin() {
         let user = "foo@bar.com"

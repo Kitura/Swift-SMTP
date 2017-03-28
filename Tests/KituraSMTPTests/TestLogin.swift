@@ -36,7 +36,7 @@ class TestLogin: XCTestCase {
     }
     
     func testCramMD5() throws {
-        _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
     }
     
     func testLogin() throws {
