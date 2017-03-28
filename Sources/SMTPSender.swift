@@ -108,9 +108,7 @@ private extension SMTPSender {
     
     private func validateEmails(_ emails: [String]) throws {
         for email in emails {
-            if try !email.isValidEmail() {
-                throw SMTPError(.invalidEmail(email))
-            }
+            try email.isValidEmail()
         }
     }
     
@@ -134,14 +132,13 @@ private extension SMTPSender {
 }
 
 private extension String {
-//    static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-//    static let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
-//    
-//    func validateEmail() throws {
-//        if !String.emailTest.evaluate(with: self) {
-//            throw SMTPError(.invalidEmail(self))
-//        }
-//    }
+    func isValidEmail() throws {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex as CVarArg)
+        if !emailTest.evaluate(with: self) {
+            throw SMTPError(.invalidEmail(self))
+        }
+    }
     
 //    func isValidEmail() -> Bool {
 //        guard !self.lowercased().hasPrefix("mailto:") else { return false }
@@ -151,17 +148,17 @@ private extension String {
 //        return matches[0].url?.scheme == "mailto"
 //    }
     
-    func isValidEmail() throws -> Bool {
-        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
-        
-        let regex = try NSRegularExpression(pattern: emailRegEx)
-        let nsString = self as NSString
-        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
-        
-        if results.isEmpty {
-            return false
-        }
-        
-        return true
-    }
+//    func isValidEmail() throws -> Bool {
+//        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
+//        
+//        let regex = try NSRegularExpression(pattern: emailRegEx)
+//        let nsString = self as NSString
+//        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
+//        
+//        if results.isEmpty {
+//            return false
+//        }
+//        
+//        return true
+//    }
 }
