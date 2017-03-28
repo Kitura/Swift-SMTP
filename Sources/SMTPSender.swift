@@ -141,9 +141,9 @@ private extension String {
 }
 
 #if os(Linux)
-    typealias Regex = RegularExpression
+    private typealias Regex = RegularExpression
 #else
-    typealias Regex = NSRegularExpression
+    private typealias Regex = NSRegularExpression
 #endif
 
 private extension Regex {

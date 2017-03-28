@@ -37,6 +37,8 @@ class SMTPLogin {
     fileprivate let accessToken: String?
     fileprivate var socket: SMTPSocket
     
+    private let timeout = 2
+    
     init(hostname: String, user: String, password: String, port: Port, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
         self.user = user
@@ -60,7 +62,7 @@ class SMTPLogin {
             } catch {}
         }
         
-        if group.wait(timeout: DispatchTime.now() + .seconds(1)) == .timedOut {
+        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
             queue.cancelAllOperations()
             socket.close()
             socket = try SMTPSocket()
