@@ -110,18 +110,19 @@ private extension SMTPLogin {
         let _: Void = try starttls()
         socket.close()
         
-        let root = #file.characters
+        let root = #file
+            .characters
             .split(separator: "/", omittingEmptySubsequences: false)
             .dropLast(1)
             .map { String($0) }
             .joined(separator: "/")
-        
+
         #if os(Linux)
             let cert = root + "/cert.pem"
             let key = root + "/key.pem"
             let config = SSLService.Configuration(withCACertificateFilePath: nil, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: true)
         #else
-            let chainFilePath = #file.replacingOccurrences(of: "SMTPLogin.swift", with: "cert.pfx")
+            let chainFilePath = root + "/cert.pfx"
             let chainFilePassword = "kitura"
             let selfSignedCerts = true
             let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)

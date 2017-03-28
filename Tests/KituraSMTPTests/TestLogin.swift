@@ -24,7 +24,7 @@ import XCTest
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
-//            ("testCramMD5", testCramMD5),
+            ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
             ("testPortSSL", testPortSSL),
@@ -35,9 +35,9 @@ class TestLogin: XCTestCase {
         ]
     }
     
-//    func testCramMD5() throws {
-//        _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
-//    }
+    func testCramMD5() throws {
+        _ = try SMTPLogin(hostname: junoSMTP, user: junoUser, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    }
     
     func testLogin() throws {
         _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
