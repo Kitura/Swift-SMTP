@@ -87,7 +87,7 @@ private extension SMTPSender {
 private extension SMTPSender {
     func send(_ mail: Mail) throws {
         let recipientEmails = getRecipientEmails(from: mail)
-        try validateEmails(recipientEmails)
+//        try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()

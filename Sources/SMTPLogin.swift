@@ -129,7 +129,6 @@ private extension SMTPLogin {
         #endif
 
         let delegate = try SSLService(usingConfiguration: config)
-        
         socket = try SMTPSocket()
         socket.socket.delegate = delegate
         try connect(Proto.ssl.rawValue)
