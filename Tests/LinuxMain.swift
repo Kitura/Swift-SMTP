@@ -3,7 +3,7 @@ import XCTest
 
 XCTMain([
      testCase(TestAuthCredentials.allTests),
-     testCase(TestDataSender.allTests),
-     testCase(TestLogin.allTests),
-     testCase(TestSender.allTests)
+//     testCase(TestDataSender.allTests),
+     testCase(TestLogin.allTests)
+//     testCase(TestSender.allTests)
 ])

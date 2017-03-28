@@ -20,7 +20,7 @@ import KituraSMTP
 class TestDataSender: XCTestCase {
     static var allTests : [(String, (TestDataSender) -> () throws -> Void)] {
         return [
-//            ("testSendNonASCII", testSendNonASCII),
+            ("testSendNonASCII", testSendNonASCII),
             ("testSendFile", testSendFile),
             ("testSendHTMLAlternative", testSendHTMLAlternative),
             ("testSendHTML", testSendHTML),
@@ -30,14 +30,14 @@ class TestDataSender: XCTestCase {
         ]
     }
     
-//    func testSendNonASCII() {
-//        let mail = Mail(from: user, to: [user], subject: "Non ASCII", text: "💦")
-//        smtp.send(mail) { (err) in
-//            XCTAssertNil(err)
-//            self.x.fulfill()
-//        }
-//        waitForExpectations(timeout: timeout)
-//    }
+    func testSendNonASCII() {
+        let mail = Mail(from: user, to: [user], subject: "Non ASCII", text: "💦")
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err)
+            self.x.fulfill()
+        }
+        waitForExpectations(timeout: timeout)
+    }
     
     func testSendFile() {
         let fileAttachment = Attachment(filePath: imgFilePath)
