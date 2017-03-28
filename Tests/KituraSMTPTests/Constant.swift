@@ -19,8 +19,8 @@ import KituraSMTP
 let timeout: Double = 10
 
 let gmailSMTP = "smtp.gmail.com"
-let gmailUser1 = "kiturasmtp3@gmail.com"
-let gmailUser2 = "kiturasmtp2@gmail.com"
+let gmailUser1 = "kiturasmtp4@gmail.com"
+let gmailUser2 = "kiturasmtp@gmail.com"
 let password = "ibm12345"
 
 let smtp = SMTP(hostname: gmailSMTP, user: gmailUser1, password: password)
@@ -32,4 +32,9 @@ let to2 = User(name: "Roll", email: gmailUser2)
 
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
-let imgFilePath = #file.replacingOccurrences(of: "Constant.swift", with: "x.png")
+let imgFilePath = #file
+    .characters
+    .split(separator: "/", omittingEmptySubsequences: false)
+    .dropLast(1)
+    .map { String($0) }
+    .joined(separator: "/") + "x.png"
