@@ -108,7 +108,7 @@ private extension SMTPSender {
     
     private func validateEmails(_ emails: [String]) throws {
         for email in emails {
-            if try !email.isValidEmail() {
+            if !email.isValidEmail {
                 throw SMTPError(.invalidEmail(email))
             }
         }
@@ -134,38 +134,18 @@ private extension SMTPSender {
 }
 
 private extension String {
-//    func validateEmail() throws {
-    //    let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-    //    let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
-//        if !String.emailTest.evaluate(with: self) {
-//            throw SMTPError(.invalidEmail(self))
-//        }
-//    }
-    
-//    func isValidEmail() -> Bool {
-//        guard !self.lowercased().hasPrefix("mailto:") else { return false }
-//        guard let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
-//        let matches = emailDetector.matches(in: self, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange(location: 0, length: self.characters.count))
-//        guard matches.count == 1 else { return false }
-//        return matches[0].url?.scheme == "mailto"
-//    }
-    
-    func isValidEmail() throws -> Bool {
-        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
-        
-        #if os(Linux)
-            let regex = try RegularExpression(coder: emailRegEx)
-        #else
-            let regex = try NSRegularExpression(pattern: emailRegEx)
-        #endif
-        
-        let nsString = NSString.init(string: self)
-        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
-        
-        if results.isEmpty {
-            return false
-        }
-        
-        return true
+    var isValidEmail: Bool {
+        let range = NSMakeRange(0, utf16.count)
+        return !Regex.emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
+}
+
+#if os(Linux)
+    typealias Regex = RegularExpression
+#else
+    typealias Regex = NSRegularExpression
+#endif
+
+private extension Regex {
+    static let emailRegex = try! Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
 }
