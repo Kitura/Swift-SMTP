@@ -17,9 +17,9 @@
 import XCTest
 import KituraSMTP
 
-//#if os(Linux)
-//    import Dispatch
-//#endif
+#if os(Linux)
+    import Dispatch
+#endif
 
 class TestSender: XCTestCase {
     static var allTests : [(String, (TestSender) -> () throws -> Void)] {
@@ -29,7 +29,7 @@ class TestSender: XCTestCase {
             ("testSendMailWithCc", testSendMailWithCc),
             ("testSendMailWithBcc", testSendMailWithBcc),
             ("testSendMultipleMails", testSendMultipleMails),
-//            ("testSendMailsConcurrently", testSendMailsConcurrently),
+            ("testSendMailsConcurrently", testSendMailsConcurrently),
             ("testBadEmail", testBadEmail),
             ("testSendMultipleMailsWithFail", testSendMultipleMailsWithFail)
         ]
@@ -84,29 +84,23 @@ class TestSender: XCTestCase {
         waitForExpectations(timeout: timeout)
     }
     
-//    func testSendMailsConcurrently() {
-//        let group = DispatchGroup()
-//        group.enter()
-//        group.enter()
-//        
-//        let mail1 = Mail(from: from, to: [to1], subject: "Send mails concurrently 1")
-//        let mail2 = Mail(from: from, to: [to1], subject: "Send mails concurrently 2")
-//
-//        smtp.send(mail1) { (err) in
-//            XCTAssertNil(err)
-//            group.leave()
-//        }
-//        
-//        smtp.send(mail2) { (err) in
-//            XCTAssertNil(err)
-//            group.leave()
-//        }
-//        
-//        group.wait()
-//        
-//        x.fulfill()
-//        waitForExpectations(timeout: timeout)
-//    }
+    func testSendMailsConcurrently() {
+        let group = DispatchGroup()
+        let mails = [Mail(from: from, to: [to1], subject: "Send mails concurrently 1"), Mail(from: from, to: [to1], subject: "Send mails concurrently 2")]
+        
+        for mail in mails {
+            group.enter()
+            
+            smtp.send(mail) { (err) in
+                XCTAssertNil(err)
+                group.leave()
+            }
+        }
+        
+        group.wait()
+        x.fulfill()
+        waitForExpectations(timeout: timeout)
+    }
     
     func testBadEmail() {
         let user = User(email: "")

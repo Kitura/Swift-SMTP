@@ -19,7 +19,7 @@ import KituraSMTP
 let timeout: Double = 10
 
 let gmailSMTP = "smtp.gmail.com"
-let gmailUser = "kiturasmtp@gmail.com"
+let gmailUser = "kiturasmtp2@gmail.com"
 let junoUser = "kitura-smtp@juno.com"
 let password = "ibm12345"
 
