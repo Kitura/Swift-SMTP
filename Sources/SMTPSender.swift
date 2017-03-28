@@ -133,8 +133,8 @@ private extension SMTPSender {
 
 private extension String {
     func isValidEmail() throws {
-        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex as CVarArg)
+        let emailRegex: NSString = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegex)
         if !emailTest.evaluate(with: self) {
             throw SMTPError(.invalidEmail(self))
         }
