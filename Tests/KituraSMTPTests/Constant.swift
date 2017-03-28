@@ -18,17 +18,21 @@ import KituraSMTP
 
 let timeout: Double = 10
 
+// NOTE: 
+// Sending too many emails from one account will suspend it for some time.
+// Use different emails when testing extensively.
+
 let gmailSMTP = "smtp.gmail.com"
-let gmailUser1 = "kiturasmtp4@gmail.com"
-let gmailUser2 = "kiturasmtp@gmail.com"
+let email1 = "kiturasmtp4@gmail.com"
+let email2 = "kiturasmtp@gmail.com"
 let password = "ibm12345"
 
-let smtp = SMTP(hostname: gmailSMTP, user: gmailUser1, password: password)
+let smtp = SMTP(hostname: gmailSMTP, user: email1, password: password)
 
-let user = User(email: gmailUser1)
-let from = User(name: "Dr. Light", email: gmailUser1)
-let to1 = User(name: "Megaman", email: gmailUser1)
-let to2 = User(name: "Roll", email: gmailUser2)
+let user = User(email: email1)
+let from = User(name: "Dr. Light", email: email1)
+let to1 = User(name: "Megaman", email: email1)
+let to2 = User(name: "Roll", email: email2)
 
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
@@ -37,4 +41,4 @@ let imgFilePath = #file
     .split(separator: "/", omittingEmptySubsequences: false)
     .dropLast(1)
     .map { String($0) }
-    .joined(separator: "/") + "x.png"
+    .joined(separator: "/") + "/x.png"
