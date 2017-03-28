@@ -154,7 +154,7 @@ private extension String {
         let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
         
         #if os(Linux)
-            let regex = try RegularExpression(pattern: emailRegEx)
+            let regex = try RegularExpression(coder: emailRegEx)
         #else
             let regex = try NSRegularExpression(pattern: emailRegEx)
         #endif
