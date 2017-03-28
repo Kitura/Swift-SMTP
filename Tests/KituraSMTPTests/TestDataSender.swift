@@ -82,7 +82,7 @@ class TestDataSender: XCTestCase {
     
     func testSendRelatedAttachment() {
         let fileAttachment = Attachment(filePath: imgFilePath, inline: true, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
-        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/></html>", related: [fileAttachment])
+        let htmlAttachment = Attachment(htmlContent: "<html><p>Lorum Ipsum Blah Blah</p><img src=\"cid:megaman-pic\"/><p>Lorum Ipsum Blah Blah</p></html>", related: [fileAttachment])
         let mail = Mail(from: user, to: [user], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
