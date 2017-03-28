@@ -37,6 +37,8 @@ class SMTPLogin {
     fileprivate let accessToken: String?
     fileprivate var socket: SMTPSocket
     
+    private let timeout = 5
+    
     init(hostname: String, user: String, password: String, port: Port, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
         self.user = user
@@ -50,18 +52,17 @@ class SMTPLogin {
     
     func login() throws -> SMTPSocket {
         let group = DispatchGroup()
-        let queue = OperationQueue()
+        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLoginQueue")
         
         group.enter()
-        queue.addOperation {
+        queue.async {
             do {
                 try self.connect(self.port)
                 group.leave()
             } catch {}
         }
         
-        if group.wait(timeout: DispatchTime.now() + .seconds(1)) == .timedOut {
-            queue.cancelAllOperations()
+        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
             socket.close()
             socket = try SMTPSocket()
             try connect(Proto.tls.rawValue)

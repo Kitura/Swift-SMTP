@@ -19,16 +19,16 @@ import KituraSMTP
 let timeout: Double = 10
 
 let gmailSMTP = "smtp.gmail.com"
-let gmailUser = "kiturasmtp3@gmail.com"
-let junoUser = "kitura-smtp@juno.com"
+let gmailUser1 = "kiturasmtp3@gmail.com"
+let gmailUser2 = "kiturasmtp2@gmail.com"
 let password = "ibm12345"
 
-let smtp = SMTP(hostname: gmailSMTP, user: gmailUser, password: password)
+let smtp = SMTP(hostname: gmailSMTP, user: gmailUser1, password: password)
 
-let user = User(email: gmailUser)
-let from = User(name: "Dr. Light", email: gmailUser)
-let to1 = User(name: "Megaman", email: gmailUser)
-let to2 = User(name: "Roll", email: junoUser)
+let user = User(email: gmailUser1)
+let from = User(name: "Dr. Light", email: gmailUser1)
+let to1 = User(name: "Megaman", email: gmailUser1)
+let to2 = User(name: "Roll", email: gmailUser2)
 
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"

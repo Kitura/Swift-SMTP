@@ -86,24 +86,18 @@ class TestSender: XCTestCase {
     
     func testSendMailsConcurrently() {
         let group = DispatchGroup()
-        group.enter()
-        group.enter()
+        let mails = [Mail(from: from, to: [to1], subject: "Send mails concurrently 1"), Mail(from: from, to: [to1], subject: "Send mails concurrently 2")]
         
-        let mail1 = Mail(from: from, to: [to1], subject: "Send mails concurrently 1")
-        let mail2 = Mail(from: from, to: [to1], subject: "Send mails concurrently 2")
-
-        smtp.send(mail1) { (err) in
-            XCTAssertNil(err)
-            group.leave()
-        }
-        
-        smtp.send(mail2) { (err) in
-            XCTAssertNil(err)
-            group.leave()
+        for mail in mails {
+            group.enter()
+            
+            smtp.send(mail) { (err) in
+                XCTAssertNil(err)
+                group.leave()
+            }
         }
         
         group.wait()
-        
         x.fulfill()
         waitForExpectations(timeout: timeout)
     }
