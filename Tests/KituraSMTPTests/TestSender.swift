@@ -17,9 +17,9 @@
 import XCTest
 import KituraSMTP
 
-#if os(Linux)
-    import Dispatch
-#endif
+//#if os(Linux)
+//    import Dispatch
+//#endif
 
 class TestSender: XCTestCase {
     static var allTests : [(String, (TestSender) -> () throws -> Void)] {
@@ -29,7 +29,7 @@ class TestSender: XCTestCase {
             ("testSendMailWithCc", testSendMailWithCc),
             ("testSendMailWithBcc", testSendMailWithBcc),
             ("testSendMultipleMails", testSendMultipleMails),
-            ("testSendMailsConcurrently", testSendMailsConcurrently),
+//            ("testSendMailsConcurrently", testSendMailsConcurrently),
             ("testBadEmail", testBadEmail),
             ("testSendMultipleMailsWithFail", testSendMultipleMailsWithFail)
         ]
@@ -121,7 +121,7 @@ class TestSender: XCTestCase {
     func testSendMultipleMailsWithFail() {
         let badUser = User(email: "")
         let badMail = Mail(from: from, to: [badUser])
-        let goodMail = Mail(from: from, to: [to1], subject: "Good email address")
+        let goodMail = Mail(from: from, to: [to1], subject: "Send multiple mails with fail")
         
         smtp.send([badMail, goodMail]) { (sent, failed) in
             XCTAssertEqual(sent.count, 1)
