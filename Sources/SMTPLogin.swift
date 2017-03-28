@@ -23,6 +23,8 @@ import SSLService
 #endif
 
 enum Proto: Port {
+    case plain = 25
+    case plainAlt = 2525
     case tls = 587
     case ssl = 465
 }
@@ -31,19 +33,21 @@ class SMTPLogin {
     fileprivate let hostname: String
     fileprivate let user: String
     fileprivate let password: String
-    fileprivate let port: Port
+    fileprivate let port: Port?
+    fileprivate let secure: Bool
     fileprivate let authMethods: [AuthMethod]
     fileprivate let domainName: String
     fileprivate let accessToken: String?
     fileprivate var socket: SMTPSocket
     
-    private let timeout = 5
+    private let timeout = 10
     
-    init(hostname: String, user: String, password: String, port: Port, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
+    init(hostname: String, user: String, password: String, port: Port?, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
+        self.secure = secure
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
@@ -51,25 +55,37 @@ class SMTPLogin {
     }
     
     func login() throws -> SMTPSocket {
-        let group = DispatchGroup()
-        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLoginQueue")
-        
-        group.enter()
-        queue.async {
-            do {
-                try self.connect(self.port)
-                group.leave()
-            } catch {}
+        var ports = [Proto.plain.rawValue, Proto.plainAlt.rawValue, Proto.tls.rawValue]
+        if let port = port {
+            if let i = ports.index(of: port) {
+                ports.remove(at: i)
+            }
+            ports = [port] + ports
         }
         
-        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
-            socket.close()
-            socket = try SMTPSocket()
-            try connect(Proto.tls.rawValue)
+        for port in ports {
+            let group = DispatchGroup()
+            let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLoginQueue")
+
+            group.enter()
+            queue.async {
+                do {
+                    try self.connect(port)
+                    group.leave()
+                } catch {}
+            }
+            
+            if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
+                socket.close()
+                socket = try SMTPSocket()
+            }
+            
+            if socket.socket.isConnected {
+                let _: Void = try self.login()
+                return socket
+            }
         }
-        
-        let _: Void = try self.login()
-        return socket
+        throw SMTPError(.couldNotConnectToServer(hostname))
     }
 }
 
@@ -81,7 +97,7 @@ private extension SMTPLogin {
     
     func login() throws {
         var serverInfo = try getServerInfo()
-        if try starttls(serverInfo) {
+        if try secure && starttls(serverInfo) {
             serverInfo = try starttls()
         }
         switch try getAuthMethod(serverInfo) {

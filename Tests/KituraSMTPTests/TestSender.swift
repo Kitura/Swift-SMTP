@@ -36,7 +36,7 @@ class TestSender: XCTestCase {
     }
     
     func testSendMail() {
-        let mail = Mail(from: from, to: [to1], subject: "Simple email", text: text)
+        let mail = Mail(from: from, to: [to2], subject: "Simple email", text: text)
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -45,7 +45,7 @@ class TestSender: XCTestCase {
     }
     
     func testSendMultipleRecipients() {
-        let mail = Mail(from: from, to: [to1, to2], subject: "Multiple recipients")
+        let mail = Mail(from: from, to: [to, to2], subject: "Multiple recipients")
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -54,7 +54,7 @@ class TestSender: XCTestCase {
     }
     
     func testSendMailWithCc() {
-        let mail = Mail(from: from, to: [to2], cc: [to1], subject: "Mail with Cc")
+        let mail = Mail(from: from, to: [to], cc: [to2], subject: "Mail with Cc")
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -63,7 +63,7 @@ class TestSender: XCTestCase {
     }
     
     func testSendMailWithBcc() {
-        let mail = Mail(from: from, to: [to2], bcc: [to1], subject: "Mail with Bcc")
+        let mail = Mail(from: from, to: [to], bcc: [to2], subject: "Mail with Bcc")
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -72,8 +72,8 @@ class TestSender: XCTestCase {
     }
     
     func testSendMultipleMails() {
-        let mail1 = Mail(from: from, to: [to1], subject: "Send multiple mails 1")
-        let mail2 = Mail(from: from, to: [to1], subject: "Send multiple mails 2")
+        let mail1 = Mail(from: from, to: [to], subject: "Send multiple mails 1")
+        let mail2 = Mail(from: from, to: [to], subject: "Send multiple mails 2")
         smtp.send([mail1, mail2], progress: { (_, err) in
             XCTAssertNil(err)
         }) { (sent, failed) in
@@ -86,7 +86,7 @@ class TestSender: XCTestCase {
     
     func testSendMailsConcurrently() {
         let group = DispatchGroup()
-        let mails = [Mail(from: from, to: [to1], subject: "Send mails concurrently 1"), Mail(from: from, to: [to1], subject: "Send mails concurrently 2")]
+        let mails = [Mail(from: from, to: [to], subject: "Send mails concurrently 1"), Mail(from: from, to: [to], subject: "Send mails concurrently 2")]
         
         for mail in mails {
             group.enter()
@@ -115,7 +115,7 @@ class TestSender: XCTestCase {
     func testSendMultipleMailsWithFail() {
         let badUser = User(email: "")
         let badMail = Mail(from: from, to: [badUser])
-        let goodMail = Mail(from: from, to: [to1], subject: "Send multiple mails with fail")
+        let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
         
         smtp.send([badMail, goodMail]) { (sent, failed) in
             XCTAssertEqual(sent.count, 1)

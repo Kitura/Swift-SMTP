@@ -19,20 +19,25 @@ import KituraSMTP
 let timeout: Double = 10
 
 // NOTE: 
-// Sending too many emails from one account will suspend it for some time.
+// Sending too many emails from one account may suspend it for some time.
 // Use different emails when testing extensively.
 
-let gmailSMTP = "smtp.gmail.com"
-let email1 = "kiturasmtp4@gmail.com"
-let email2 = "kiturasmtp@gmail.com"
-let password = "ibm12345"
+let slSMTP = "smtp.socketlabs.com"
+let slUser = "server16337"
+let slPassword = "w5DRd9c2EPo6f8NQa4"
+let slMail = "quan.vo@ibm.com"
 
-let smtp = SMTP(hostname: gmailSMTP, user: email1, password: password)
+let gSMTP = "smtp.gmail.com"
+let gMail = "kiturasmtp@gmail.com"
+let gMail2 = "kiturasmtp2@gmail.com"
+let gPassword = "ibm12345"
+let gSecure = true
 
-let user = User(email: email1)
-let from = User(name: "Dr. Light", email: email1)
-let to1 = User(name: "Megaman", email: email1)
-let to2 = User(name: "Roll", email: email2)
+let smtp = SMTP(hostname: slSMTP, user: slUser, password: slPassword, secure: false)
+
+let from = User(name: "Dr. Light", email: slMail)
+let to = User(name: "Megaman", email: gMail)
+let to2 = User(name: "Roll", email: gMail2)
 
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"

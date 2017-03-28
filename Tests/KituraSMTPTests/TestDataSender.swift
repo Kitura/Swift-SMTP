@@ -31,7 +31,7 @@ class TestDataSender: XCTestCase {
     }
     
     func testSendNonASCII() {
-        let mail = Mail(from: user, to: [user], subject: "Non ASCII", text: "💦")
+        let mail = Mail(from: from, to: [to], subject: "Non ASCII", text: "💦")
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -41,7 +41,7 @@ class TestDataSender: XCTestCase {
     
     func testSendFile() {
         let fileAttachment = Attachment(filePath: imgFilePath)
-        let mail = Mail(from: user, to: [user], subject: "File attachment", attachments: [fileAttachment])
+        let mail = Mail(from: from, to: [to], subject: "File attachment", attachments: [fileAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -51,7 +51,7 @@ class TestDataSender: XCTestCase {
     
     func testSendHTMLAlternative() {
         let htmlAttachment = Attachment(htmlContent: html)
-        let mail = Mail(from: user, to: [user], subject: "HTML alternative attachment", text: text, attachments: [htmlAttachment])
+        let mail = Mail(from: from, to: [to], subject: "HTML alternative attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -61,7 +61,7 @@ class TestDataSender: XCTestCase {
     
     func testSendHTML() {
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
-        let mail = Mail(from: user, to: [user], subject: "HTML attachment", text: text, attachments: [htmlAttachment])
+        let mail = Mail(from: from, to: [to], subject: "HTML attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -72,7 +72,7 @@ class TestDataSender: XCTestCase {
     func testSendData() {
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
         let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
-        let mail = Mail(from: user, to: [user], subject: "Data attachment", attachments: [attachment])
+        let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [attachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -83,7 +83,7 @@ class TestDataSender: XCTestCase {
     func testSendRelatedAttachment() {
         let fileAttachment = Attachment(filePath: imgFilePath, inline: true, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
         let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/></html>", related: [fileAttachment])
-        let mail = Mail(from: user, to: [user], subject: "HTML with related attachment", attachments: [htmlAttachment])
+        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()
@@ -94,7 +94,7 @@ class TestDataSender: XCTestCase {
     func testSendMultipleAttachments() {
         let fileAttachment = Attachment(filePath: imgFilePath)
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
-        let mail = Mail(from: user, to: [user], subject: "Multiple attachments", text: text, attachments: [fileAttachment, htmlAttachment])
+        let mail = Mail(from: from, to: [to], subject: "Multiple attachments", text: text, attachments: [fileAttachment, htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             self.x.fulfill()

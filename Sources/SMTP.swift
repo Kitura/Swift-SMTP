@@ -34,7 +34,8 @@ public struct SMTP {
     let hostname: String
     let user: String
     let password: String
-    let port: Port
+    let port: Port?
+    let secure: Bool
     let authMethods: [AuthMethod]
     let domainName: String
     let accessToken: String?
@@ -46,9 +47,9 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. Defaults to 587. If the
-    ///             user given port cannot connect in 1 second, closes the
-    ///             socket and tries again on 587.
+    ///     - port: Port to connect to the server on. Defaults to 25. If SMTP
+    ///             cannot connect within 10 seconds, tries the next port. Order
+    ///             is [user given] > 25 > 2525 > 587.
     ///     - authMethods: Authentication methods to use to log in to the
     ///                    server. Defaults to all supported ones--currently
     ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
@@ -60,11 +61,12 @@ public struct SMTP {
     ///     Some servers like Gmail support IPv6, and if your network does not, 
     ///     you will first attempt to connect via IPv6, then timeout, and fall 
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, user: String, password: String, port: Port = Proto.tls.rawValue, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
+    public init(hostname: String, user: String, password: String, port: Port? = nil, secure: Bool = true, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
+        self.secure = secure
         
         if !authMethods.isEmpty { self.authMethods = authMethods }
         else { self.authMethods = AuthMethod.defaultAuthMethods }
@@ -115,7 +117,7 @@ public struct SMTP {
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         do {
-            let socket = try SMTPLogin(hostname: hostname, user: user, password: password, port: port, authMethods: authMethods, domainName: domainName, accessToken: accessToken).login()
+            let socket = try SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken).login()
             try SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
         } catch {
             completion?([], mails.map { ($0, error) })
