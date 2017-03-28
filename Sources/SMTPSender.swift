@@ -133,7 +133,7 @@ private extension SMTPSender {
 
 private extension String {
     static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-    static let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex))
+    static let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
     
     func validateEmail() throws {
         if !String.emailTest.evaluate(with: self) {
