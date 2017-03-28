@@ -108,7 +108,9 @@ private extension SMTPSender {
     
     private func validateEmails(_ emails: [String]) throws {
         for email in emails {
-            try email.validateEmail()
+            if !email.isValidEmail() {
+                throw SMTPError(.invalidEmail(email))
+            }
         }
     }
     
@@ -132,12 +134,20 @@ private extension SMTPSender {
 }
 
 private extension String {
-    static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-    static let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
+//    static let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+//    static let emailTest = NSPredicate(format:"SELF MATCHES %@", NSString.init(string: emailRegex) as CVarArg)
+//    
+//    func validateEmail() throws {
+//        if !String.emailTest.evaluate(with: self) {
+//            throw SMTPError(.invalidEmail(self))
+//        }
+//    }
     
-    func validateEmail() throws {
-        if !String.emailTest.evaluate(with: self) {
-            throw SMTPError(.invalidEmail(self))
-        }
+    func isValidEmail() -> Bool {
+        guard !self.lowercased().hasPrefix("mailto:") else { return false }
+        guard let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+        let matches = emailDetector.matches(in: self, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange(location: 0, length: self.characters.count))
+        guard matches.count == 1 else { return false }
+        return matches[0].url?.scheme == "mailto"
     }
 }
