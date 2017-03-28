@@ -108,7 +108,7 @@ private extension SMTPSender {
     
     private func validateEmails(_ emails: [String]) throws {
         for email in emails {
-            if !email.isValidEmail() {
+            if try !email.isValidEmail() {
                 throw SMTPError(.invalidEmail(email))
             }
         }
@@ -143,11 +143,25 @@ private extension String {
 //        }
 //    }
     
-    func isValidEmail() -> Bool {
-        guard !self.lowercased().hasPrefix("mailto:") else { return false }
-        guard let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
-        let matches = emailDetector.matches(in: self, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange(location: 0, length: self.characters.count))
-        guard matches.count == 1 else { return false }
-        return matches[0].url?.scheme == "mailto"
+//    func isValidEmail() -> Bool {
+//        guard !self.lowercased().hasPrefix("mailto:") else { return false }
+//        guard let emailDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }
+//        let matches = emailDetector.matches(in: self, options: NSRegularExpression.MatchingOptions.anchored, range: NSRange(location: 0, length: self.characters.count))
+//        guard matches.count == 1 else { return false }
+//        return matches[0].url?.scheme == "mailto"
+//    }
+    
+    func isValidEmail() throws -> Bool {
+        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
+        
+        let regex = try NSRegularExpression(pattern: emailRegEx)
+        let nsString = self as NSString
+        let results = regex.matches(in: self, range: NSRange(location: 0, length: nsString.length))
+        
+        if results.isEmpty {
+            return false
+        }
+        
+        return true
     }
 }
