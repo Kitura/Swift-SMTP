@@ -37,35 +37,59 @@ class TestLogin: XCTestCase {
     }
     
     func testCramMD5() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testLogin() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testPlain() throws {
-        _ = try SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testSecure() throws {
-        _ = try SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testPortSSL() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.ssl.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.ssl.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testPortTLS() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testPort0() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 0, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 0, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testBadPort() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        waitForExpectations(timeout: timeout)
     }
     
     func testRandomPort() throws {
@@ -78,6 +102,13 @@ class TestLogin: XCTestCase {
             let randomPort = Int32(arc4random_uniform(UInt32(maxPort)) + 1)
         #endif
         
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login(callback: { (_) in
+            self.x.fulfill()
+        })
+        
+        waitForExpectations(timeout: timeout)
     }
+    
+    var x: XCTestExpectation!
+    override func setUp() { x = expectation(description: "") }
 }

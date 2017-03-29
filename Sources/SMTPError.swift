@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import LoggerAPI
 
 enum SMTPError: Error {
     // AuthCredentials
@@ -25,7 +26,7 @@ enum SMTPError: Error {
     case fileNotFound(String)
     
     // SMTPLogin
-    case couldNotConnectToServer(String)
+    case couldNotConnectToServer(String, Int)
     case noSupportedAuthMethods(String)
     case noAccessToken
     
@@ -41,7 +42,7 @@ enum SMTPError: Error {
         case .md5HashChallengeFail: return "Hashing server challenge with MD5 algorithm failed."
         case .base64DecodeFail(let s): return "Error decoding string: \(s)."
         case .fileNotFound(let p): return "File not found at path: \(p)."
-        case .couldNotConnectToServer(let s): return "Could not connect to server: \(s)."
+        case .couldNotConnectToServer(let s, let t): return "Could not connect to server (\(s)) within specified timeout (\(t))."
         case .noSupportedAuthMethods(let hostname): return "No supported authorization methods that matched the preferred authorization methods were found on \(hostname)."
         case .noAccessToken: return "Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token."
         case .convertDataUTF8Fail(let buf): return "Error converting data to string: \(buf)."
@@ -52,6 +53,6 @@ enum SMTPError: Error {
     
     init(_ error: SMTPError, file: String = #file, line: Int = #line) {
         self = error
-        print("[Kitura-SMTP Error]: \(self.localizedDescription) file: \(file) line: \(line).")
+        Log.debug("[Kitura-SMTP Error]: \(self.localizedDescription) file: \(file) line: \(line).")
     }
 }

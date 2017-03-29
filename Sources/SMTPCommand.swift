@@ -18,8 +18,8 @@ import Foundation
 
 enum SMTPCommand {
     case connect
-    case helo(String)
     case ehlo(String)
+    case helo(String)
     case starttls
     case auth(AuthMethod, String?)
     case authUser(String)
@@ -33,8 +33,8 @@ enum SMTPCommand {
     var text: String {
         switch self {
         case .connect: return ""
-        case .helo(let domain): return "HELO \(domain)"
         case .ehlo(let domain): return "EHLO \(domain)"
+        case .helo(let domain): return "HELO \(domain)"
         case .starttls: return "STARTTLS"
         case .auth(let method, let credentials):
             if let credentials = credentials { return "AUTH \(method.rawValue) \(credentials)" }

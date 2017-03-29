@@ -29,7 +29,7 @@ class SMTPSender {
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
-    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSenderQueue")
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     

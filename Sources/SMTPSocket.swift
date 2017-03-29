@@ -71,6 +71,9 @@ struct SMTPSocket {
     }
     
     private static func getResponseCode(_ response: String, command: SMTPCommand) throws -> SMTPResponseCode {
+        guard response.characters.count >= 3 else {
+            throw SMTPError(.badResponse(command.text, response))
+        }
         let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
         guard let responseCode = Int(response[range]), command.expectedCodes.contains(SMTPResponseCode(responseCode)) else {
             throw SMTPError(.badResponse(command.text, response))
@@ -79,6 +82,9 @@ struct SMTPSocket {
     }
     
     private static func getResponseMessage(_ response: String) -> String {
+        if response.characters.count < 4 {
+            return ""
+        }
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]
     }
