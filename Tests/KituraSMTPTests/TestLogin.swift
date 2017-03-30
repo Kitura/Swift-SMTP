@@ -20,7 +20,6 @@ import XCTest
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
-            ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
             ("testSecure", testSecure),
@@ -28,14 +27,6 @@ class TestLogin: XCTestCase {
             ("testPort0", testPort0),
             ("testBadPort", testBadPort)
         ]
-    }
-    
-    func testCramMD5() throws {
-        SMTPLogin(hostname: jSMTP, user: jMail, password: jPassword, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
-            XCTAssertNil(err)
-            self.x.fulfill()
-        }.login()
-        waitForExpectations(timeout: timeout)
     }
     
     func testLogin() throws {
