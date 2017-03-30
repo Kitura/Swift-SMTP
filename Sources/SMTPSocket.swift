@@ -42,13 +42,11 @@ struct SMTPSocket {
     
     func write(_ commandText: String) throws {
         Log.debug("[Kitura-SMTP c]: \(commandText)")
-        print("[Kitura-SMTP c]: \(commandText)")
         _ = try socket.write(from: commandText + CRLF)
     }
     
     func write(_ data: Data) throws {
         Log.debug("[Kitura-SMTP c]: (sending data)")
-        print("[Kitura-SMTP c]: (sending data)")
         _ = try socket.write(from: data)
     }
     
@@ -59,7 +57,6 @@ struct SMTPSocket {
             throw SMTPError(.convertDataUTF8Fail(buf))
         }
         Log.debug("[Kitura-SMTP s]: \(res)")
-        print("[Kitura-SMTP s]: \(res)")
         return res
     }
     

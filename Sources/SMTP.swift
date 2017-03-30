@@ -119,11 +119,11 @@ public struct SMTP {
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken) { (socket, err) in
-            do {
-                try SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
-            } catch {
-                completion?([], mails.map { ($0, error) })
+            if let err = err {
+                completion?([], mails.map { ($0, err) })
+                return
             }
+            SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
             }.login()
     }
 }

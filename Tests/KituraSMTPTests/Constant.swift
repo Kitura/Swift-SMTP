@@ -16,7 +16,7 @@
 
 import KituraSMTP
 
-let timeout: Double = 60
+let timeout: Double = 20
 
 // NOTE: 
 // Sending too many emails from one account may suspend it for some time.

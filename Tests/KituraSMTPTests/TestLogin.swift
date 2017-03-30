@@ -24,9 +24,10 @@ import XCTest
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
-//            ("testCramMD5", testCramMD5),
+            ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
+            ("testBadCredentials", testBadCredentials),
             ("testSecure", testSecure),
             ("testPortSSL", testPortSSL),
             ("testPortTLS", testPortTLS),
@@ -36,13 +37,13 @@ class TestLogin: XCTestCase {
         ]
     }
     
-//    func testCramMD5() throws {
-//        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
-//            XCTAssertNil(err)
-//            self.x.fulfill()
-//        }.login()
-//        waitForExpectations(timeout: timeout)
-//    }
+    func testCramMD5() throws {
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
+            XCTAssertNil(err)
+            self.x.fulfill()
+        }.login()
+        waitForExpectations(timeout: timeout)
+    }
     
     func testLogin() throws {
         SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
@@ -55,6 +56,14 @@ class TestLogin: XCTestCase {
     func testPlain() throws {
         SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
             XCTAssertNil(err)
+            self.x.fulfill()
+            }.login()
+        waitForExpectations(timeout: timeout)
+    }
+    
+    func testBadCredentials() throws {
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: "", port: smtp.port, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
+            XCTAssertNotNil(err)
             self.x.fulfill()
             }.login()
         waitForExpectations(timeout: timeout)

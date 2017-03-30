@@ -33,7 +33,7 @@ class SMTPSender {
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     
-    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) throws {
+    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress

@@ -29,27 +29,25 @@ enum Proto: Port {
     case ssl = 465
 }
 
-typealias LoginCallback = ((SMTPSocket, SMTPError?) -> Void)
+typealias LoginCallback = ((SMTPSocket, Error?) -> Void)
 
 class SMTPLogin {
-    fileprivate let hostname: String
-    fileprivate let user: String
-    fileprivate let password: String
-    fileprivate let port: Port?
-    fileprivate let secure: Bool
-    fileprivate let authMethods: [AuthMethod]
-    fileprivate let domainName: String
-    fileprivate let accessToken: String?
-    fileprivate let timeout = 30
+    private let hostname: String
+    private let user: String
+    private let password: String
+    private let port: Port?
+    private let secure: Bool
+    private let authMethods: [AuthMethod]
+    private let domainName: String
+    private let accessToken: String?
+    private let callback: LoginCallback
     
-    private let portTimeout = 5
-    
-    let g = DispatchGroup()
-    let q = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.helperQueue", attributes: .concurrent)
-    let q2 = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.statusQueue")
-    var loggedIn = false
-    var error: SMTPError
-    let callback: LoginCallback
+    private let group = DispatchGroup()
+    private let loginQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.loginQueue", attributes: .concurrent)
+    private let statusQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.statusQueue")
+    private var done = false
+    private var error: Error
+    private let timeout = 10
     
     init(hostname: String, user: String, password: String, port: Port?, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?, callback: @escaping LoginCallback) {
         self.hostname = hostname
@@ -60,20 +58,47 @@ class SMTPLogin {
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
-        error = SMTPError(.couldNotConnectToServer(hostname, timeout))
         self.callback = callback
+        error = SMTPError(.couldNotConnectToServer(hostname, timeout))
     }
     
     func login() {
-        g.enter()
+        group.enter()
         
-        q.async {
+        loginQueue.async {
             self.loginPorts(ports: self.getPorts(port: self.port))
         }
         
-        if g.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
+        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
             callback(try! SMTPSocket(), error)
         }
+    }
+    
+    private func loginPorts(ports: [Port]) {
+        for port in ports {
+            loginQueue.async {
+                self.loginPort(port: port)
+            }
+        }
+    }
+    
+    private func loginPort(port: Port) {
+        SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login(callback: { (socket, err) in
+            
+            self.statusQueue.sync(flags: .barrier) {
+                if !self.done {
+                    
+                    if let err = err {
+                        self.error = err
+                        return
+                    }
+                    
+                    self.done = true
+                    self.group.leave()
+                    self.callback(socket, nil)
+                }
+            }
+        })
     }
     
     private func getPorts(port: Port?) -> [Port] {
@@ -87,39 +112,6 @@ class SMTPLogin {
         }
         
         return ports
-    }
-    
-    private func loginPorts(ports: [Port]) {
-        for port in ports {
-            q.async {
-                self.loginPort(port: port)
-            }
-        }
-    }
-    
-    private func loginPort(port: Port) {
-        let g2 = DispatchGroup()
-        g2.enter()
-        
-        q.async {
-            SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login(callback: { (socket, err) in
-                
-                // if let err { callback(socket, err) }
-                
-                self.q2.sync(flags: .barrier) {
-                    if !self.loggedIn {
-                        self.loggedIn = true
-                        self.g.leave()
-                        g2.leave()
-                        self.callback(socket, nil)
-                    }
-                }
-            })
-        }
-        
-        if g2.wait(timeout: DispatchTime.now() + .seconds(portTimeout)) == .timedOut {
-            loginPort(port: port)
-        }
     }
 }
 
@@ -152,7 +144,7 @@ class SMTPLoginHelper {
             try login()
             callback(socket, nil)
         } catch {
-            // callback with error
+            callback(socket, error)
         }
     }
 }
