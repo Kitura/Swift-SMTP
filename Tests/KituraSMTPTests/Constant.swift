@@ -14,28 +14,31 @@
  * limitations under the License.
  **/
 
+import Foundation
 import KituraSMTP
+
+#if os(Linux)
+    import Glibc
+#endif
 
 let timeout: Double = 20
 
-// NOTE: 
+// NOTE:
 // Sending too many emails from one account may suspend it for some time.
 // Use different emails when testing extensively.
+
+let gSMTP = "smtp.gmail.com"
+let gMail = "kiturasmtp" + "\(Int.randomEmailNum(4))" + "@gmail.com"
+let gMail2 = "kiturasmtp@gmail.com"
+let gPassword = "ibm12345"
 
 let slSMTP = "smtp.socketlabs.com"
 let slUser = "server16337"
 let slPassword = "w5DRd9c2EPo6f8NQa4"
-let slMail = "quan.vo@ibm.com"
 
-let gSMTP = "smtp.gmail.com"
-let gMail = "kiturasmtp@gmail.com"
-let gMail2 = "kiturasmtp2@gmail.com"
-let gPassword = "ibm12345"
-let gSecure = true
+let smtp = SMTP(hostname: gSMTP, user: gMail, password: gPassword)
 
-let smtp = SMTP(hostname: slSMTP, user: slUser, password: slPassword, secure: false)
-
-let from = User(name: "Dr. Light", email: slMail)
+let from = User(name: "Dr. Light", email: gMail)
 let to = User(name: "Megaman", email: gMail)
 let to2 = User(name: "Roll", email: gMail2)
 
@@ -47,3 +50,17 @@ let imgFilePath = #file
     .dropLast(1)
     .map { String($0) }
     .joined(separator: "/") + "/x.png"
+
+private extension Int {
+    static func randomEmailNum(_ max: Int) -> String {
+        var r: Int
+        #if os(Linux)
+            srand(UInt32(time(nil)))
+            r = Int(random() % 3) + 1
+        #else
+            r = Int(arc4random_uniform(UInt32(3)) + 1)
+        #endif
+        if r == 0 { return "" }
+        return String(r)
+    }
+}

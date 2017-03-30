@@ -22,9 +22,7 @@ import SSLService
     import Dispatch
 #endif
 
-enum Proto: Port {
-    case plain = 25
-    case plainAlt = 2525
+public enum Proto: Port {
     case tls = 587
     case ssl = 465
 }
@@ -35,21 +33,15 @@ class SMTPLogin {
     private let hostname: String
     private let user: String
     private let password: String
-    private let port: Port?
+    private let port: Port
     private let secure: Bool
     private let authMethods: [AuthMethod]
     private let domainName: String
     private let accessToken: String?
     private let callback: LoginCallback
+    private let timeout: Int
     
-    private let group = DispatchGroup()
-    private let loginQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.loginQueue", attributes: .concurrent)
-    private let statusQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.statusQueue")
-    private var done = false
-    private var error: Error
-    private let timeout = 10
-    
-    init(hostname: String, user: String, password: String, port: Port?, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?, callback: @escaping LoginCallback) {
+    init(hostname: String, user: String, password: String, port: Port, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: @escaping LoginCallback) {
         self.hostname = hostname
         self.user = user
         self.password = password
@@ -58,68 +50,26 @@ class SMTPLogin {
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
+        self.timeout = timeout
         self.callback = callback
-        error = SMTPError(.couldNotConnectToServer(hostname, timeout))
     }
     
     func login() {
+        let group = DispatchGroup()
+        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.queue", attributes: .concurrent)
+
         group.enter()
         
-        loginQueue.async {
-            self.loginPorts(ports: self.getPorts(port: self.port))
+        queue.async {
+            SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
+                group.leave()
+                self.callback(socket, err)
+            }
         }
         
         if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
-            callback(try! SMTPSocket(), error)
+            callback(try! SMTPSocket(), SMTPError(.couldNotConnectToServer(hostname, timeout)))
         }
-    }
-    
-    private func loginPorts(ports: [Port]) {
-        for port in ports {
-            loginQueue.async {
-                self.loginPort(port: port)
-            }
-        }
-    }
-    
-    private func loginPort(port: Port) {
-        SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login(callback: { (socket, err) in
-            
-            self.statusQueue.sync(flags: .barrier) {
-                if !self.done {
-                    
-                    if let err = err as? SMTPError {
-                        if case .badResponse = err {
-                            self.done = true
-                            self.group.leave()
-                            self.callback(socket, err)
-                            return
-                        }
-                    }
-                    
-                    if let err = err {
-                        self.error = err
-                        return
-                    }
-                    
-                    self.done = true
-                    self.group.leave()
-                    self.callback(socket, nil)
-                }
-            }
-        })
-    }
-    
-    private func getPorts(port: Port?) -> [Port] {
-        var ports = [Proto.plain.rawValue, Proto.plainAlt.rawValue, Proto.tls.rawValue]
-        
-        if let port = port {
-            if !ports.contains(port) {
-                ports.append(port)
-            }
-        }
-        
-        return ports
     }
 }
 
@@ -194,6 +144,7 @@ private extension SMTPLoginHelper {
     private func starttls() throws -> [SMTPResponse] {
         let _: Void = try starttls()
         socket.close()
+        socket = try SMTPSocket()
         
         let root = #file
             .characters
@@ -213,9 +164,7 @@ private extension SMTPLoginHelper {
             let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         #endif
         
-        let delegate = try SSLService(usingConfiguration: config)
-        socket = try SMTPSocket()
-        socket.socket.delegate = delegate
+        socket.socket.delegate = try SSLService(usingConfiguration: config)
         try connect(Proto.ssl.rawValue)
         
         return try getServerInfo()

@@ -34,11 +34,12 @@ public struct SMTP {
     let hostname: String
     let user: String
     let password: String
-    let port: Port?
+    let port: Port
     let secure: Bool
     let authMethods: [AuthMethod]
     let domainName: String
     let accessToken: String?
+    let timeout: Int
     
     /// Initializes an `SMTP` instance.
     ///
@@ -47,9 +48,7 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. You will need to enter a
-    ///             custom port if SMTP cannot connect to your server on ports
-    ///             25, 2525, or 587. (optional)
+    ///     - port: Port to connect to the server on. Defaults to `587`.
     ///     - secure: Indicates whether to connect using TLS if available.
     ///               Defaults to `true`.
     ///     - authMethods: Authentication methods to use to log in to the
@@ -58,12 +57,14 @@ public struct SMTP {
     ///     - domainName: Client domain name used when communicating with the
     ///                   server. Defaults to `localhost`.
     ///     - accessToken: Access token used if logging in through XOAUTH2.
+    ///     - timeout: How long to try connecting to the server to. Defaults
+    ///                to `10` seconds.
     ///
     /// - note:
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, user: String, password: String, port: Port? = nil, secure: Bool = true, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
+    public init(hostname: String, user: String, password: String, port: Port = Proto.tls.rawValue, secure: Bool = true, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
         self.hostname = hostname
         self.user = user
         self.password = password
@@ -75,6 +76,7 @@ public struct SMTP {
         
         self.domainName = domainName
         self.accessToken = accessToken
+        self.timeout = timeout
     }
     
     /// Send an email.
@@ -118,7 +120,7 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken) { (socket, err) in
+        SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
             if let err = err {
                 completion?([], mails.map { ($0, err) })
                 return

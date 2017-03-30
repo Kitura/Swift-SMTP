@@ -43,10 +43,6 @@ class SMTPSender {
     func resume() {
         queue.async { self.sendNext() }
     }
-    
-    deinit {
-        socket.close()
-    }
 }
 
 private extension SMTPSender {
@@ -54,7 +50,6 @@ private extension SMTPSender {
         if pending.isEmpty {
             completion?(sent, failed)
             try? quit()
-            cleanUp()
             return
         }
         
@@ -71,11 +66,6 @@ private extension SMTPSender {
         }
         
         queue.async { self.sendNext() }
-    }
-    
-    func cleanUp() {
-        progress = nil
-        completion = nil
     }
     
     func quit() throws {
