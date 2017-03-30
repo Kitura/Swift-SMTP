@@ -47,19 +47,21 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. Defaults to 25. If SMTP
-    ///             cannot connect within 10 seconds, tries the next port. Order
-    ///             is [user given] > 25 > 2525 > 587.
+    ///     - port: Port to connect to the server on. You will need to enter a
+    ///             custom port if SMTP cannot connect to your server on ports
+    ///             25, 2525, or 587. (optional)
+    ///     - secure: Indicates whether to connect using TLS if available.
+    ///               Defaults to `true`.
     ///     - authMethods: Authentication methods to use to log in to the
     ///                    server. Defaults to all supported ones--currently
     ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
     ///     - domainName: Client domain name used when communicating with the
-    ///                   server. Defaults to "localhost".
+    ///                   server. Defaults to `localhost`.
     ///     - accessToken: Access token used if logging in through XOAUTH2.
     ///
     /// - note:
-    ///     Some servers like Gmail support IPv6, and if your network does not, 
-    ///     you will first attempt to connect via IPv6, then timeout, and fall 
+    ///     Some servers like Gmail support IPv6, and if your network does not,
+    ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
     public init(hostname: String, user: String, password: String, port: Port? = nil, secure: Bool = true, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil) {
         self.hostname = hostname
@@ -116,11 +118,12 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        do {
-            let socket = try SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken).login()
-            try SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
-        } catch {
-            completion?([], mails.map { ($0, error) })
-        }
+        SMTPLogin(hostname: hostname, user: user, password: password, port: port, secure: secure, authMethods: authMethods, domainName: domainName, accessToken: accessToken) { (socket, err) in
+            if let err = err {
+                completion?([], mails.map { ($0, err) })
+                return
+            }
+            SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).resume()
+            }.login()
     }
 }

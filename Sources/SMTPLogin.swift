@@ -29,20 +29,27 @@ enum Proto: Port {
     case ssl = 465
 }
 
+typealias LoginCallback = ((SMTPSocket, Error?) -> Void)
+
 class SMTPLogin {
-    fileprivate let hostname: String
-    fileprivate let user: String
-    fileprivate let password: String
-    fileprivate let port: Port?
-    fileprivate let secure: Bool
-    fileprivate let authMethods: [AuthMethod]
-    fileprivate let domainName: String
-    fileprivate let accessToken: String?
-    fileprivate var socket: SMTPSocket
+    private let hostname: String
+    private let user: String
+    private let password: String
+    private let port: Port?
+    private let secure: Bool
+    private let authMethods: [AuthMethod]
+    private let domainName: String
+    private let accessToken: String?
+    private let callback: LoginCallback
     
+    private let group = DispatchGroup()
+    private let loginQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.loginQueue", attributes: .concurrent)
+    private let statusQueue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.statusQueue")
+    private var done = false
+    private var error: Error
     private let timeout = 10
     
-    init(hostname: String, user: String, password: String, port: Port?, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
+    init(hostname: String, user: String, password: String, port: Port?, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?, callback: @escaping LoginCallback) {
         self.hostname = hostname
         self.user = user
         self.password = password
@@ -51,47 +58,108 @@ class SMTPLogin {
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
-        socket = try SMTPSocket()
+        self.callback = callback
+        error = SMTPError(.couldNotConnectToServer(hostname, timeout))
     }
     
-    func login() throws -> SMTPSocket {
-        var ports = [Proto.plain.rawValue, Proto.plainAlt.rawValue, Proto.tls.rawValue]
-        if let port = port {
-            if let i = ports.index(of: port) {
-                ports.remove(at: i)
-            }
-            ports = [port] + ports
+    func login() {
+        group.enter()
+        
+        loginQueue.async {
+            self.loginPorts(ports: self.getPorts(port: self.port))
         }
         
+        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
+            callback(try! SMTPSocket(), error)
+        }
+    }
+    
+    private func loginPorts(ports: [Port]) {
         for port in ports {
-            let group = DispatchGroup()
-            let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLoginQueue")
-
-            group.enter()
-            queue.async {
-                do {
-                    try self.connect(port)
-                    group.leave()
-                } catch {}
-            }
-            
-            if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
-                socket.close()
-                socket = try SMTPSocket()
-            }
-            
-            if socket.socket.isConnected {
-                let _: Void = try self.login()
-                return socket
+            loginQueue.async {
+                self.loginPort(port: port)
             }
         }
-        throw SMTPError(.couldNotConnectToServer(hostname))
+    }
+    
+    private func loginPort(port: Port) {
+        SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login(callback: { (socket, err) in
+            
+            self.statusQueue.sync(flags: .barrier) {
+                if !self.done {
+                    
+                    if let err = err as? SMTPError {
+                        if case .badResponse = err {
+                            self.done = true
+                            self.group.leave()
+                            self.callback(socket, err)
+                            return
+                        }
+                    }
+                    
+                    if let err = err {
+                        self.error = err
+                        return
+                    }
+                    
+                    self.done = true
+                    self.group.leave()
+                    self.callback(socket, nil)
+                }
+            }
+        })
+    }
+    
+    private func getPorts(port: Port?) -> [Port] {
+        var ports = [Proto.plain.rawValue, Proto.plainAlt.rawValue, Proto.tls.rawValue]
+        
+        if let port = port {
+            if !ports.contains(port) {
+                ports.append(port)
+            }
+        }
+        
+        return ports
     }
 }
 
-private extension SMTPLogin {
+class SMTPLoginHelper {
+    fileprivate let hostname: String
+    fileprivate let user: String
+    fileprivate let password: String
+    fileprivate let port: Port
+    fileprivate let secure: Bool
+    fileprivate let authMethods: [AuthMethod]
+    fileprivate let domainName: String
+    fileprivate let accessToken: String?
+    fileprivate var socket: SMTPSocket
+    
+    init(hostname: String, user: String, password: String, port: Port, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?) {
+        self.hostname = hostname
+        self.user = user
+        self.password = password
+        self.port = port
+        self.secure = secure
+        self.authMethods = authMethods
+        self.domainName = domainName
+        self.accessToken = accessToken
+        socket = try! SMTPSocket()
+    }
+    
+    func login(callback: LoginCallback) {
+        do {
+            try connect(port)
+            try login()
+            callback(socket, nil)
+        } catch {
+            callback(socket, error)
+        }
+    }
+}
+
+private extension SMTPLoginHelper {
     func connect(_ port: Port) throws {
-        try socket.socket.connect(to: hostname, port: port)
+        try self.socket.socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
     
@@ -133,7 +201,7 @@ private extension SMTPLogin {
             .dropLast(1)
             .map { String($0) }
             .joined(separator: "/")
-
+        
         #if os(Linux)
             let cert = root + "/cert.pem"
             let key = root + "/key.pem"
@@ -144,7 +212,7 @@ private extension SMTPLogin {
             let selfSignedCerts = true
             let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
         #endif
-
+        
         let delegate = try SSLService(usingConfiguration: config)
         socket = try SMTPSocket()
         socket.socket.delegate = delegate
@@ -192,7 +260,7 @@ private extension SMTPLogin {
     }
 }
 
-private extension SMTPLogin {
+private extension SMTPLoginHelper {
     func ehlo() throws -> [SMTPResponse] {
         return try socket.send(.ehlo(domainName))
     }

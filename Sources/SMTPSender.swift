@@ -29,11 +29,11 @@ class SMTPSender {
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
-    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSenderQueue")
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     
-    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) throws {
+    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress
@@ -133,7 +133,7 @@ private extension SMTPSender {
     }
 }
 
-#if os(Linux)
+#if os(Linux) && !swift(>=3.1)
     private typealias Regex = RegularExpression
 #else
     private typealias Regex = NSRegularExpression
