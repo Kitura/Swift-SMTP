@@ -17,6 +17,10 @@
 import XCTest
 @testable import KituraSMTP
 
+#if os(Linux)
+    import Glibc
+#endif
+
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
@@ -28,7 +32,8 @@ class TestLogin: XCTestCase {
             ("testPortSSL", testPortSSL),
             ("testPortTLS", testPortTLS),
             ("testPort0", testPort0),
-            ("testBadPort", testBadPort)
+            ("testBadPort", testBadPort),
+            ("testRandomPort", testRandomPort)
         ]
     }
     
@@ -98,6 +103,23 @@ class TestLogin: XCTestCase {
     
     func testBadPort() throws {
         SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
+            XCTAssertNil(err)
+            self.x.fulfill()
+            }.login()
+        waitForExpectations(timeout: timeout)
+    }
+    
+    func testRandomPort() throws {
+        let maxPort = 65535
+        
+        #if os(Linux)
+            srand(UInt32(time(nil)))
+            let randomPort = Int32(random() % maxPort) + 1
+        #else
+            let randomPort = Int32(arc4random_uniform(UInt32(maxPort)) + 1)
+        #endif
+        
+        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
             }.login()
