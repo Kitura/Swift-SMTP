@@ -32,9 +32,9 @@ let gMail = "kiturasmtp" + "\(Int.randomEmailNum(4))" + "@gmail.com"
 let gMail2 = "kiturasmtp@gmail.com"
 let gPassword = "ibm12345"
 
-let slSMTP = "smtp.socketlabs.com"
-let slUser = "server16337"
-let slPassword = "w5DRd9c2EPo6f8NQa4"
+let jSMTP = "smtp.juno.com"
+let jMail = "kitura-smtp@juno.com"
+let jPassword = "ibm12345"
 
 let smtp = SMTP(hostname: gSMTP, user: gMail, password: gPassword)
 

@@ -31,7 +31,7 @@ class TestLogin: XCTestCase {
     }
     
     func testCramMD5() throws {
-        SMTPLogin(hostname: slSMTP, user: slUser, password: slPassword, port: smtp.port, secure: false, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
+        SMTPLogin(hostname: jSMTP, user: jMail, password: jPassword, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
         }.login()
