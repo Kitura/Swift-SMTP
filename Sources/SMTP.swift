@@ -47,9 +47,9 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. Defaults to 25. If SMTP
-    ///             cannot connect within 10 seconds, tries the next port. Order
-    ///             is [user given] > 25 > 2525 > 587.
+    ///     - port: Port to connect to the server on. You will need to enter a
+    ///             custom port if SMTP cannot connect to your server on ports
+    ///             25, 2525, or 587. (optional)
     ///     - secure: Indicates whether to connect using TLS if available.
     ///               Defaults to `true`.
     ///     - authMethods: Authentication methods to use to log in to the

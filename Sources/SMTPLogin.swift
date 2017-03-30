@@ -88,6 +88,15 @@ class SMTPLogin {
             self.statusQueue.sync(flags: .barrier) {
                 if !self.done {
                     
+                    if let err = err as? SMTPError {
+                        if case .badResponse = err {
+                            self.done = true
+                            self.group.leave()
+                            self.callback(socket, err)
+                            return
+                        }
+                    }
+                    
                     if let err = err {
                         self.error = err
                         return
@@ -105,10 +114,9 @@ class SMTPLogin {
         var ports = [Proto.plain.rawValue, Proto.plainAlt.rawValue, Proto.tls.rawValue]
         
         if let port = port {
-            if let i = ports.index(of: port) {
-                ports.remove(at: i)
+            if !ports.contains(port) {
+                ports.append(port)
             }
-            ports = [port] + ports
         }
         
         return ports
