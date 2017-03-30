@@ -133,19 +133,13 @@ private extension SMTPSender {
     }
 }
 
-#if os(Linux)
-    private typealias Regex = RegularExpression
-#else
-    private typealias Regex = NSRegularExpression
-#endif
-
-private extension Regex {
-    static let emailRegex = try! Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
+private extension NSRegularExpression {
+    static let emailRegex = try! NSRegularExpression(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
 }
 
 private extension String {
     var isValidEmail: Bool {
         let range = NSMakeRange(0, utf16.count)
-        return !Regex.emailRegex.matches(in: self, options: [], range: range).isEmpty
+        return !NSRegularExpression.emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }
