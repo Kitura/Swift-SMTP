@@ -77,8 +77,8 @@ class TestSender: XCTestCase {
         smtp.send([mail1, mail2], progress: { (_, err) in
             XCTAssertNil(err)
         }) { (sent, failed) in
-            XCTAssertEqual(sent.count, 2)
             XCTAssert(failed.isEmpty)
+            XCTAssertEqual(sent.count, 2)
             self.x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -118,11 +118,11 @@ class TestSender: XCTestCase {
         let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
         
         smtp.send([badMail, goodMail]) { (sent, failed) in
-            XCTAssertEqual(sent.count, 1)
-            XCTAssertEqual(sent[0].id, goodMail.id)
             XCTAssertEqual(failed.count, 1)
             XCTAssertEqual(failed[0].0.id, badMail.id)
             XCTAssertNotNil(failed[0].1)
+            XCTAssertEqual(sent.count, 1)
+            XCTAssertEqual(sent[0].id, goodMail.id)
             self.x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
