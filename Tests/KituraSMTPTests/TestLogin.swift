@@ -22,7 +22,6 @@ class TestLogin: XCTestCase {
         return [
             ("testLogin", testLogin),
             ("testPlain", testPlain),
-            ("testSecure", testSecure),
             ("testBadCredentials", testBadCredentials),
             ("testPort0", testPort0),
             ("testBadPort", testBadPort)
@@ -30,54 +29,49 @@ class TestLogin: XCTestCase {
     }
     
     func testLogin() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
+        SMTPLogin(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
-            }.login()
-        waitForExpectations(timeout: timeout)
+        }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
     func testPlain() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
+        SMTPLogin(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
             }.login()
-        waitForExpectations(timeout: timeout)
-    }
-    
-    func testSecure() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
-            XCTAssertNil(err)
-            self.x.fulfill()
-            }.login()
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testBadCredentials() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: "", port: smtp.port, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
+        SMTPLogin(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .badResponse = err {
                 self.x.fulfill()
             } else {
                 XCTFail()
             }
             }.login()
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testPort0() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 0, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
+        SMTPLogin(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNotNil(err)
             self.x.fulfill()
             }.login()
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testBadPort() throws {
-        SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken, timeout: smtp.timeout) { (_, err) in
-            XCTAssertNotNil(err)
-            self.x.fulfill()
+        SMTPLogin(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
+                self.x.fulfill()
+            } else {
+                XCTFail()
+            }
             }.login()
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     var x: XCTestExpectation!

@@ -41,7 +41,7 @@ class TestSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMultipleRecipients() {
@@ -50,7 +50,7 @@ class TestSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMailWithCc() {
@@ -59,7 +59,7 @@ class TestSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMailWithBcc() {
@@ -68,7 +68,7 @@ class TestSender: XCTestCase {
             XCTAssertNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMultipleMails() {
@@ -81,7 +81,7 @@ class TestSender: XCTestCase {
             XCTAssert(failed.isEmpty)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMailsConcurrently() {
@@ -99,7 +99,7 @@ class TestSender: XCTestCase {
         
         group.wait()
         x.fulfill()
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testBadEmail() {
@@ -109,7 +109,7 @@ class TestSender: XCTestCase {
             XCTAssertNotNil(err)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     func testSendMultipleMailsWithFail() {
@@ -125,7 +125,7 @@ class TestSender: XCTestCase {
             XCTAssertNotNil(failed[0].1)
             self.x.fulfill()
         }
-        waitForExpectations(timeout: timeout)
+        waitForExpectations(timeout: testDuration)
     }
     
     var x: XCTestExpectation!

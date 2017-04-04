@@ -22,31 +22,26 @@ import SSLService
     import Dispatch
 #endif
 
-public enum Proto: Port {
-    case tls = 587
-    case ssl = 465
-}
+typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
 
-typealias LoginCallback = ((SMTPSocket, Error?) -> Void)
-
-class SMTPLogin {
+struct SMTPLogin {
     private let hostname: String
     private let user: String
     private let password: String
     private let port: Port
-    private let secure: Bool
+    private let ssl: SSL?
     private let authMethods: [AuthMethod]
     private let domainName: String
     private let accessToken: String?
-    private let callback: LoginCallback
     private let timeout: Int
+    private let callback: LoginCallback
     
-    init(hostname: String, user: String, password: String, port: Port, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: @escaping LoginCallback) {
+    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: @escaping LoginCallback) {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
-        self.secure = secure
+        self.ssl = ssl
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
@@ -55,20 +50,27 @@ class SMTPLogin {
     }
     
     func login() {
-        let group = DispatchGroup()
         let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.queue", attributes: .concurrent)
-
-        group.enter()
-        
         queue.async {
-            SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, secure: self.secure, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
-                group.leave()
-                self.callback(socket, err)
+            
+            let group = DispatchGroup()
+            group.enter()
+            
+            queue.async {
+                do {
+                    try SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, ssl: self.ssl, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
+                        group.leave()
+                        self.callback(socket, err)
+                    }
+                } catch {
+                    group.leave()
+                    self.callback(nil, error)
+                }
             }
-        }
-        
-        if group.wait(timeout: DispatchTime.now() + .seconds(timeout)) == .timedOut {
-            callback(try! SMTPSocket(), SMTPError(.couldNotConnectToServer(hostname, timeout)))
+            
+            if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
+                self.callback(nil, SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
+            }
         }
     }
 }
@@ -78,22 +80,22 @@ class SMTPLoginHelper {
     fileprivate let user: String
     fileprivate let password: String
     fileprivate let port: Port
-    fileprivate let secure: Bool
+    fileprivate let ssl: SSL?
     fileprivate let authMethods: [AuthMethod]
     fileprivate let domainName: String
     fileprivate let accessToken: String?
     fileprivate var socket: SMTPSocket
     
-    init(hostname: String, user: String, password: String, port: Port, secure: Bool, authMethods: [AuthMethod], domainName: String, accessToken: String?) {
+    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
         self.user = user
         self.password = password
         self.port = port
-        self.secure = secure
+        self.ssl = ssl
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
-        socket = try! SMTPSocket()
+        socket = try SMTPSocket()
     }
     
     func login(callback: LoginCallback) {
@@ -102,7 +104,7 @@ class SMTPLoginHelper {
             try login()
             callback(socket, nil)
         } catch {
-            callback(socket, error)
+            callback(nil, error)
         }
     }
 }
@@ -115,9 +117,13 @@ private extension SMTPLoginHelper {
     
     func login() throws {
         var serverInfo = try getServerInfo()
-        if try secure && starttls(serverInfo) {
-            serverInfo = try starttls()
+        
+        if let ssl = ssl {
+            if try doesStarttls(serverInfo) {
+                serverInfo = try starttls(ssl)
+            }
         }
+        
         switch try getAuthMethod(serverInfo) {
         case .cramMD5: try loginCramMD5()
         case .login: try loginLogin()
@@ -131,7 +137,7 @@ private extension SMTPLoginHelper {
         catch { return try helo() }
     }
     
-    private func starttls(_ serverInfo: [SMTPResponse]) throws -> Bool {
+    private func doesStarttls(_ serverInfo: [SMTPResponse]) throws -> Bool {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
@@ -141,31 +147,38 @@ private extension SMTPLoginHelper {
         return false
     }
     
-    private func starttls() throws -> [SMTPResponse] {
-        let _: Void = try starttls()
+    private func starttls(_ ssl: SSL) throws -> [SMTPResponse] {
+        try starttls()
         socket.close()
         socket = try SMTPSocket()
         
-        let root = #file
-            .characters
-            .split(separator: "/", omittingEmptySubsequences: false)
-            .dropLast(1)
-            .map { String($0) }
-            .joined(separator: "/")
-        
         #if os(Linux)
-            let cert = root + "/cert.pem"
-            let key = root + "/key.pem"
-            let config = SSLService.Configuration(withCACertificateFilePath: nil, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: true)
+            switch ssl.config {
+            case .caCertificatePath(ca: let ca, cert: let cert, key: let key, selfSigned: let selfSigned, cipher: let cipher):
+                let config = SSLService.Configuration(withCACertificateFilePath: ca, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
+                
+            case .caCertificateDirectory(ca: let ca, cert: let cert, key: let key, selfSigned: let selfSigned, cipher: let cipher):
+                let config = SSLService.Configuration(withCACertificateDirectory: ca, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
+                
+            case .pemCertificate(pem: let pem, selfSigned: let selfSigned, cipher: let cipher):
+                let config = SSLService.Configuration(withPEMCertificateString: pem, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
+                
+            case .cipherSuite(cipher: let cipher):
+                let config = SSLService.Configuration(withCipherSuite: cipher)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
+            }
         #else
-            let chainFilePath = root + "/cert.pfx"
-            let chainFilePassword = "kitura"
-            let selfSignedCerts = true
-            let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: chainFilePassword, usingSelfSignedCerts: selfSignedCerts)
+            switch ssl.config {
+            case .chainFile(chainFilePath: let chainFilePath, password: let password, selfSigned: let selfSigned, cipherSuite: let cipherSuite):
+                let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: password, usingSelfSignedCerts: selfSigned, cipherSuite: cipherSuite)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
+            }
         #endif
-        
-        socket.socket.delegate = try SSLService(usingConfiguration: config)
-        try connect(Proto.ssl.rawValue)
+
+        try connect(Ports.ssl.rawValue)
         
         return try getServerInfo()
     }

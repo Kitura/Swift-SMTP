@@ -40,7 +40,7 @@ class SMTPSender {
         self.completion = completion
     }
     
-    func resume() {
+    func send() {
         queue.async { self.sendNext() }
     }
 }

@@ -146,22 +146,22 @@ extension Attachment {
         var result = [String: String]()
         switch type {
             
-        case .file(let fileProperty):
-            result["CONTENT-TYPE"] = fileProperty.mime
-            var attachmentDisposition = fileProperty.inline ? "inline" : "attachment"
-            if let mime = fileProperty.name.mimeEncoded {
+        case .file(let file):
+            result["CONTENT-TYPE"] = file.mime
+            var attachmentDisposition = file.inline ? "inline" : "attachment"
+            if let mime = file.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
             result["CONTENT-DISPOSITION"] = attachmentDisposition
             
-        case .html(let htmlProperty):
-            result["CONTENT-TYPE"] = "text/html; charset=\(htmlProperty.characterSet)"
+        case .html(let html):
+            result["CONTENT-TYPE"] = "text/html; charset=\(html.characterSet)"
             result["CONTENT-DISPOSITION"] = "inline"
             
-        case .data(let dataProperty):
-            result["CONTENT-TYPE"] = dataProperty.mime
-            var attachmentDisposition = dataProperty.inline ? "inline" : "attachment"
-            if let mime = dataProperty.name.mimeEncoded {
+        case .data(let data):
+            result["CONTENT-TYPE"] = data.mime
+            var attachmentDisposition = data.inline ? "inline" : "attachment"
+            if let mime = data.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
             result["CONTENT-DISPOSITION"] = attachmentDisposition

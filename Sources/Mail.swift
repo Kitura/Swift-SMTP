@@ -74,7 +74,7 @@ extension Mail {
         }
         
         fields["SUBJECT"] = subject.mimeEncoded ?? ""
-        fields["MIME-VERSION"] = "1.0 (SMTP-Kitura)"
+        fields["MIME-VERSION"] = "1.0 (Kitura-SMTP)"
         
         if let additionalHeaders = additionalHeaders {
             for (key, value) in additionalHeaders {
