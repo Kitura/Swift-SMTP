@@ -26,9 +26,8 @@ public struct SSL {
             case caCertificateDirectory(ca: String?, cert: String?, key: String?, selfSigned: Bool, cipher: String?)
             case pemCertificate(pem: String, selfSigned: Bool, cipher: String?)
             case cipherSuite(cipher: String?)
-        #else
-            case chainFile(chainFilePath: String?, password: String?, selfSigned: Bool, cipherSuite: String?)
         #endif
+            case chainFile(chainFilePath: String?, password: String?, selfSigned: Bool, cipherSuite: String?)
     }
     
     #if os(Linux)
@@ -41,7 +40,7 @@ public struct SSL {
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
     public init(withCACertificateFilePath caCertificateFilePath: String?, usingCertificateFile certificateFilePath: String?, withKeyFile keyFilePath: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = Config.caCertificatePath(ca: caCertificateFilePath, cert: certificateFilePath, key: keyFilePath, selfSigned: selfSigned, cipher: cipherSuite)
+        config = .caCertificatePath(ca: caCertificateFilePath, cert: certificateFilePath, key: keyFilePath, selfSigned: selfSigned, cipher: cipherSuite)
     }
     
     /// Initialize a configuration using a `CA Certificate` directory.
@@ -55,7 +54,7 @@ public struct SSL {
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
     public init(withCACertificateDirectory caCertificateDirPath: String?, usingCertificateFile certificateFilePath: String?, withKeyFile keyFilePath: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = Config.caCertificateDirectory(ca: caCertificateDirPath, cert: certificateFilePath, key: keyFilePath, selfSigned: selfSigned, cipher: cipherSuite)
+        config = .caCertificateDirectory(ca: caCertificateDirPath, cert: certificateFilePath, key: keyFilePath, selfSigned: selfSigned, cipher: cipherSuite)
     }
 
     /// Initialize a configuration using a `PEM formatted certificate in String form`.
@@ -65,7 +64,7 @@ public struct SSL {
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
     public init(withPEMCertificateString certificateString: String, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = Config.pemCertificate(pem: certificateString, selfSigned: selfSigned, cipher: cipherSuite)
+        config = .pemCertificate(pem: certificateString, selfSigned: selfSigned, cipher: cipherSuite)
     }
     
     /// Initialize a configuration with no backing certificates.
@@ -73,10 +72,10 @@ public struct SSL {
     /// - Parameters:
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
     public init(withCipherSuite cipherSuite: String?) {
-        config = Config.cipherSuite(cipher: cipherSuite)
+        config = .cipherSuite(cipher: cipherSuite)
     }
+    #endif
     
-    #else
     /// Initialize a configuration using a `Certificate Chain File`.
     ///
     /// *Note:* If using a certificate chain file, the certificates must be in PEM format and must be sorted starting with the subject's certificate (actual client or server certificate), followed by intermediate CA certificates if applicable, and ending at the highest level (root) CA.
@@ -87,7 +86,6 @@ public struct SSL {
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
     public init(withChainFilePath chainFilePath: String? = nil, withPassword password: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = Config.chainFile(chainFilePath: chainFilePath, password: password, selfSigned: selfSigned, cipherSuite: cipherSuite)
+        config = .chainFile(chainFilePath: chainFilePath, password: password, selfSigned: selfSigned, cipherSuite: cipherSuite)
     }
-    #endif
 }

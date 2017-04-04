@@ -16,7 +16,7 @@
 
 import Foundation
 
-struct SMTPDataSender {
+struct DataSender {
     let mail: Mail
     let socket: SMTPSocket
     
@@ -36,7 +36,7 @@ struct SMTPDataSender {
     }
 }
 
-private extension SMTPDataSender {
+private extension DataSender {
     func sendHeader() throws {
         try send(mail.headers)
     }
@@ -107,8 +107,8 @@ private extension SMTPDataSender {
         
         try send("")
         
-        if let related = attachment.related {
-            try sendAttachments(related, boundary: relatedBoundary)
+        if let relatedAttachments = attachment.relatedAttachments {
+            try sendAttachments(relatedAttachments, boundary: relatedBoundary)
         }
     }
     
@@ -132,7 +132,7 @@ private extension SMTPDataSender {
     }
 }
 
-private extension SMTPDataSender {
+private extension DataSender {
     func send(_ text: String) throws {
         try socket.write(text)
     }

@@ -126,13 +126,13 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
             if let err = err {
                 completion?([], mails.map { ($0, err) })
                 return
             }
             if let socket = socket {
-                SMTPSender(socket: socket, pending: mails, progress: progress, completion: completion).send()
+                Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
                 return
             }
             completion?([], mails.map { ($0, SMTPError(.unknownError)) })

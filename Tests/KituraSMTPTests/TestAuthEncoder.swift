@@ -17,8 +17,8 @@
 import XCTest
 @testable import KituraSMTP
 
-class TestAuthCredentials: XCTestCase {
-    static var allTests : [(String, (TestAuthCredentials) -> () throws -> Void)] {
+class TestAuthEncoder: XCTestCase {
+    static var allTests : [(String, (TestAuthEncoder) -> () throws -> Void)] {
         return [
             ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
@@ -34,7 +34,7 @@ class TestAuthCredentials: XCTestCase {
         
         // http://busylog.net/cram-md5-online-generator/
         let expected = "Zm9vQGJhci5jb20gMjhmOGNhMDI0YjBlNjE4YWUzNWQ0NmRiODExNzU2NjM="
-        let result = try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password)
+        let result = try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password)
         XCTAssertEqual(result, expected)
     }
     
@@ -43,7 +43,7 @@ class TestAuthCredentials: XCTestCase {
         let password = "password"
         
         let expected = ("Zm9vQGJhci5jb20=", "cGFzc3dvcmQ=")
-        let result = AuthCredentials.login(user: user, password: password)
+        let result = AuthEncoder.login(user: user, password: password)
         XCTAssertEqual(result.encodedUser, expected.0)
         XCTAssertEqual(result.encodedPassword, expected.1)
     }
@@ -54,7 +54,7 @@ class TestAuthCredentials: XCTestCase {
         
         // echo -ne "\0foo@bar.com\0password"|base64
         let expected = "AHRlc3QAdGVzdHBhc3M="
-        let result = AuthCredentials.plain(user: user, password: password)
+        let result = AuthEncoder.plain(user: user, password: password)
         XCTAssertEqual(result, expected)
     }
     
@@ -64,7 +64,7 @@ class TestAuthCredentials: XCTestCase {
         
         // echo -ne "user=foo@bar.com\001auth=Bearer token\001\001"|base64
         let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
-        let result = AuthCredentials.xoauth2(user: user, accessToken: token)
+        let result = AuthEncoder.xoauth2(user: user, accessToken: token)
         XCTAssertEqual(result, expected)
     }
 }

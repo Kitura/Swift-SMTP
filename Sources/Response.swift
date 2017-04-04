@@ -16,31 +16,31 @@
 
 import Foundation
 
-struct SMTPResponse {
-    let code: SMTPResponseCode
+struct Response {
+    let code: ResponseCode
     let message: String
     let response: String
     
-    init(code: SMTPResponseCode, message: String, response: String) {
+    init(code: ResponseCode, message: String, response: String) {
         self.code = code
         self.message = message
         self.response = response
     }
 }
 
-struct SMTPResponseCode: Equatable {
+struct ResponseCode: Equatable {
     let rawValue: Int
     init(_ value: Int) { rawValue = value }
     
-    static let serviceReady = SMTPResponseCode(220)
-    static let connectionClosing = SMTPResponseCode(221)
-    static let authSucceeded = SMTPResponseCode(235)
-    static let commandOK = SMTPResponseCode(250)
-    static let willForward = SMTPResponseCode(251)
-    static let containingChallenge = SMTPResponseCode(334)
-    static let startMailInput = SMTPResponseCode(354)
+    static let serviceReady = ResponseCode(220)
+    static let connectionClosing = ResponseCode(221)
+    static let authSucceeded = ResponseCode(235)
+    static let commandOK = ResponseCode(250)
+    static let willForward = ResponseCode(251)
+    static let containingChallenge = ResponseCode(334)
+    static let startMailInput = ResponseCode(354)
     
-    public static func ==(lhs: SMTPResponseCode, rhs: SMTPResponseCode) -> Bool {
+    public static func ==(lhs: ResponseCode, rhs: ResponseCode) -> Bool {
         return lhs.rawValue == rhs.rawValue
     }
 }

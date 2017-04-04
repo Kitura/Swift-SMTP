@@ -24,7 +24,7 @@ import SSLService
 
 typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
 
-struct SMTPLogin {
+struct Login {
     private let hostname: String
     private let user: String
     private let password: String
@@ -50,7 +50,7 @@ struct SMTPLogin {
     }
     
     func login() {
-        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPLogin.queue", attributes: .concurrent)
+        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Login.queue", attributes: .concurrent)
         queue.async {
             
             let group = DispatchGroup()
@@ -58,7 +58,7 @@ struct SMTPLogin {
             
             queue.async {
                 do {
-                    try SMTPLoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, ssl: self.ssl, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
+                    try LoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, ssl: self.ssl, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
                         group.leave()
                         self.callback(socket, err)
                     }
@@ -75,7 +75,7 @@ struct SMTPLogin {
     }
 }
 
-class SMTPLoginHelper {
+class LoginHelper {
     fileprivate let hostname: String
     fileprivate let user: String
     fileprivate let password: String
@@ -109,7 +109,7 @@ class SMTPLoginHelper {
     }
 }
 
-private extension SMTPLoginHelper {
+private extension LoginHelper {
     func connect(_ port: Port) throws {
         try self.socket.socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
@@ -132,12 +132,12 @@ private extension SMTPLoginHelper {
         }
     }
     
-    private func getServerInfo() throws -> [SMTPResponse] {
+    private func getServerInfo() throws -> [Response] {
         do { return try ehlo() }
         catch { return try helo() }
     }
     
-    private func doesStarttls(_ serverInfo: [SMTPResponse]) throws -> Bool {
+    private func doesStarttls(_ serverInfo: [Response]) throws -> Bool {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "STARTTLS" {
@@ -147,33 +147,37 @@ private extension SMTPLoginHelper {
         return false
     }
     
-    private func starttls(_ ssl: SSL) throws -> [SMTPResponse] {
+    private func starttls(_ ssl: SSL) throws -> [Response] {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
         
         #if os(Linux)
             switch ssl.config {
-            case .caCertificatePath(ca: let ca, cert: let cert, key: let key, selfSigned: let selfSigned, cipher: let cipher):
-                let config = SSLService.Configuration(withCACertificateFilePath: ca, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+            case .caCertificatePath(ca: let config):
+                let config = SSLService.Configuration(withCACertificateFilePath: config.ca, usingCertificateFile: config.cert, withKeyFile: config.key, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
                 socket.socket.delegate = try SSLService(usingConfiguration: config)
                 
-            case .caCertificateDirectory(ca: let ca, cert: let cert, key: let key, selfSigned: let selfSigned, cipher: let cipher):
-                let config = SSLService.Configuration(withCACertificateDirectory: ca, usingCertificateFile: cert, withKeyFile: key, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+            case .caCertificateDirectory(ca: let config):
+                let config = SSLService.Configuration(withCACertificateDirectory: config.ca, usingCertificateFile: config.cert, withKeyFile: config.key, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
                 socket.socket.delegate = try SSLService(usingConfiguration: config)
                 
-            case .pemCertificate(pem: let pem, selfSigned: let selfSigned, cipher: let cipher):
-                let config = SSLService.Configuration(withPEMCertificateString: pem, usingSelfSignedCerts: selfSigned, cipherSuite: cipher)
+            case .pemCertificate(pem: let config):
+                let config = SSLService.Configuration(withPEMCertificateString: config.pem, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
                 socket.socket.delegate = try SSLService(usingConfiguration: config)
                 
             case .cipherSuite(cipher: let cipher):
                 let config = SSLService.Configuration(withCipherSuite: cipher)
                 socket.socket.delegate = try SSLService(usingConfiguration: config)
+                
+            case .chainFile(let config):
+                let config = SSLService.Configuration(withChainFilePath: config.chainFilePath, withPassword: config.password, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipherSuite)
+                socket.socket.delegate = try SSLService(usingConfiguration: config)
             }
         #else
             switch ssl.config {
-            case .chainFile(chainFilePath: let chainFilePath, password: let password, selfSigned: let selfSigned, cipherSuite: let cipherSuite):
-                let config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: password, usingSelfSignedCerts: selfSigned, cipherSuite: cipherSuite)
+            case .chainFile(let config):
+                let config = SSLService.Configuration(withChainFilePath: config.chainFilePath, withPassword: config.password, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipherSuite)
                 socket.socket.delegate = try SSLService(usingConfiguration: config)
             }
         #endif
@@ -183,7 +187,7 @@ private extension SMTPLoginHelper {
         return try getServerInfo()
     }
     
-    private func getAuthMethod(_ serverInfo: [SMTPResponse]) throws -> AuthMethod {
+    private func getAuthMethod(_ serverInfo: [Response]) throws -> AuthMethod {
         for res in serverInfo {
             let resArr = res.message.components(separatedBy: " ")
             if resArr.first == "AUTH" {
@@ -200,34 +204,34 @@ private extension SMTPLoginHelper {
     
     private func loginCramMD5() throws {
         let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
-        try authPassword(password: try AuthCredentials.cramMD5(challenge: challenge, user: user, password: password))
+        try authPassword(password: try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password))
     }
     
     private func loginLogin() throws {
         _ = try auth(authMethod: .login, credentials: nil)
-        let credentials = AuthCredentials.login(user: user, password: password)
+        let credentials = AuthEncoder.login(user: user, password: password)
         try authUser(user: credentials.encodedUser)
         try authPassword(password: credentials.encodedPassword)
     }
     
     private func loginPlain() throws {
-        _ = try auth(authMethod: .plain, credentials: AuthCredentials.plain(user: user, password: password))
+        _ = try auth(authMethod: .plain, credentials: AuthEncoder.plain(user: user, password: password))
     }
     
     private func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        _ = try auth(authMethod: .xoauth2, credentials: AuthCredentials.xoauth2(user: user, accessToken: accessToken))
+        _ = try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: user, accessToken: accessToken))
     }
 }
 
-private extension SMTPLoginHelper {
-    func ehlo() throws -> [SMTPResponse] {
+private extension LoginHelper {
+    func ehlo() throws -> [Response] {
         return try socket.send(.ehlo(domainName))
     }
     
-    func helo() throws -> [SMTPResponse] {
+    func helo() throws -> [Response] {
         return try socket.send(.helo(domainName))
     }
     
@@ -235,7 +239,7 @@ private extension SMTPLoginHelper {
         return try socket.send(.starttls)
     }
     
-    func auth(authMethod: AuthMethod, credentials: String?) throws -> SMTPResponse {
+    func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
         return try socket.send(.auth(authMethod, credentials))
     }
     

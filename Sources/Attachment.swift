@@ -20,18 +20,7 @@ import Foundation
 public struct Attachment {
     let type: AttachmentType
     let additionalHeaders: [String: String]?
-    let related: [Attachment]?
-    
-    var hasRelated: Bool {
-        return related != nil
-    }
-    
-    var isAlternative: Bool {
-        if case .html(let p) = type, p.alternative {
-            return true
-        }
-        return false
-    }
+    let relatedAttachments: [Attachment]?
     
     /// Initialize an attachment from a local file.
     ///
@@ -47,10 +36,9 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment. 
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
+    public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
         let name = name ?? NSString(string: filePath).lastPathComponent
-        let fileProperty = FileProperty(path: filePath, mime: mime, name: name, inline: inline)
-        self.init(type: .file(fileProperty), additionalHeaders: additionalHeaders, related: related)
+        self.init(type: .file(path: filePath, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
     /// Initialize an HTML attachment.
@@ -64,9 +52,8 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
-        let htmlProperty = HTMLProperty(content: htmlContent, characterSet: characterSet, alternative: alternative)
-        self.init(type: .html(htmlProperty), additionalHeaders: additionalHeaders, related: related)
+    public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
+        self.init(type: .html(content: htmlContent, characterSet: characterSet, alternative: alternative), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
     /// Initialize a data attachment.
@@ -81,63 +68,22 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related attachments of this attachment. (optional)
-    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, related: [Attachment]? = nil) {
-        let dataProperty = DataProperty(data: data, mime: mime, name: name, inline: inline)
-        self.init(type: .data(dataProperty), additionalHeaders: additionalHeaders, related: related)
+    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
+        self.init(type: .data(data: data, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
-    init(type: AttachmentType, additionalHeaders: [String: String]?, related: [Attachment]?) {
+    private init(type: AttachmentType, additionalHeaders: [String: String]?, relatedAttachments: [Attachment]?) {
         self.type = type
         self.additionalHeaders = additionalHeaders
-        self.related = related
+        self.relatedAttachments = relatedAttachments
     }
 }
 
 extension Attachment {
     enum AttachmentType {
-        case file(FileProperty)
-        case html(HTMLProperty)
-        case data(DataProperty)
-    }
-    
-    struct FileProperty {
-        let path: String
-        let mime: String
-        let name: String
-        let inline: Bool
-        
-        init(path: String, mime: String, name: String, inline: Bool) {
-            self.path = path
-            self.mime = mime
-            self.name = name
-            self.inline = inline
-        }
-    }
-    
-    struct HTMLProperty {
-        let content: String
-        let characterSet: String
-        let alternative: Bool
-        
-        init(content: String, characterSet: String, alternative: Bool) {
-            self.content = content
-            self.characterSet = characterSet
-            self.alternative = alternative
-        }
-    }
-    
-    struct DataProperty {
-        let data: Data
-        let mime: String
-        let name: String
-        let inline: Bool
-        
-        init(data: Data, mime: String, name: String, inline: Bool) {
-            self.data = data
-            self.mime = mime
-            self.name = name
-            self.inline = inline
-        }
+        case file(path: String, mime: String, name: String, inline: Bool)
+        case html(content: String, characterSet: String, alternative: Bool)
+        case data(data: Data, mime: String, name: String, inline: Bool)
     }
 }
 
@@ -182,5 +128,18 @@ extension Attachment {
         return headersDictionary.map { (key, value) in
             return "\(key): \(value)"
             }.joined(separator: CRLF)
+    }
+}
+
+extension Attachment {
+    var hasRelated: Bool {
+        return relatedAttachments != nil
+    }
+    
+    var isAlternative: Bool {
+        if case .html(let p) = type, p.alternative {
+            return true
+        }
+        return false
     }
 }

@@ -29,7 +29,7 @@ class TestLogin: XCTestCase {
     }
     
     func testLogin() throws {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
         }.login()
@@ -37,7 +37,7 @@ class TestLogin: XCTestCase {
     }
     
     func testPlain() throws {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
             self.x.fulfill()
             }.login()
@@ -45,7 +45,7 @@ class TestLogin: XCTestCase {
     }
     
     func testBadCredentials() throws {
-        SMTPLogin(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        Login(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .badResponse = err {
                 self.x.fulfill()
             } else {
@@ -56,7 +56,7 @@ class TestLogin: XCTestCase {
     }
     
     func testPort0() throws {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        Login(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNotNil(err)
             self.x.fulfill()
             }.login()
@@ -64,7 +64,7 @@ class TestLogin: XCTestCase {
     }
     
     func testBadPort() throws {
-        SMTPLogin(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        Login(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
                 self.x.fulfill()
             } else {

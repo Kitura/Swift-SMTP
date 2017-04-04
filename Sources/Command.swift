@@ -16,7 +16,7 @@
 
 import Foundation
 
-enum SMTPCommand {
+enum Command {
     case connect
     case ehlo(String)
     case helo(String)
@@ -49,7 +49,7 @@ enum SMTPCommand {
         }
     }
         
-    var expectedCodes: [SMTPResponseCode] {
+    var expectedResponseCodes: [ResponseCode] {
         switch self {
         case .connect: return [.serviceReady]
         case .starttls: return [.serviceReady]

@@ -24,12 +24,12 @@ import Socket
 public typealias Progress = ((Mail, Error?) -> Void)?
 public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
-class SMTPSender {
+class Sender {
     fileprivate var socket: SMTPSocket
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
-    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSender.queue")
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     
@@ -45,7 +45,7 @@ class SMTPSender {
     }
 }
 
-private extension SMTPSender {
+private extension Sender {
     func sendNext() {
         if pending.isEmpty {
             completion?(sent, failed)
@@ -74,14 +74,14 @@ private extension SMTPSender {
     }
 }
 
-private extension SMTPSender {
+private extension Sender {
     func send(_ mail: Mail) throws {
         let recipientEmails = getRecipientEmails(from: mail)
         try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()
-        try SMTPDataSender(mail: mail, socket: socket).send()
+        try DataSender(mail: mail, socket: socket).send()
         try dataEnd()
     }
     
