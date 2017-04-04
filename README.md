@@ -14,14 +14,25 @@ Dependencies: [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSS
 
 ## Usage
 
-Use the `SMTP` struct as a handle to an SMTP server:
+Use the `SMTP` struct as a handle to an SMTP server. Most servers will also require a secure connection through SSL/TLS. You can specify an `SSL` config and init an `SMTP` handle with it:
 
 ```swift
 import KituraSMTP
 
+#if os(Linux)
+  let certificateFilePath = "~/cert.pem"
+  let keyFilePath = "~/key.pem"
+  let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: certificateFilePath, withKeyFile: keyFilePath)
+#else
+  let chainFilePath = "~/cert.pfx"
+  let certPassword = "password"
+  let ssl = SSL(withChainFilePath: chainFilePath, withPassword: certPassword)
+#endif
+
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
                 user: "user@gmail.com",         // username to login 
-                password: "password")           // password to login
+                password: "password",           // password to login
+                ssl: ssl)                       /* additional ways to init an `SSL` instance */
 
 /* Additional parameters available for further customization */
 ```
