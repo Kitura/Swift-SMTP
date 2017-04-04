@@ -25,17 +25,17 @@ struct SMTPSocket {
         socket = try Socket.create()
     }
     
-    func send(_ command: SMTPCommand) throws {
+    func send(_ command: Command) throws {
         try write(command.text)
         _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)
     }
     
-    func send(_ command: SMTPCommand) throws -> SMTPResponse {
+    func send(_ command: Command) throws -> Response {
         try write(command.text)
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)[0]
     }
     
-    func send(_ command: SMTPCommand) throws -> [SMTPResponse] {
+    func send(_ command: Command) throws -> [Response] {
         try write(command.text)
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
     }
@@ -60,25 +60,31 @@ struct SMTPSocket {
         return res
     }
     
-    static func parseResponses(_ responses: String, command: SMTPCommand) throws -> [SMTPResponse] {
-        var validResponses = [SMTPResponse]()
+    static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
+        var validResponses = [Response]()
         let resArr = responses.components(separatedBy: CRLF)
         for res in resArr {
             if res == "" { break }
-            validResponses.append(SMTPResponse(code: try getResponseCode(res, command: command), message: getResponseMessage(res), response: res))
+            validResponses.append(Response(code: try getResponseCode(res, command: command), message: getResponseMessage(res), response: res))
         }
         return validResponses
     }
     
-    private static func getResponseCode(_ response: String, command: SMTPCommand) throws -> SMTPResponseCode {
-        let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
-        guard let responseCode = Int(response[range]), command.expectedCodes.contains(SMTPResponseCode(responseCode)) else {
+    private static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
+        guard response.characters.count >= 3 else {
             throw SMTPError(.badResponse(command.text, response))
         }
-        return SMTPResponseCode(responseCode)
+        let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
+        guard let responseCode = Int(response[range]), command.expectedResponseCodes.contains(ResponseCode(responseCode)) else {
+            throw SMTPError(.badResponse(command.text, response))
+        }
+        return ResponseCode(responseCode)
     }
     
     private static func getResponseMessage(_ response: String) -> String {
+        if response.characters.count < 4 {
+            return ""
+        }
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]
     }

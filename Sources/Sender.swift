@@ -24,37 +24,32 @@ import Socket
 public typealias Progress = ((Mail, Error?) -> Void)?
 public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
-class SMTPSender {
+class Sender {
     fileprivate var socket: SMTPSocket
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
-    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.SMTPSenderQueue")
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     
-    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) throws {
+    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress
         self.completion = completion
     }
     
-    func resume() {
+    func send() {
         queue.async { self.sendNext() }
-    }
-    
-    deinit {
-        socket.close()
     }
 }
 
-private extension SMTPSender {
+private extension Sender {
     func sendNext() {
         if pending.isEmpty {
             completion?(sent, failed)
             try? quit()
-            cleanUp()
             return
         }
         
@@ -73,25 +68,20 @@ private extension SMTPSender {
         queue.async { self.sendNext() }
     }
     
-    func cleanUp() {
-        progress = nil
-        completion = nil
-    }
-    
     func quit() throws {
         defer { socket.close() }
         return try socket.send(.quit)
     }
 }
 
-private extension SMTPSender {
+private extension Sender {
     func send(_ mail: Mail) throws {
         let recipientEmails = getRecipientEmails(from: mail)
         try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()
-        try SMTPDataSender(mail: mail, socket: socket).send()
+        try DataSender(mail: mail, socket: socket).send()
         try dataEnd()
     }
     
@@ -133,7 +123,7 @@ private extension SMTPSender {
     }
 }
 
-#if os(Linux)
+#if os(Linux) && !swift(>=3.1)
     private typealias Regex = RegularExpression
 #else
     private typealias Regex = NSRegularExpression

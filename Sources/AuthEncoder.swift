@@ -17,7 +17,7 @@
 import Foundation
 import Cryptor
 
-struct AuthCredentials {
+struct AuthEncoder {
     static func cramMD5(challenge: String, user: String, password: String) throws -> String {
         guard let hmac = HMAC(using: HMAC.Algorithm.md5, key: password).update(string: try challenge.base64Decoded())?.final() else {
             throw SMTPError(.md5HashChallengeFail)

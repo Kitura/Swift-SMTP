@@ -16,34 +16,58 @@
 
 import KituraSMTP
 
-let timeout: Double = 10
+#if os(Linux)
+    import Glibc
+#else
+    import Foundation
+#endif
 
-// NOTE: 
-// Sending too many emails from one account may suspend it for some time.
-// Use different emails when testing extensively.
+let testDuration: Double = 10
 
-let slSMTP = "smtp.socketlabs.com"
-let slUser = "server16337"
-let slPassword = "w5DRd9c2EPo6f8NQa4"
-let slMail = "quan.vo@ibm.com"
+let hostname = "smtp.gmail.com"
+let user = "kiturasmtp" + Int.randomEmailNum(4) + "@gmail.com"
+let user2 = "kiturasmtp@gmail.com"
+let password = "ibm12345"
+let port = Ports.tls.rawValue
+let secure = true
+let authMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
+let domainName = "localhost"
+let timeout = 5
 
-let gSMTP = "smtp.gmail.com"
-let gMail = "kiturasmtp@gmail.com"
-let gMail2 = "kiturasmtp2@gmail.com"
-let gPassword = "ibm12345"
-let gSecure = true
-
-let smtp = SMTP(hostname: slSMTP, user: slUser, password: slPassword, secure: false)
-
-let from = User(name: "Dr. Light", email: slMail)
-let to = User(name: "Megaman", email: gMail)
-let to2 = User(name: "Roll", email: gMail2)
-
-let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
-let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
-let imgFilePath = #file
+let root = #file
     .characters
     .split(separator: "/", omittingEmptySubsequences: false)
     .dropLast(1)
     .map { String($0) }
-    .joined(separator: "/") + "/x.png"
+    .joined(separator: "/")
+
+#if os(Linux)
+let cert = root + "/cert.pem"
+let key = root + "/key.pem"
+let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
+#else
+let cert = root + "/cert.pfx"
+let certPassword = "kitura"
+let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
+#endif
+
+let smtp = SMTP(hostname: hostname, user: user, password: password, ssl: ssl)
+let from = User(name: "Dr. Light", email: user)
+let to = User(name: "Megaman", email: user)
+let to2 = User(name: "Roll", email: user2)
+let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
+let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
+let imgFilePath = root + "/x.png"
+
+private extension Int {
+    static func randomEmailNum(_ max: Int) -> String {
+        #if os(Linux)
+            srand(UInt32(time(nil)))
+            let r = Int(random() % max)
+        #else
+            let r = Int(arc4random_uniform(UInt32(max)))
+        #endif
+        if r == 0 { return "" }
+        return String(r)
+    }
+}

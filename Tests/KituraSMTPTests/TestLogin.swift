@@ -17,67 +17,63 @@
 import XCTest
 @testable import KituraSMTP
 
-#if os(Linux)
-    import Glibc
-#endif
-
 class TestLogin: XCTestCase {
     static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
         return [
-            ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
-            ("testSecure", testSecure),
-            ("testPortSSL", testPortSSL),
-            ("testPortTLS", testPortTLS),
+            ("testBadCredentials", testBadCredentials),
             ("testPort0", testPort0),
-            ("testBadPort", testBadPort),
-            ("testRandomPort", testRandomPort)
+            ("testBadPort", testBadPort)
         ]
     }
     
-    func testCramMD5() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.cramMD5], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
-    }
-    
     func testLogin() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: smtp.port, secure: smtp.secure, authMethods: [.login], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNil(err)
+            self.x.fulfill()
+        }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
     func testPlain() throws {
-        _ = try SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: [.plain], domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNil(err)
+            self.x.fulfill()
+            }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
-    func testSecure() throws {
-        _ = try SMTPLogin(hostname: gSMTP, user: gMail, password: gPassword, port: smtp.port, secure: gSecure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
-    }
-    
-    func testPortSSL() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.ssl.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
-    }
-    
-    func testPortTLS() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: Proto.tls.rawValue, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+    func testBadCredentials() throws {
+        Login(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            if let err = err as? SMTPError, case .badResponse = err {
+                self.x.fulfill()
+            } else {
+                XCTFail()
+            }
+            }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
     func testPort0() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 0, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        Login(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNotNil(err)
+            self.x.fulfill()
+            }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
     func testBadPort() throws {
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: 1, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
+        Login(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
+                self.x.fulfill()
+            } else {
+                XCTFail()
+            }
+            }.login()
+        waitForExpectations(timeout: testDuration)
     }
     
-    func testRandomPort() throws {
-        let maxPort = 65535
-        
-        #if os(Linux)
-            srand(UInt32(time(nil)))
-            let randomPort = Int32(random() % maxPort) + 1
-        #else
-            let randomPort = Int32(arc4random_uniform(UInt32(maxPort)) + 1)
-        #endif
-        
-        _ = try SMTPLogin(hostname: smtp.hostname, user: smtp.user, password: smtp.password, port: randomPort, secure: smtp.secure, authMethods: smtp.authMethods, domainName: smtp.domainName, accessToken: smtp.accessToken).login()
-    }
+    var x: XCTestExpectation!
+    override func setUp() { x = expectation(description: "") }
 }
