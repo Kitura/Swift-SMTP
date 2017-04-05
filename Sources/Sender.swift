@@ -43,6 +43,10 @@ class Sender {
     func send() {
         queue.async { self.sendNext() }
     }
+    
+    deinit {
+        socket.close()
+    }
 }
 
 private extension Sender {

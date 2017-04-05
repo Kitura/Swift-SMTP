@@ -22,7 +22,7 @@ import KituraSMTP
     import Foundation
 #endif
 
-let testDuration: Double = 10
+let testDuration: Double = 20
 
 let hostname = "smtp.gmail.com"
 let user = "kiturasmtp" + Int.randomEmailNum(4) + "@gmail.com"
@@ -32,7 +32,7 @@ let port = Ports.tls.rawValue
 let secure = true
 let authMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
 let domainName = "localhost"
-let timeout = 5
+let timeout = 10
 
 let root = #file
     .characters
