@@ -72,7 +72,6 @@ private extension Int {
     }
 }
 
-
 #if os(Linux)
 extension MutableCollection where Indices.Iterator.Element == Index {
     mutating func shuffle() {
