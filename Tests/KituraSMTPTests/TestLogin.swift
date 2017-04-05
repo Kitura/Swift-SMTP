@@ -24,30 +24,34 @@ class TestLogin: XCTestCase {
             ("testPlain", testPlain),
             ("testBadCredentials", testBadCredentials),
             ("testPort0", testPort0),
-            ("testBadPort", testBadPort)
+            ("testBadPort", testBadPort),
+            ("testLinuxTestSuiteIncludesAllTests", testLinuxTestSuiteIncludesAllTests)
         ]
     }
     
     func testLogin() throws {
+        let x = expectation(description: "Login with Login auth.")
         Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }.login()
         waitForExpectations(timeout: testDuration)
     }
     
     func testPlain() throws {
+        let x = expectation(description: "Login with Plain auth.")
         Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
             }.login()
         waitForExpectations(timeout: testDuration)
     }
     
     func testBadCredentials() throws {
+        let x = expectation(description: "Fail login with bad credentials.")
         Login(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .badResponse = err {
-                self.x.fulfill()
+                x.fulfill()
             } else {
                 XCTFail()
             }
@@ -56,17 +60,19 @@ class TestLogin: XCTestCase {
     }
     
     func testPort0() throws {
+        let x = expectation(description: "Fail login because port can't be 0.")
         Login(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             XCTAssertNotNil(err)
-            self.x.fulfill()
+            x.fulfill()
             }.login()
         waitForExpectations(timeout: testDuration)
     }
     
     func testBadPort() throws {
+        let x = expectation(description: "Login timeout because bad port.")
         Login(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
-                self.x.fulfill()
+                x.fulfill()
             } else {
                 XCTFail()
             }
@@ -74,6 +80,12 @@ class TestLogin: XCTestCase {
         waitForExpectations(timeout: testDuration)
     }
     
-    var x: XCTestExpectation!
-    override func setUp() { x = expectation(description: "") }
+    func testLinuxTestSuiteIncludesAllTests() {
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+            let thisClass = type(of: self)
+            let linuxCount = thisClass.allTests.count
+            let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
+        #endif
+    }
 }

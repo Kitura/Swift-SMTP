@@ -25,7 +25,8 @@ class TestAuthEncoder: XCTestCase {
             ("testCramMD5", testCramMD5),
             ("testLogin", testLogin),
             ("testPlain", testPlain),
-            ("testXOAuth2", testXOAuth2)
+            ("testXOAuth2", testXOAuth2),
+            ("testLinuxTestSuiteIncludesAllTests", testLinuxTestSuiteIncludesAllTests)
         ]
     }
     
@@ -68,5 +69,14 @@ class TestAuthEncoder: XCTestCase {
         let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
         let result = AuthEncoder.xoauth2(user: user, accessToken: token)
         XCTAssertEqual(result, expected)
+    }
+    
+    func testLinuxTestSuiteIncludesAllTests() {
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+            let thisClass = type(of: self)
+            let linuxCount = thisClass.allTests.count
+            let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
+        #endif
     }
 }

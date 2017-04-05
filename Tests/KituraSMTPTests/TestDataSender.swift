@@ -26,82 +26,96 @@ class TestDataSender: XCTestCase {
             ("testSendHTML", testSendHTML),
             ("testSendData", testSendData),
             ("testSendRelatedAttachment", testSendRelatedAttachment),
-            ("testSendMultipleAttachments", testSendMultipleAttachments)
+            ("testSendMultipleAttachments", testSendMultipleAttachments),
+            ("testLinuxTestSuiteIncludesAllTests", testLinuxTestSuiteIncludesAllTests)
         ]
     }
     
     func testSendNonASCII() {
+        let x = expectation(description: "Send mail with non ASCII character.")
         let mail = Mail(from: from, to: [to], subject: "Non ASCII", text: "💦")
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendFile() {
+        let x = expectation(description: "Send mail with file attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath)
         let mail = Mail(from: from, to: [to], subject: "File attachment", attachments: [fileAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendHTMLAlternative() {
+        let x = expectation(description: "Send mail with HTML as alternative to text.")
         let htmlAttachment = Attachment(htmlContent: html)
         let mail = Mail(from: from, to: [to], subject: "HTML alternative attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendHTML() {
+        let x = expectation(description: "Send mail with HTML attachment.")
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
         let mail = Mail(from: from, to: [to], subject: "HTML attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendData() {
+        let x = expectation(description: "Send mail with data attachment.")
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
         let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
         let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [attachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendRelatedAttachment() {
+        let x = expectation(description: "Send mail with an attachment that references a related attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
         let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/></html>", relatedAttachments: [fileAttachment])
         let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
     func testSendMultipleAttachments() {
+        let x = expectation(description: "Send mail with multiple attachments.")
         let fileAttachment = Attachment(filePath: imgFilePath)
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
         let mail = Mail(from: from, to: [to], subject: "Multiple attachments", text: text, attachments: [fileAttachment, htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
-            self.x.fulfill()
+            x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
     }
     
-    var x: XCTestExpectation!
-    override func setUp() { x = expectation(description: "") }
+    func testLinuxTestSuiteIncludesAllTests() {
+        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+            let thisClass = type(of: self)
+            let linuxCount = thisClass.allTests.count
+            let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
+        #endif
+    }
 }
