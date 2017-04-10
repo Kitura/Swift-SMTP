@@ -2,8 +2,6 @@
 
 Swift package for sending emails to an SMTP server.
 
-Dependencies: [BlueSocket](https://github.com/IBM-Swift/BlueSocket.git), [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService), [BlueCryptor](https://github.com/IBM-Swift/BlueCryptor.git), [LoggerAPI](https://github.com/IBM-Swift/LoggerAPI)
-
 ## Features
 
 - Connect securely through SSL/TLS if available
