@@ -16,6 +16,7 @@
 
 import Foundation
 
+/// https://github.com/IBM-Swift/BlueSSLService
 /// Configuration to connect securely through SSL/TLS.
 public struct SSL {
     let config: Config

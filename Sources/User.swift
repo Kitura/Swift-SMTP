@@ -18,7 +18,7 @@ import Foundation
 
 /// Represents a sender or receiver of an email.
 public struct User {
-    let name: String?
+    fileprivate let name: String?
     let email: String
     
     ///  Initializes a `User`.
@@ -30,7 +30,9 @@ public struct User {
         self.name = name
         self.email = email
     }
-    
+}
+
+extension User {
     var mime: String {
         if let name = name, let nameEncoded = name.mimeEncoded {
             return "\(nameEncoded) <\(email)>"

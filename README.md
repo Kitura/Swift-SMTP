@@ -123,7 +123,7 @@ smtp.send([mail1, mail2],
 
 ## Acknowledgements
 
-`Kitura-SMTP` was inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP), two Swift libraries that can also be used to send emails to an SMTP server.
+`Kitura-SMTP` was inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP), two Swift packages that can also be used to send emails to an SMTP server.
 
 ## License
 

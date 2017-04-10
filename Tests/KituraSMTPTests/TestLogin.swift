@@ -25,7 +25,6 @@ class TestLogin: XCTestCase {
             ("testBadCredentials", testBadCredentials),
             ("testPort0", testPort0),
             ("testBadPort", testBadPort),
-            ("testLinuxTestSuiteIncludesAllTests", testLinuxTestSuiteIncludesAllTests)
         ]
     }
     
@@ -78,14 +77,5 @@ class TestLogin: XCTestCase {
             }
             }.login()
         waitForExpectations(timeout: testDuration)
-    }
-    
-    func testLinuxTestSuiteIncludesAllTests() {
-        #if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
-            let thisClass = type(of: self)
-            let linuxCount = thisClass.allTests.count
-            let darwinCount = Int(thisClass.defaultTestSuite().testCaseCount)
-            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from allTests")
-        #endif
-    }
+    }    
 }

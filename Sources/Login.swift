@@ -75,16 +75,16 @@ struct Login {
     }
 }
 
-class LoginHelper {
-    fileprivate let hostname: String
-    fileprivate let user: String
-    fileprivate let password: String
-    fileprivate let port: Port
-    fileprivate let ssl: SSL?
-    fileprivate let authMethods: [AuthMethod]
-    fileprivate let domainName: String
-    fileprivate let accessToken: String?
-    fileprivate var socket: SMTPSocket
+private class LoginHelper {
+    let hostname: String
+    let user: String
+    let password: String
+    let port: Port
+    let ssl: SSL?
+    let authMethods: [AuthMethod]
+    let domainName: String
+    let accessToken: String?
+    var socket: SMTPSocket
     
     init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
         self.hostname = hostname
@@ -201,24 +201,26 @@ private extension LoginHelper {
         }
         throw SMTPError(.noSupportedAuthMethods(hostname))
     }
-    
-    private func loginCramMD5() throws {
+}
+
+private extension LoginHelper {
+    func loginCramMD5() throws {
         let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
         try authPassword(password: try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password))
     }
     
-    private func loginLogin() throws {
+    func loginLogin() throws {
         _ = try auth(authMethod: .login, credentials: nil)
         let credentials = AuthEncoder.login(user: user, password: password)
         try authUser(user: credentials.encodedUser)
         try authPassword(password: credentials.encodedPassword)
     }
     
-    private func loginPlain() throws {
+    func loginPlain() throws {
         _ = try auth(authMethod: .plain, credentials: AuthEncoder.plain(user: user, password: password))
     }
     
-    private func loginXOAuth2() throws {
+    func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }

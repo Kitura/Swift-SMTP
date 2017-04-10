@@ -25,6 +25,12 @@ struct SMTPSocket {
         socket = try Socket.create()
     }
     
+    func close() {
+        socket.close()
+    }
+}
+
+extension SMTPSocket {
     func send(_ command: Command) throws {
         try write(command.text)
         _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)
@@ -39,7 +45,9 @@ struct SMTPSocket {
         try write(command.text)
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
     }
-    
+}
+
+extension SMTPSocket {
     func write(_ commandText: String) throws {
         Log.debug("[Kitura-SMTP c]: \(commandText)")
         _ = try socket.write(from: commandText + CRLF)
@@ -59,7 +67,9 @@ struct SMTPSocket {
         Log.debug("[Kitura-SMTP s]: \(res)")
         return res
     }
-    
+}
+
+extension SMTPSocket {
     static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
         var validResponses = [Response]()
         let resArr = responses.components(separatedBy: CRLF)
@@ -82,14 +92,8 @@ struct SMTPSocket {
     }
     
     private static func getResponseMessage(_ response: String) -> String {
-        if response.characters.count < 4 {
-            return ""
-        }
+        if response.characters.count < 4 { return "" }
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]
-    }
-    
-    func close() {
-        socket.close()
     }
 }

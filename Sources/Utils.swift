@@ -31,7 +31,9 @@ extension String {
             .replacingOccurrences(of: "%", with: "=")
         return "=?UTF-8?Q?\(quoted)?="
     }
-    
+}
+
+extension String {
     var base64Encoded: String {
         return Data(utf8).base64EncodedString()
     }

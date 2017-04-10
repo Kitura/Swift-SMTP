@@ -77,8 +77,11 @@ public struct SMTP {
         self.port = port
         self.ssl = ssl
         
-        if !authMethods.isEmpty { self.authMethods = authMethods }
-        else { self.authMethods = AuthMethod.defaultAuthMethods }
+        if !authMethods.isEmpty {
+            self.authMethods = authMethods
+        } else {
+            self.authMethods = AuthMethod.defaultAuthMethods
+        }
         
         self.domainName = domainName
         self.accessToken = accessToken

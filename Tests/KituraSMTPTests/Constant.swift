@@ -42,13 +42,13 @@ let root = #file
     .joined(separator: "/")
 
 #if os(Linux)
-let cert = root + "/cert.pem"
-let key = root + "/key.pem"
-let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
+    let cert = root + "/cert.pem"
+    let key = root + "/key.pem"
+    let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
 #else
-let cert = root + "/cert.pfx"
-let certPassword = "kitura"
-let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
+    let cert = root + "/cert.pfx"
+    let certPassword = "kitura"
+    let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
 #endif
 
 let smtp = SMTP(hostname: hostname, user: user, password: password, ssl: ssl)
@@ -71,28 +71,3 @@ private extension Int {
         return String(r)
     }
 }
-
-#if os(Linux)
-extension MutableCollection where Indices.Iterator.Element == Index {
-    mutating func shuffle() {
-        let c = count
-        guard c > 1 else { return }
-        
-        srand(UInt32(time(nil)))
-        for (firstUnshuffled , unshuffledCount) in zip(indices, stride(from: c, to: 1, by: -1)) {
-            let d: IndexDistance = numericCast(random() % numericCast(unshuffledCount))
-            guard d != 0 else { continue }
-            let i = index(firstUnshuffled, offsetBy: d)
-            swap(&self[firstUnshuffled], &self[i])
-        }
-    }
-}
-
-extension Sequence {
-    func shuffled() -> [Iterator.Element] {
-        var result = Array(self)
-        result.shuffle()
-        return result
-    }
-}
-#endif
