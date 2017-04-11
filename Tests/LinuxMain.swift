@@ -49,4 +49,4 @@ XCTMain([
      testCase(TestDataSender.allTests.shuffled()),
      testCase(TestLogin.allTests.shuffled()),
      testCase(TestSender.allTests.shuffled())
-])
+].shuffled())

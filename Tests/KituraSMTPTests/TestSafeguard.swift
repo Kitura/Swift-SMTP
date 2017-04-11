@@ -25,22 +25,22 @@
             // TestAuthEncoder
             linuxCount = TestAuthEncoder.allTests.count
             darwinCount = Int(TestAuthEncoder.defaultTestSuite().testCaseCount)
-            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from ConfigurationManagerTest.allTests")
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestAuthEncoder.allTests")
             
             // TestDataSender
             linuxCount = TestDataSender.allTests.count
             darwinCount = Int(TestDataSender.defaultTestSuite().testCaseCount)
-            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from ConfigurationManagerTest.allTests")
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestDataSender.allTests")
             
             // TestLogin
             linuxCount = TestLogin.allTests.count
             darwinCount = Int(TestLogin.defaultTestSuite().testCaseCount)
-            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from ConfigurationManagerTest.allTests")
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestLogin.allTests")
             
             // TestSender
             linuxCount = TestSender.allTests.count
             darwinCount = Int(TestSender.defaultTestSuite().testCaseCount)
-            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from ConfigurationManagerTest.allTests")
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestSender.allTests")
         }
     }
 #endif
