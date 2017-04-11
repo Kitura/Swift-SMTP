@@ -19,23 +19,29 @@ import Foundation
 /// Port to connect to SMTP server with.
 public typealias Port = Int32
 
-/// Common ports.
+/// Common `Port`s.
 public enum Ports: Port {
+    /// Default `Port`.
     case tls = 587
+    /// `Port` used to connect securely.
     case ssl = 465
 }
 
 /// Supported authentication methods for logging into the SMTP server.
 public enum AuthMethod: String {
+    /// CRAM-MD5 authentication.
     case cramMD5 = "CRAM-MD5"
+    /// LOGIN authentication.
     case login = "LOGIN"
+    /// PLAIN authentication.
     case plain = "PLAIN"
+    /// XOAUTH2 authentication. Requires a valid access token.
     case xoauth2 = "XOAUTH2"
     
     static fileprivate let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
 }
 
-/// Represents a handle to connect to and send emails through an SMTP server.
+/// Represents a handle to connect to and send emails to an SMTP server.
 public struct SMTP {
     private let hostname: String
     private let user: String
@@ -54,15 +60,15 @@ public struct SMTP {
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
     ///     - password: Password to log in to server.
-    ///     - port: Port to connect to the server on. Defaults to `587`.
-    ///     - ssl: Struct containing configuration info for connecting securely
+    ///     - port: `Port` to connect to the server on. Defaults to `587`.
+    ///     - ssl: `SSL` containing configuration info for connecting securely
     ///            through SSL/TLS. (optional)
-    ///     - authMethods: Authentication methods to use to log in to the
+    ///     - authMethods: `AuthMethod`s to use to log in to the
     ///                    server. Defaults to all supported ones--currently
-    ///                    CRAM-MD5, LOGIN, PLAIN, XOAUTH2.
+    ///                    `CRAM-MD5`, `LOGIN`, `PLAIN`, `XOAUTH2`.
     ///     - domainName: Client domain name used when communicating with the
     ///                   server. Defaults to `localhost`.
-    ///     - accessToken: Access token used if logging in through XOAUTH2.
+    ///     - accessToken: Access token used if logging in through `XOAUTH2`.
     ///     - timeout: How long to try connecting to the server to before
     ///                returning an error. Defaults to `10` seconds.
     ///
@@ -118,11 +124,12 @@ public struct SMTP {
     ///                   `Error`s. (optional)
     ///
     /// - Note:
-    ///     - If any of the emails in a `Mail`'s `to`, `cc`, or `bcc` are
-    ///       invalid, the entire mail will not send and return an error.
+    ///     - If any of the emails addresses in a `Mail`'s `to`, `cc`, or `bcc` 
+    ///       are invalid, the entire mail will not send and return an 
+    ///       `SMTPError`.
     ///
-    ///     - If an individual `mail` fails while sending an array of `mail`s,
-    ///       the whole sending process will not stop until all pending mails
+    ///     - If an individual `Mail` fails while sending an array of `Mail`s,
+    ///       the whole sending process will not stop until all pending `Mail`s
     ///       are attempted.
     ///
     ///     - Each call to `send` queues it's `Mail`s and sends them one by one.

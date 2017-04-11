@@ -22,52 +22,52 @@ public struct Attachment {
     let additionalHeaders: [String: String]?
     let relatedAttachments: [Attachment]?
     
-    /// Initialize an attachment from a local file.
+    /// Initialize an `Attachment` from a local file.
     ///
     /// - Parameters:
     ///     - filePath: Path to the local file.
-    ///     - mime: MIME type of the file. Default is 
-    ///             "application/octet-stream".
+    ///     - mime: MIME type of the file. Defaults to 
+    ///             `application/octet-stream`.
     ///     - name: Name of the file. Defaults to the name component in its 
     ///             file path.
     ///     - inline: Indicates if attachment is inline. To embed the attachment 
     ///               in mail content, set to `true`. To send as standalone 
-    ///               attachment, set to false. Defaults to `false`.
+    ///               attachment, set to `false`. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment. 
     ///                          (optional)
-    ///     - related: Related attachments of this attachment. (optional)
+    ///     - related: Related `Attachment`s of this attachment. (optional)
     public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
         let name = name ?? NSString(string: filePath).lastPathComponent
         self.init(type: .file(path: filePath, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
-    /// Initialize an HTML attachment.
+    /// Initialize an HTML `Attachment`.
     ///
     /// - Parameters:
     ///     - htmlContent: Content string of HTML.
     ///     - characterSet: Character encoding of `htmlContent`. Defaults to
-    ///                     "utf-8".
+    ///                     `utf-8`.
     ///     - alternative: Whether the HTML is an alternative for plain text or 
     ///                    not. Defaults to `true`.
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
-    ///     - related: Related attachments of this attachment. (optional)
+    ///     - related: Related `Attachment`s of this attachment. (optional)
     public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
         self.init(type: .html(content: htmlContent, characterSet: characterSet, alternative: alternative), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
-    /// Initialize a data attachment.
+    /// Initialize a data `Attachment`.
     ///
     /// - Parameters:
     ///     - data: Raw data to be sent as attachment.
     ///     - mime: MIME type of the data.
     ///     - name: File name which will be presented in the mail.
     ///     - inline: Indicates if attachment is inline. To embed the attachment
-    ///               in mail content, set to `false`. To send as standalone
-    ///               attachment, set to false. Defaults to `false`.
+    ///               in mail content, set to `true`. To send as standalone
+    ///               attachment, set to `false`. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
-    ///     - related: Related attachments of this attachment. (optional)
+    ///     - related: Related `Attachment`s of this attachment. (optional)
     public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
         self.init(type: .data(data: data, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }

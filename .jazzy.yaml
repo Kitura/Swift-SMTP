@@ -1,4 +1,4 @@
-module: Kitura-SMTP
+module: KituraSMTP
 author: IBM
 github_url: https://github.com/IBM-Swift/Kitura-SMTP/
 
@@ -11,4 +11,4 @@ readme: README.md
 skip_undocumented: false
 hide_documentation_coverage: false
 
-xcodebuild_arguments: [-project, Kitura-SMTP.xcodeproj, -target, Kitura-SMTP, LIBRARY_SEARCH_PATHS=.build/debug]
+xcodebuild_arguments: [-project, KituraSMTP.xcodeproj, -target, KituraSMTP, LIBRARY_SEARCH_PATHS=.build/debug]

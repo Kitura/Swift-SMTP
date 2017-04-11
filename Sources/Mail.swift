@@ -18,7 +18,10 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
+    
+    /// UUID of the `Mail`.
     public let id = UUID().uuidString + ".Kitura-SMTP"
+    
     let from: User
     let to: [User]
     let cc: [User]?

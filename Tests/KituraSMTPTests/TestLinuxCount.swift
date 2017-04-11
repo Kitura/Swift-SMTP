@@ -17,8 +17,8 @@
 #if os(OSX)
     import XCTest
     
-    class TestSafeGuard: XCTestCase {
-        func testVerifyLinuxTestCount() {
+    class TestLinuxCount: XCTestCase {
+        func testLinuxCount() {
             var linuxCount: Int
             var darwinCount: Int
             

@@ -53,8 +53,8 @@ let root = #file
 
 let smtp = SMTP(hostname: hostname, user: user, password: password, ssl: ssl)
 let from = User(name: "Dr. Light", email: user)
-let to = User(name: "Megaman", email: user)
-let to2 = User(name: "Roll", email: user2)
+let to = User(name: "Megaman", email: user2)
+let to2 = User(name: "Roll", email: "kiturasmtp2@gmail.com")
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
 let imgFilePath = root + "/x.png"

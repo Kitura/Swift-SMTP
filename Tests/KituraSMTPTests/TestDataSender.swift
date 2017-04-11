@@ -88,7 +88,7 @@ class TestDataSender: XCTestCase {
     func testSendRelatedAttachment() {
         let x = expectation(description: "Send mail with an attachment that references a related attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
-        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/></html>", relatedAttachments: [fileAttachment])
+        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>hi</html>", relatedAttachments: [fileAttachment])
         let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
