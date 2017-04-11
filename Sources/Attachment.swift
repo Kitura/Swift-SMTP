@@ -24,7 +24,7 @@ public struct Attachment {
     
     /// Initialize an attachment from a local file.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - filePath: Path to the local file.
     ///     - mime: MIME type of the file. Default is 
     ///             "application/octet-stream".
@@ -43,7 +43,7 @@ public struct Attachment {
     
     /// Initialize an HTML attachment.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - htmlContent: Content string of HTML.
     ///     - characterSet: Character encoding of `htmlContent`. Defaults to
     ///                     "utf-8".
@@ -58,7 +58,7 @@ public struct Attachment {
     
     /// Initialize a data attachment.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - data: Raw data to be sent as attachment.
     ///     - mime: MIME type of the data.
     ///     - name: File name which will be presented in the mail.

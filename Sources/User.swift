@@ -23,7 +23,7 @@ public struct User {
     
     ///  Initializes a `User`.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - name: Display name for the user. Defaults to empty string.
     ///     - email: Email for the user.
     public init(name: String? = nil , email: String) {

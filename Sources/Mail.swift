@@ -31,7 +31,7 @@ public struct Mail {
     
     /// Initializes a `Mail` object.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - from: `User` to set the `Mail`'s sender to.
     ///     - to: Array of `User`s to send the `Mail` to.
     ///     - cc: Array of `User`s to cc. (optional)

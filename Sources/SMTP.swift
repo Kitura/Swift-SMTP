@@ -49,7 +49,7 @@ public struct SMTP {
     
     /// Initializes an `SMTP` instance.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - hostname: Hostname of the SMTP server to connect to. Should not
     ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - user: Username to log in to server.
@@ -66,7 +66,7 @@ public struct SMTP {
     ///     - timeout: How long to try connecting to the server to before
     ///                returning an error. Defaults to `10` seconds.
     ///
-    /// - note:
+    /// - Note:
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
@@ -90,7 +90,7 @@ public struct SMTP {
     
     /// Send an email.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - mail: `Mail` object to send.
     ///     - completion: Callback when sending finishes. `Error` is nil on
     ///                   success.
@@ -106,7 +106,7 @@ public struct SMTP {
     
     /// Send multiple emails.
     ///
-    /// - parameters:
+    /// - Parameters:
     ///     - mails: Array of `Mail`s to send.
     ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent.
     ///                 `Mail` is the `Mail` sent and `Error` is the error if it
@@ -117,7 +117,7 @@ public struct SMTP {
     ///                   array of failed `Mail`s and their corresponding
     ///                   `Error`s. (optional)
     ///
-    /// - note:
+    /// - Note:
     ///     - If any of the emails in a `Mail`'s `to`, `cc`, or `bcc` are
     ///       invalid, the entire mail will not send and return an error.
     ///
