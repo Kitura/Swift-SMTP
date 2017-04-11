@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>KituraSMTP  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+
+    <a title="KituraSMTP  Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="index.html">
+          KituraSMTP Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/IBM-Swift/Kitura-SMTP/">
+            <img class="header-icon" src="img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="index.html">KituraSMTP Reference</a>
+      <img class="carat" src="img/carat.png" />
+      KituraSMTP  Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/AuthMethod.html">AuthMethod</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/Ports.html">Ports</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/SMTPError.html">SMTPError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/Mail.html">Mail</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/SMTP.html">SMTP</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/SSL.html">SSL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/User.html">User</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:10KituraSMTP4Port">Port</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            
+            <a href='#kitura-smtp' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h1 id='kitura-smtp'>Kitura-SMTP</h1>
+
+<p>Swift package for sending emails to an SMTP server.</p>
+<a href='#features' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='features'>Features</h2>
+
+<ul>
+<li>Connect securely through SSL/TLS if available</li>
+<li>Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2</li>
+<li>Send emails with local file, HTML, and raw data attachments</li>
+<li>Add custom headers</li>
+<li>Asynchronous</li>
+</ul>
+<a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
+
+<p>Use the <code>SMTP</code> struct as a handle to an SMTP server. Most servers will also require a secure connection through SSL/TLS. You can specify an <code>SSL</code> config and init an <code>SMTP</code> handle with it:</p>
+<pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">KituraSMTP</span>
+
+<span class="cp">#if os(Linux)</span>
+  <span class="k">let</span> <span class="nv">certificateFilePath</span> <span class="o">=</span> <span class="s">"~/cert.pem"</span>
+  <span class="k">let</span> <span class="nv">keyFilePath</span> <span class="o">=</span> <span class="s">"~/key.pem"</span>
+  <span class="k">let</span> <span class="nv">ssl</span> <span class="o">=</span> <span class="kt">SSL</span><span class="p">(</span><span class="nv">withCACertificateDirectory</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">usingCertificateFile</span><span class="p">:</span> <span class="n">certificateFilePath</span><span class="p">,</span> <span class="nv">withKeyFile</span><span class="p">:</span> <span class="n">keyFilePath</span><span class="p">)</span>
+<span class="cp">#else</span>
+  <span class="k">let</span> <span class="nv">chainFilePath</span> <span class="o">=</span> <span class="s">"~/cert.pfx"</span>
+  <span class="k">let</span> <span class="nv">certPassword</span> <span class="o">=</span> <span class="s">"password"</span>
+  <span class="k">let</span> <span class="nv">ssl</span> <span class="o">=</span> <span class="kt">SSL</span><span class="p">(</span><span class="nv">withChainFilePath</span><span class="p">:</span> <span class="n">chainFilePath</span><span class="p">,</span> <span class="nv">withPassword</span><span class="p">:</span> <span class="n">certPassword</span><span class="p">)</span>
+<span class="cp">#endif</span>
+
+<span class="k">let</span> <span class="nv">smtp</span> <span class="o">=</span> <span class="kt">SMTP</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="s">"smtp.gmail.com"</span><span class="p">,</span>     <span class="c1">// SMTP server address</span>
+                <span class="nv">user</span><span class="p">:</span> <span class="s">"user@gmail.com"</span><span class="p">,</span>         <span class="c1">// username to login </span>
+                <span class="nv">password</span><span class="p">:</span> <span class="s">"password"</span><span class="p">,</span>           <span class="c1">// password to login</span>
+                <span class="nv">ssl</span><span class="p">:</span> <span class="n">ssl</span><span class="p">)</span>                       <span class="cm">/* additional ways to init an `SSL` instance */</span>
+
+<span class="cm">/* Additional parameters available for further customization */</span>
+</code></pre>
+<a href='#send-email' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-email'>Send email</h3>
+
+<p>Create a <code>Mail</code> object and use your <code>smtp</code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">from</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">to</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span>
+                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span>
+                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Humans and robots living together in harmony and equality."</span><span class="p">,</span>
+                <span class="nv">text</span><span class="p">:</span> <span class="s">"That was my ultimate wish."</span><span class="p">)</span>
+
+<span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">in</span>
+    <span class="k">if</span> <span class="k">let</span> <span class="nv">err</span> <span class="o">=</span> <span class="n">err</span> <span class="p">{</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Add Cc and Bcc:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">roll</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Roll"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"roll@gmail.com"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">zero</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Zero"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"zero@gmail.com"</span><span class="p">)</span>
+
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span>
+                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span>
+                <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="n">roll</span><span class="p">],</span>
+                <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="n">zero</span><span class="p">],</span>
+                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Humans and robots living together in harmony and equality."</span><span class="p">,</span>
+                <span class="nv">text</span><span class="p">:</span> <span class="s">"That was my ultimate wish."</span><span class="p">)</span>
+
+<span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+
+</code></pre>
+<a href='#send-attachments' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-attachments'>Send attachments</h3>
+
+<p>Create an <code>Attachment</code>, attach it to your <code>Mail</code>, and send it through the <code>smtp</code> handle. Here&rsquo;s an example of how you can send the three supported types of attachments&ndash;a local file, HTML, and raw data:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">fileAttachment</span> <span class="o">=</span> <span class="kt">Attachment</span><span class="p">(</span><span class="nv">filePath</span><span class="p">:</span> <span class="s">"~/img.png"</span><span class="p">,</span>
+                                <span class="c1">// You can add "CONTENT-ID" to reference this in another attachment</span>
+                                <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="s">"CONTENT-ID"</span><span class="p">:</span> <span class="s">"img001"</span><span class="p">])</span>
+
+<span class="k">let</span> <span class="nv">htmlAttachment</span> <span class="o">=</span> <span class="kt">Attachment</span><span class="p">(</span><span class="nv">htmlContent</span><span class="p">:</span> <span class="s">"&lt;html&gt;Here's an image: &lt;img src=</span><span class="se">\"</span><span class="s">cid:img001</span><span class="se">\"</span><span class="s">/&gt;&lt;/html&gt;"</span><span class="p">,</span> 
+                                <span class="nv">related</span><span class="p">:</span> <span class="p">[</span><span class="n">fileAttachment</span><span class="p">])</span> <span class="c1">// to reference `fileAttachment`</span>
+
+<span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="s">"{</span><span class="se">\"</span><span class="s">key</span><span class="se">\"</span><span class="s">: </span><span class="se">\"</span><span class="s">hello world</span><span class="se">\"</span><span class="s">}"</span><span class="o">.</span><span class="nf">data</span><span class="p">(</span><span class="nv">using</span><span class="p">:</span> <span class="o">.</span><span class="n">utf8</span><span class="p">)</span><span class="o">!</span>
+<span class="k">let</span> <span class="nv">dataAttachment</span> <span class="o">=</span> <span class="kt">Attachment</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> 
+                                <span class="nv">mime</span><span class="p">:</span> <span class="s">"application/json"</span><span class="p">,</span> 
+                                <span class="nv">name</span><span class="p">:</span> <span class="s">"file.json"</span><span class="p">,</span>
+                                <span class="nv">inline</span><span class="p">:</span> <span class="kc">false</span><span class="p">)</span> <span class="c1">// send as a standalone attachment</span>
+
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span> 
+                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span> 
+                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Check out this image and JSON file!"</span><span class="p">,</span> 
+                <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="n">htmlAttachment</span><span class="p">,</span> <span class="n">dataAttachment</span><span class="p">])</span> <span class="c1">// attachments we created earlier</span>
+
+<span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
+
+<span class="cm">/* Each type of attachment has additional parameters for further customization */</span>
+</code></pre>
+<a href='#send-multiple-mails' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-multiple-mails'>Send multiple mails</h3>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">mail1</span><span class="p">:</span> <span class="kt">Mail</span> <span class="o">=</span> <span class="c1">//...</span>
+<span class="k">let</span> <span class="nv">mail2</span><span class="p">:</span> <span class="kt">Mail</span> <span class="o">=</span> <span class="c1">//...</span>
+
+<span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">([</span><span class="n">mail1</span><span class="p">,</span> <span class="n">mail2</span><span class="p">],</span> 
+        <span class="nv">progress</span><span class="p">:</span> <span class="p">{</span> <span class="p">(</span><span class="n">mail</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
+            <span class="c1">// this optional callback gets called after each mail is sent</span>
+            <span class="c1">// `mail` is the attempted mail, `error` is the error if one occured</span>
+        <span class="p">},</span>
+        <span class="nv">completion</span><span class="p">:</span> <span class="p">{</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">failed</span><span class="p">)</span> <span class="k">in</span>
+            <span class="c1">// this optional callback gets called after all the mails have been sent</span>
+            <span class="c1">// `sent` is an array of the successfully sent mails</span>
+            <span class="c1">// `failed` is an array of (Mail, Error)--the failed mails and their corresponding errors</span>
+        <span class="p">}</span>
+<span class="p">)</span>
+</code></pre>
+<a href='#acknowledgements' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='acknowledgements'>Acknowledgements</h2>
+
+<p><code>Kitura-SMTP</code> was inspired by <a href="https://github.com/onevcat/Hedwig">Hedwig</a> and <a href="https://github.com/PerfectlySoft/Perfect-SMTP">Perfect-SMTP</a>, two Swift packages that can also be used to send emails to an SMTP server.</p>
+<a href='#license' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='license'>License</h2>
+
+<p>Apache 2.0</p>
+
+          </div>
+        </section>
+
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-04-11)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

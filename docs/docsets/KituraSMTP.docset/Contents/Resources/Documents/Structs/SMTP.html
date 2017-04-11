@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SMTP Struct Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Struct/SMTP" class="dashAnchor"></a>
+
+    <a title="SMTP Struct Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          KituraSMTP Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/IBM-Swift/Kitura-SMTP/">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">KituraSMTP Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      SMTP Struct Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/AuthMethod.html">AuthMethod</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Ports.html">Ports</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SMTPError.html">SMTPError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Mail.html">Mail</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SSL.html">SSL</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/User.html">User</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:10KituraSMTP4Port">Port</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            <h1>SMTP</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SMTP</span></code></pre>
+
+                </div>
+              </div>
+            <p>Represents a handle to connect to and send emails to an SMTP server.</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV10KituraSMTP4SMTPcFT8hostnameSS4userSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSi_S0_"></a>
+                    <a name="//apple_ref/swift/Method/init(hostname:user:password:port:ssl:authMethods:domainName:accessToken:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV10KituraSMTP4SMTPcFT8hostnameSS4userSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSi_S0_">init(hostname:user:password:port:ssl:authMethods:domainName:accessToken:timeout:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes an <code>SMTP</code> instance.</p>
+
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Some servers like Gmail support IPv6, and if your network does not,
+you will first attempt to connect via IPv6, then timeout, and fall
+back to IPv4. You can avoid this by disabling IPv6 on your machine.</p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">user</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">port</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10KituraSMTP4Port">Port</a></span> <span class="o">=</span> <span class="kt"><a href="../Enums/Ports.html">Ports</a></span><span class="o">.</span><span class="n">tls</span><span class="o">.</span><span class="n">rawValue</span><span class="p">,</span> <span class="nv">ssl</span><span class="p">:</span> <span class="kt"><a href="../Structs/SSL.html">SSL</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="o">.</span><span class="n">defaultAuthMethods</span><span class="p">,</span> <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span> <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">timeout</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hostname</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Hostname of the SMTP server to connect to. Should not include any scheme–ie <code>smtp.example.com</code> is valid.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Username to log in to server.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>password</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Password to log in to server.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>port</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Port</code> to connect to the server on. Defaults to <code>587</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>ssl</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>SSL</code> containing configuration info for connecting securely through SSL/TLS. (optional)</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>authMethods</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>AuthMethod</code>s to use to log in to the server. Defaults to all supported ones–currently <code>CRAM-MD5</code>, <code>LOGIN</code>, <code>PLAIN</code>, <code>XOAUTH2</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>domainName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Client domain name used when communicating with the server. Defaults to <code>localhost</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>accessToken</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Access token used if logging in through <code>XOAUTH2</code>.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>timeout</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>How long to try connecting to the server to before returning an error. Defaults to <code>10</code> seconds.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV10KituraSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_"></a>
+                    <a name="//apple_ref/swift/Method/send(_:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV10KituraSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_">send(_:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send an email.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mail</span><span class="p">:</span> <span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">((</span><span class="kt">Error</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>mail</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>Mail</code> object to send.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Callback when sending finishes. <code>Error</code> is nil on success.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FV10KituraSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_"></a>
+                    <a name="//apple_ref/swift/Method/send(_:progress:completion:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FV10KituraSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_">send(_:progress:completion:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send multiple emails.</p>
+
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p>Note:</p>
+
+<ul>
+<li>If any of the emails addresses in a <code><a href="../Structs/Mail.html">Mail</a></code>&lsquo;s <code>to</code>, <code>cc</code>, or <code>bcc</code> 
+are invalid, the entire mail will not send and return an 
+<code><a href="../Enums/SMTPError.html">SMTPError</a></code>.</li>
+<li>If an individual <code><a href="../Structs/Mail.html">Mail</a></code> fails while sending an array of <code><a href="../Structs/Mail.html">Mail</a></code>s,
+the whole sending process will not stop until all pending <code><a href="../Structs/Mail.html">Mail</a></code>s
+are attempted.</li>
+<li>Each call to <code>send</code> queues it&rsquo;s <code><a href="../Structs/Mail.html">Mail</a></code>s and sends them one by one.
+To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send them in separate calls to
+<code>send</code>.</li>
+</ul>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mails</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">],</span> <span class="nv">progress</span><span class="p">:</span> <span class="kt">Progress</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="kt">Completion</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>mails</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>Mail</code>s to send.</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>progress</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>(<code>Mail</code>, <code>Error</code>) callback after each <code>Mail</code> is sent. <code>Mail</code> is the <code>Mail</code> sent and <code>Error</code> is the error if it failed. (optional)</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>([<code>Mail</code>], [(<code>Mail</code>, <code>Error</code>)]) callback after all <code>Mail</code>s have been attempted. [<code>Mail</code>] is an array of successfully sent <code>Mail</code>s. [(<code>Mail</code>, <code>Error</code>)] is an array of failed <code>Mail</code>s and their corresponding <code>Error</code>s. (optional)</p>
+
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-04-11)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
