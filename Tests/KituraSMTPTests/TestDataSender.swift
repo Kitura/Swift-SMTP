@@ -18,7 +18,7 @@ import XCTest
 import KituraSMTP
 
 class TestDataSender: XCTestCase {
-    static var allTests : [(String, (TestDataSender) -> () throws -> Void)] {
+    static var allTests: [(String, (TestDataSender) -> () throws -> Void)] {
         return [
             ("testSendNonASCII", testSendNonASCII),
             ("testSendFile", testSendFile),
@@ -26,7 +26,7 @@ class TestDataSender: XCTestCase {
             ("testSendHTML", testSendHTML),
             ("testSendData", testSendData),
             ("testSendRelatedAttachment", testSendRelatedAttachment),
-            ("testSendMultipleAttachments", testSendMultipleAttachments),
+            ("testSendMultipleAttachments", testSendMultipleAttachments)
         ]
     }
     
@@ -76,8 +76,8 @@ class TestDataSender: XCTestCase {
     func testSendData() {
         let x = expectation(description: "Send mail with data attachment.")
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-        let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
-        let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [attachment])
+        let dataAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
+        let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [dataAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err)
             x.fulfill()

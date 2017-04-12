@@ -56,6 +56,9 @@ struct Login {
             let group = DispatchGroup()
             group.enter()
             
+            // Yet another thread is created here because trying to connect on a
+            // "bad" port will hang that thread. Doing this on a separate one
+            // ensures we can call `wait` and timeout if needed.
             queue.async {
                 do {
                     try LoginHelper(hostname: self.hostname, user: self.user, password: self.password, port: self.port, ssl: self.ssl, authMethods: self.authMethods, domainName: self.domainName, accessToken: self.accessToken).login { (socket, err) in
@@ -133,8 +136,10 @@ private extension LoginHelper {
     }
     
     private func getServerInfo() throws -> [Response] {
-        do { return try ehlo() }
-        catch { return try helo() }
+        do { return try ehlo()
+        } catch {
+            return try helo()
+        }
     }
     
     private func doesStarttls(_ serverInfo: [Response]) throws -> Bool {

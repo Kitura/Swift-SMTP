@@ -137,7 +137,7 @@ extension Attachment {
     }
     
     var isAlternative: Bool {
-        if case .html(let p) = type, p.alternative {
+        if case .html(let html) = type, html.alternative {
             return true
         }
         return false

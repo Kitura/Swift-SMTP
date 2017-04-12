@@ -127,7 +127,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Creating the HMAC for CRAM-MD5 authentication failed.</p>
+                        <p>Hashing server challenge with MD5 algorithm failed.</p>
 
                       </div>
                       <div class="declaration">
@@ -158,7 +158,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Decoding the base64 encoded String failed.</p>
+                        <p>Error decoding string.</p>
 
                       </div>
                       <div class="declaration">
@@ -166,6 +166,165 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="k">case</span> <span class="nf">base64DecodeFail</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10KituraSMTP9SMTPError12fileNotFoundFMS0_FSSS0_"></a>
+                    <a name="//apple_ref/swift/Element/fileNotFound" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError12fileNotFoundFMS0_FSSS0_">fileNotFound</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>File not found at path while trying to send file <code><a href="../Structs/Attachment.html">Attachment</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">fileNotFound</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10KituraSMTP9SMTPError23couldNotConnectToServerFMS0_FTSSSi_S0_"></a>
+                    <a name="//apple_ref/swift/Element/couldNotConnectToServer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError23couldNotConnectToServerFMS0_FTSSSi_S0_">couldNotConnectToServer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Could not connect to server within specified timeout. Ensure your
+server can connect through <code><a href="../Typealiases.html#/s:10KituraSMTP4Port">Port</a></code> 587 or specify which <code><a href="../Typealiases.html#/s:10KituraSMTP4Port">Port</a></code> to connect
+on. Some SMTP servers may require a longer timeout.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">couldNotConnectToServer</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10KituraSMTP9SMTPError22noSupportedAuthMethodsFMS0_FSSS0_"></a>
+                    <a name="//apple_ref/swift/Element/noSupportedAuthMethods" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError22noSupportedAuthMethodsFMS0_FSSS0_">noSupportedAuthMethods</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The preferred <code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s could not be found. Connecting with <code><a href="../Structs/SSL.html">SSL</a></code>
+may be required.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">noSupportedAuthMethods</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10KituraSMTP9SMTPError13noAccessTokenFMS0_S0_"></a>
+                    <a name="//apple_ref/swift/Element/noAccessToken" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError13noAccessTokenFMS0_S0_">noAccessToken</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attempted to login using <code>XOAUTH2</code> but <code><a href="../Structs/SMTP.html">SMTP</a></code> instance was initialized 
+without an access token.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="n">noAccessToken</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FO10KituraSMTP9SMTPError22createEmailRegexFailedFMS0_S0_"></a>
+                    <a name="//apple_ref/swift/Element/createEmailRegexFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError22createEmailRegexFailedFMS0_S0_">createEmailRegexFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Failed to create RegularExpression that can check if an email is valid.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="n">createEmailRegexFailed</span></code></pre>
 
                         </div>
                       </div>
@@ -210,132 +369,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FO10KituraSMTP9SMTPError12fileNotFoundFMS0_FSSS0_"></a>
-                    <a name="//apple_ref/swift/Element/fileNotFound" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError12fileNotFoundFMS0_FSSS0_">fileNotFound</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>File not found at path while trying to send a file <code><a href="../Structs/Attachment.html">Attachment</a></code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">fileNotFound</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:FO10KituraSMTP9SMTPError23couldNotConnectToServerFMS0_FTSSSi_S0_"></a>
-                    <a name="//apple_ref/swift/Element/couldNotConnectToServer" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError23couldNotConnectToServerFMS0_FTSSSi_S0_">couldNotConnectToServer</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Connecting to server timed out. Check that you are connecting to a valid
-<code><a href="../Typealiases.html#/s:10KituraSMTP4Port">Port</a></code> for your SMTP server.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">couldNotConnectToServer</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:FO10KituraSMTP9SMTPError22noSupportedAuthMethodsFMS0_FSSS0_"></a>
-                    <a name="//apple_ref/swift/Element/noSupportedAuthMethods" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError22noSupportedAuthMethodsFMS0_FSSS0_">noSupportedAuthMethods</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>This SMTP server does not support any authentication methods that
-were provided on initialization of this instance of <code><a href="../Structs/SMTP.html">SMTP</a></code>.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">noSupportedAuthMethods</span><span class="p">(</span><span class="kt">String</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:FO10KituraSMTP9SMTPError13noAccessTokenFMS0_S0_"></a>
-                    <a name="//apple_ref/swift/Element/noAccessToken" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FO10KituraSMTP9SMTPError13noAccessTokenFMS0_S0_">noAccessToken</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Authenticating with XOAUTH2 requres a valid access token.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">noAccessToken</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:FO10KituraSMTP9SMTPError19convertDataUTF8FailFMS0_FV10Foundation4DataS0_"></a>
                     <a name="//apple_ref/swift/Element/convertDataUTF8Fail" class="dashAnchor"></a>
                     <a class="token" href="#/s:FO10KituraSMTP9SMTPError19convertDataUTF8FailFMS0_FV10Foundation4DataS0_">convertDataUTF8Fail</a>
@@ -346,7 +379,7 @@ were provided on initialization of this instance of <code><a href="../Structs/SM
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Converting Data read from socket to a String failed.</p>
+                        <p>Error converting Data read from socket to a String.</p>
 
                       </div>
                       <div class="declaration">
@@ -461,7 +494,7 @@ were provided on initialization of this instance of <code><a href="../Structs/SM
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-04-11)</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-04-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

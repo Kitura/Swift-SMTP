@@ -15,14 +15,14 @@
  **/
 
 import XCTest
-import KituraSMTP
+@testable import KituraSMTP
 
 #if os(Linux)
     import Dispatch
 #endif
 
 class TestSender: XCTestCase {
-    static var allTests : [(String, (TestSender) -> () throws -> Void)] {
+    static var allTests: [(String, (TestSender) -> () throws -> Void)] {
         return [
             ("testSendMail", testSendMail),
             ("testSendMultipleRecipients", testSendMultipleRecipients),
@@ -32,9 +32,10 @@ class TestSender: XCTestCase {
             ("testSendMailsConcurrently", testSendMailsConcurrently),
             ("testBadEmail", testBadEmail),
             ("testSendMultipleMailsWithFail", testSendMultipleMailsWithFail),
+            ("testIsValidEmail", testIsValidEmail)
         ]
     }
-    
+
     func testSendMail() {
         let x = expectation(description: "Send a simple email.")
         let mail = Mail(from: from, to: [to2], subject: "Simple email", text: text)
@@ -44,7 +45,7 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMultipleRecipients() {
         let x = expectation(description: "Send a single mail to multiple recipients.")
         let mail = Mail(from: from, to: [to, to2], subject: "Multiple recipients")
@@ -54,7 +55,7 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMailWithCc() {
         let x = expectation(description: "Send mail with Cc.")
         let mail = Mail(from: from, to: [to], cc: [to2], subject: "Mail with Cc")
@@ -64,7 +65,7 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMailWithBcc() {
         let x = expectation(description: "Send mail with Bcc.")
         let mail = Mail(from: from, to: [to], bcc: [to2], subject: "Mail with Bcc")
@@ -74,7 +75,7 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMultipleMails() {
         let x = expectation(description: "Send multiple mails with one call to `send`.")
         let mail1 = Mail(from: from, to: [to], subject: "Send multiple mails 1")
@@ -88,28 +89,28 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMailsConcurrently() {
         let x = expectation(description: "Send multiple mails concurrently with seperate calls to `send`.")
         let mail1 = Mail(from: from, to: [to], subject: "Send mails concurrently 1")
         let mail2 = Mail(from: from, to: [to], subject: "Send mails concurrently 2")
         let mails = [mail1, mail2]
         let group = DispatchGroup()
-        
+
         for mail in mails {
             group.enter()
-            
+
             smtp.send(mail) { (err) in
                 XCTAssertNil(err)
                 group.leave()
             }
         }
-        
+
         group.wait()
         x.fulfill()
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testBadEmail() {
         let x = expectation(description: "Send a mail that will fail because of an invalid receiving address.")
         let user = User(email: "")
@@ -120,23 +121,35 @@ class TestSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMultipleMailsWithFail() {
         let x = expectation(description: "Send two mails, one of which will fail.")
         let badUser = User(email: "")
         let badMail = Mail(from: from, to: [badUser])
         let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
-        
+
         smtp.send([badMail, goodMail]) { (sent, failed) in
-            if sent.count == 1 && failed.count == 1 {
-                XCTAssertEqual(sent[0].id, goodMail.id)
-                XCTAssertEqual(failed[0].0.id, badMail.id)
-                XCTAssertNotNil(failed[0].1)
-                x.fulfill()
-            } else {
+            guard sent.count == 1 && failed.count == 1 else {
                 XCTFail()
+                return
             }
+            XCTAssertEqual(sent[0].id, goodMail.id)
+            XCTAssertEqual(failed[0].0.id, badMail.id)
+            XCTAssertNotNil(failed[0].1)
+            x.fulfill()
         }
+
         waitForExpectations(timeout: testDuration)
+    }
+
+    func testIsValidEmail() throws {
+        XCTAssert(try user.isValidEmail())
+        XCTAssertFalse(try "".isValidEmail())
+        XCTAssertFalse(try "a".isValidEmail())
+        XCTAssertFalse(try "@gmail.com".isValidEmail())
+        XCTAssertFalse(try "user@.com".isValidEmail())
+        XCTAssertFalse(try "user@user".isValidEmail())
+        XCTAssertFalse(try "user@user.a".isValidEmail())
+        XCTAssertFalse(try "user@user.".isValidEmail())
     }
 }

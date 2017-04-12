@@ -25,23 +25,23 @@ struct AuthEncoder {
         let digest = CryptoUtils.hexString(from: hmac)
         return ("\(user) \(digest)").base64Encoded
     }
-    
+
     static func login(user: String, password: String) -> (encodedUser: String, encodedPassword: String) {
         return (user.base64Encoded, password.base64Encoded)
     }
-    
+
     static func plain(user: String, password: String) -> String {
         let text = "\u{0000}\(user)\u{0000}\(password)"
         return text.base64Encoded
     }
-    
+
     static func xoauth2(user: String, accessToken: String) -> String {
         let text = "user=\(user)\u{0001}auth=Bearer \(accessToken)\u{0001}\u{0001}"
         return text.base64Encoded
     }
 }
 
-private extension String {
+extension String {
     func base64Decoded() throws -> String {
         guard let data = Data(base64Encoded: self), let base64Decoded = String(data: data, encoding: .utf8) else {
             throw SMTPError(.base64DecodeFail(self))

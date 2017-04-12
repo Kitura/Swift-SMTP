@@ -20,7 +20,7 @@ struct Response {
     let code: ResponseCode
     let message: String
     let response: String
-    
+
     init(code: ResponseCode, message: String, response: String) {
         self.code = code
         self.message = message
@@ -31,7 +31,7 @@ struct Response {
 struct ResponseCode: Equatable {
     let rawValue: Int
     init(_ value: Int) { rawValue = value }
-    
+
     static let serviceReady = ResponseCode(220)
     static let connectionClosing = ResponseCode(221)
     static let authSucceeded = ResponseCode(235)
@@ -39,8 +39,8 @@ struct ResponseCode: Equatable {
     static let willForward = ResponseCode(251)
     static let containingChallenge = ResponseCode(334)
     static let startMailInput = ResponseCode(354)
-    
-    public static func ==(lhs: ResponseCode, rhs: ResponseCode) -> Bool {
+
+    public static func==(lhs: ResponseCode, rhs: ResponseCode) -> Bool {
         return lhs.rawValue == rhs.rawValue
     }
 }

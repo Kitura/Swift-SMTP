@@ -101,10 +101,8 @@ private extension Sender {
     }
     
     private func validateEmails(_ emails: [String]) throws {
-        for email in emails {
-            if !email.isValidEmail {
-                throw SMTPError(.invalidEmail(email))
-            }
+        for email in emails where try !email.isValidEmail() {
+            throw SMTPError(.invalidEmail(email))
         }
     }
     
@@ -134,12 +132,15 @@ private extension Sender {
 #endif
 
 private extension Regex {
-    static let emailRegex = try! Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
+    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
 }
 
-private extension String {
-    var isValidEmail: Bool {
-        let range = NSMakeRange(0, utf16.count)
-        return !Regex.emailRegex.matches(in: self, options: [], range: range).isEmpty
+extension String {
+    func isValidEmail() throws -> Bool {
+        guard let emailRegex = Regex.emailRegex else {
+            throw SMTPError(.createEmailRegexFailed)
+        }
+        let range = NSRange(location: 0, length: utf16.count)
+        return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }

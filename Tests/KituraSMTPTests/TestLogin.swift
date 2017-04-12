@@ -18,13 +18,13 @@ import XCTest
 @testable import KituraSMTP
 
 class TestLogin: XCTestCase {
-    static var allTests : [(String, (TestLogin) -> () throws -> Void)] {
+    static var allTests: [(String, (TestLogin) -> () throws -> Void)] {
         return [
             ("testLogin", testLogin),
             ("testPlain", testPlain),
             ("testBadCredentials", testBadCredentials),
             ("testPort0", testPort0),
-            ("testBadPort", testBadPort),
+            ("testBadPort", testBadPort)
         ]
     }
     

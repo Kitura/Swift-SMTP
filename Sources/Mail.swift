@@ -18,10 +18,10 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
-    
+
     /// UUID of the `Mail`.
     public let id = UUID().uuidString + ".Kitura-SMTP"
-    
+
     let from: User
     let to: [User]
     let cc: [User]?
@@ -31,7 +31,7 @@ public struct Mail {
     let attachments: [Attachment]?
     let alternative: Attachment?
     let additionalHeaders: [String: String]?
-    
+
     /// Initializes a `Mail` object.
     ///
     /// - Parameters:
@@ -50,7 +50,7 @@ public struct Mail {
         self.bcc = bcc
         self.subject = subject
         self.text = text
-        
+
         if let attachments = attachments {
             let result = attachments.takeLast { $0.isAlternative }
             self.alternative = result.0
@@ -59,7 +59,7 @@ public struct Mail {
             self.alternative = nil
             self.attachments = nil
         }
-        
+
         self.additionalHeaders = additionalHeaders
     }
 }
@@ -71,23 +71,23 @@ extension Mail {
         fields["DATE"] = Date().smtpFormatted
         fields["FROM"] = from.mime
         fields["TO"] = to.map { $0.mime }.joined(separator: ", ")
-        
+
         if let cc = cc {
             fields["CC"] = cc.map { $0.mime }.joined(separator: ", ")
         }
-        
+
         fields["SUBJECT"] = subject.mimeEncoded ?? ""
         fields["MIME-VERSION"] = "1.0 (Kitura-SMTP)"
-        
+
         if let additionalHeaders = additionalHeaders {
             for (key, value) in additionalHeaders {
                 fields[key.uppercased()] = value
             }
         }
-        
+
         return fields
     }
-    
+
     var headers: String {
         return headersDictionary.map { (key, value) in
             return "\(key): \(value)"
@@ -101,7 +101,7 @@ extension Mail {
     }
 }
 
-private extension DateFormatter {
+extension DateFormatter {
     static let smtpDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en-US")
@@ -110,13 +110,13 @@ private extension DateFormatter {
     }()
 }
 
-private extension Date {
+extension Date {
     var smtpFormatted: String {
         return DateFormatter.smtpDateFormatter.string(from: self)
     }
 }
 
-private extension Array {
+extension Array {
     func takeLast(where condition: (Element) -> Bool) -> (Element?, Array) {
         var index: Int?
         for i in (0 ..< count).reversed() {
@@ -125,7 +125,7 @@ private extension Array {
                 break
             }
         }
-        
+
         if let index = index {
             var array = self
             let ele = array.remove(at: index)

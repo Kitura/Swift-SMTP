@@ -17,10 +17,15 @@
 #if os(OSX)
     import XCTest
     
-    class TestLinuxCount: XCTestCase {
-        func testLinuxCount() {
+    class VerifyLinuxTextCount: XCTestCase {
+        func verifyLinuxTextCount() {
             var linuxCount: Int
             var darwinCount: Int
+            
+            // TestAttachment
+            linuxCount = TestAttachment.allTests.count
+            darwinCount = Int(TestAttachment.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestAttachment.allTests")
             
             // TestAuthEncoder
             linuxCount = TestAuthEncoder.allTests.count
@@ -37,10 +42,20 @@
             darwinCount = Int(TestLogin.defaultTestSuite().testCaseCount)
             XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestLogin.allTests")
             
+            // TestMiscellaneous
+            linuxCount = TestMiscellaneous.allTests.count
+            darwinCount = Int(TestMiscellaneous.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestMiscellaneous.allTests")
+            
             // TestSender
             linuxCount = TestSender.allTests.count
             darwinCount = Int(TestSender.defaultTestSuite().testCaseCount)
             XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestSender.allTests")
+            
+            // TestSMTPSocket
+            linuxCount = TestSMTPSocket.allTests.count
+            darwinCount = Int(TestSMTPSocket.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestSMTPSocket.allTests")
         }
     }
 #endif

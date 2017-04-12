@@ -80,7 +80,7 @@ extension SMTPSocket {
         return validResponses
     }
     
-    private static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
+    static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
         guard response.characters.count >= 3 else {
             throw SMTPError(.badResponse(command.text, response))
         }
@@ -91,7 +91,7 @@ extension SMTPSocket {
         return ResponseCode(responseCode)
     }
     
-    private static func getResponseMessage(_ response: String) -> String {
+    static func getResponseMessage(_ response: String) -> String {
         if response.characters.count < 4 { return "" }
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]

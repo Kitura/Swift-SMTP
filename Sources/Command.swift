@@ -29,16 +29,21 @@ enum Command {
     case data
     case dataEnd
     case quit
-    
+
     var text: String {
         switch self {
         case .connect: return ""
         case .ehlo(let domain): return "EHLO \(domain)"
         case .helo(let domain): return "HELO \(domain)"
         case .starttls: return "STARTTLS"
+
         case .auth(let method, let credentials):
-            if let credentials = credentials { return "AUTH \(method.rawValue) \(credentials)" }
-            else { return "AUTH \(method.rawValue)" }
+            if let credentials = credentials {
+                return "AUTH \(method.rawValue) \(credentials)"
+            } else {
+                return "AUTH \(method.rawValue)"
+            }
+
         case .authUser(let user): return user
         case .authPassword(let password): return password
         case .mail(let from): return "MAIL FROM: <\(from)>"
@@ -48,7 +53,7 @@ enum Command {
         case .quit: return "QUIT"
         }
     }
-        
+
     var expectedResponseCodes: [ResponseCode] {
         switch self {
         case .connect: return [.serviceReady]
