@@ -143,13 +143,7 @@ private extension LoginHelper {
     }
     
     private func doesStarttls(_ serverInfo: [Response]) throws -> Bool {
-        for res in serverInfo {
-            let resArr = res.message.components(separatedBy: " ")
-            if resArr.first == "STARTTLS" {
-                return true
-            }
-        }
-        return false
+        return serverInfo.contains { $0.message.contains("STARTTLS") }
     }
     
     private func starttls(_ ssl: SSL) throws -> [Response] {
