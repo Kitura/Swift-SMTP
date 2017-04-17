@@ -18,9 +18,9 @@ Swift package for sending emails to an SMTP server.
 
 ## Swift Version
 
-macOS: Swift 3.0.2 & Swift 3.1
+macOS: `Swift 3.1`
 
-Linux: Swift 3.0.2 only
+Linux: `Swift 3.0.2`
 
 ## Usage
 
