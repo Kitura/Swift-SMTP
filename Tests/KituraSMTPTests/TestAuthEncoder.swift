@@ -36,7 +36,7 @@ class TestAuthEncoder: XCTestCase {
         // http://busylog.net/cram-md5-online-generator/
         let expected = "Zm9vQGJhci5jb20gMjhmOGNhMDI0YjBlNjE4YWUzNWQ0NmRiODExNzU2NjM="
         let result = try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password)
-        XCTAssertEqual(result, expected)
+        XCTAssertEqual(result, expected, "result: \(result) != expected: \(expected)")
     }
 
     func testLogin() {
@@ -46,8 +46,8 @@ class TestAuthEncoder: XCTestCase {
         // https://www.base64decode.org/
         let expected = ("Zm9vQGJhci5jb20=", "cGFzc3dvcmQ=")
         let result = AuthEncoder.login(user: user, password: password)
-        XCTAssertEqual(result.encodedUser, expected.0)
-        XCTAssertEqual(result.encodedPassword, expected.1)
+        XCTAssertEqual(result.encodedUser, expected.0, "result: \(result.encodedUser) != expected: \(expected.0)")
+        XCTAssertEqual(result.encodedPassword, expected.1, "result: \(result.encodedPassword) != expected: \(expected.1)")
     }
 
     func testPlain() {
@@ -57,7 +57,7 @@ class TestAuthEncoder: XCTestCase {
         // echo -ne "\0foo@bar.com\0password"|base64
         let expected = "AHRlc3QAdGVzdHBhc3M="
         let result = AuthEncoder.plain(user: user, password: password)
-        XCTAssertEqual(result, expected)
+        XCTAssertEqual(result, expected, "result: \(result) != expected: \(expected)")
     }
 
     func testXOAuth2() {
@@ -67,12 +67,17 @@ class TestAuthEncoder: XCTestCase {
         // echo -ne "user=foo@bar.com\001auth=Bearer token\001\001"|base64
         let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
         let result = AuthEncoder.xoauth2(user: user, accessToken: token)
-        XCTAssertEqual(result, expected)
+        XCTAssertEqual(result, expected, "result: \(result) != expected: \(expected)")
     }
 
     func testBase64Decoder() throws {
-        XCTAssertEqual(try randomText1Encoded.base64Decoded(), randomText1)
-        XCTAssertEqual(try randomText2Encoded.base64Decoded(), randomText2)
-        XCTAssertEqual(try randomText3Encoded.base64Decoded(), randomText3)
+        let randomText1Decoded = try randomText1Encoded.base64Decoded()
+        XCTAssertEqual(randomText1Decoded, randomText1, "result: \(randomText1Decoded) != expected: \(randomText1)")
+
+        let randomText2Decoded = try randomText2Encoded.base64Decoded()
+        XCTAssertEqual(randomText2Decoded, randomText2, "result: \(randomText2Decoded) != expected: \(randomText2)")
+
+        let randomText3Decoded = try randomText3Encoded.base64Decoded()
+        XCTAssertEqual(randomText3Decoded, randomText3, "result: \(randomText3Decoded) != expected: \(randomText3)")
     }
 }

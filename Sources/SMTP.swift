@@ -37,7 +37,7 @@ public enum AuthMethod: String {
     case plain = "PLAIN"
     /// XOAUTH2 authentication. Requires a valid access token.
     case xoauth2 = "XOAUTH2"
-    
+
     static fileprivate let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
 }
 
@@ -52,7 +52,7 @@ public struct SMTP {
     private let domainName: String
     private let accessToken: String?
     private let timeout: Int
-    
+
     /// Initializes an `SMTP` instance.
     ///
     /// - Parameters:
@@ -82,18 +82,18 @@ public struct SMTP {
         self.password = password
         self.port = port
         self.ssl = ssl
-        
+
         if !authMethods.isEmpty {
             self.authMethods = authMethods
         } else {
             self.authMethods = AuthMethod.defaultAuthMethods
         }
-        
+
         self.domainName = domainName
         self.accessToken = accessToken
         self.timeout = timeout
     }
-    
+
     /// Send an email.
     ///
     /// - Parameters:
@@ -109,7 +109,7 @@ public struct SMTP {
             }
         }
     }
-    
+
     /// Send multiple emails.
     ///
     /// - Parameters:
@@ -124,8 +124,8 @@ public struct SMTP {
     ///                   `Error`s. (optional)
     ///
     /// - Note:
-    ///     - If any of the emails addresses in a `Mail`'s `to`, `cc`, or `bcc` 
-    ///       are invalid, the entire mail will not send and return an 
+    ///     - If any of the emails addresses in a `Mail`'s `to`, `cc`, or `bcc`
+    ///       are invalid, the entire mail will not send and return an
     ///       `SMTPError`.
     ///
     ///     - If an individual `Mail` fails while sending an array of `Mail`s,
@@ -136,16 +136,20 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
-            if let err = err {
-                completion?([], mails.map { ($0, err) })
-                return
-            }
-            if let socket = socket {
-                Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
-                return
-            }
-            completion?([], mails.map { ($0, SMTPError(.unknownError)) })
-            }.login()
+        #if os(Linux) && swift(>=3.1) && !swift(>=3.1.1)
+            completion?([], mails.map { ($0, SMTPError(.swift_3_1_on_linux_not_supported)) })
+        #else
+            Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
+                if let err = err {
+                    completion?([], mails.map { ($0, err) })
+                    return
+                }
+                if let socket = socket {
+                    Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
+                    return
+                }
+                completion?([], mails.map { ($0, SMTPError(.unknownError)) })
+                }.login()
+        #endif
     }
 }
