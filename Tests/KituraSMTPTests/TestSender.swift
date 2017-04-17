@@ -134,7 +134,7 @@ class TestSender: XCTestCase {
                 return
             }
             XCTAssertEqual(sent[0].id, goodMail.id, "Valid email was not sent.")
-            XCTAssertEqual(failed[0].0.id, badMail.id, "Invalid email return does not match the invalid email sent.")
+            XCTAssertEqual(failed[0].0.id, badMail.id, "Invalid email returned does not match the invalid email sent.")
             XCTAssertNotNil(failed[0].1, "Invalid email did not return an error when sending.")
             x.fulfill()
         }

@@ -34,7 +34,8 @@ class TestSMTPSocket: XCTestCase {
 extension TestSMTPSocket {
     func testGetResponseCode() throws {
         let responseCode = try SMTPSocket.getResponseCode("250-smtp.gmail.com at your service, [66.68.56.204]", command: .ehlo(""))
-        XCTAssertEqual(responseCode, ResponseCode(250), "result: \(responseCode) != expected: \(ResponseCode(250))")
+        let expected = ResponseCode(250)
+        XCTAssertEqual(responseCode, expected, "result: \(responseCode) != expected: \(expected)")
     }
 
     func testGetResponseCodeBadResponse() {
