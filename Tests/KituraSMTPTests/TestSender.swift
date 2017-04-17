@@ -40,7 +40,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: "Send a simple email.")
         let mail = Mail(from: from, to: [to2], subject: "Simple email", text: text)
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -50,7 +50,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: "Send a single mail to multiple recipients.")
         let mail = Mail(from: from, to: [to, to2], subject: "Multiple recipients")
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -60,7 +60,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: "Send mail with Cc.")
         let mail = Mail(from: from, to: [to], cc: [to2], subject: "Mail with Cc")
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -70,7 +70,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: "Send mail with Bcc.")
         let mail = Mail(from: from, to: [to], bcc: [to2], subject: "Mail with Bcc")
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -81,10 +81,10 @@ class TestSender: XCTestCase {
         let mail1 = Mail(from: from, to: [to], subject: "Send multiple mails 1")
         let mail2 = Mail(from: from, to: [to], subject: "Send multiple mails 2")
         smtp.send([mail1, mail2], progress: { (_, err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
         }) { (sent, failed) in
-            XCTAssert(failed.isEmpty)
-            XCTAssertEqual(sent.count, 2)
+            XCTAssert(failed.isEmpty, "Some mails failed to send.")
+            XCTAssertEqual(sent.count, 2, "2 mails should have been sent.")
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -101,7 +101,7 @@ class TestSender: XCTestCase {
             group.enter()
 
             smtp.send(mail) { (err) in
-                XCTAssertNil(err)
+                XCTAssertNil(err, String(describing: err))
                 group.leave()
             }
         }
@@ -116,7 +116,7 @@ class TestSender: XCTestCase {
         let user = User(email: "")
         let mail = Mail(from: user, to: [user])
         smtp.send(mail) { (err) in
-            XCTAssertNotNil(err)
+            XCTAssertNotNil(err, "Sending mail to an invalid email address should return an error, but return nil.")
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -130,12 +130,12 @@ class TestSender: XCTestCase {
 
         smtp.send([badMail, goodMail]) { (sent, failed) in
             guard sent.count == 1 && failed.count == 1 else {
-                XCTFail()
+                XCTFail("Send did not complete with 1 mail sent and 1 mail failed.")
                 return
             }
-            XCTAssertEqual(sent[0].id, goodMail.id)
-            XCTAssertEqual(failed[0].0.id, badMail.id)
-            XCTAssertNotNil(failed[0].1)
+            XCTAssertEqual(sent[0].id, goodMail.id, "Valid email was not sent.")
+            XCTAssertEqual(failed[0].0.id, badMail.id, "Invalid email return does not match the invalid email sent.")
+            XCTAssertNotNil(failed[0].1, "Invalid email did not return an error when sending.")
             x.fulfill()
         }
 
@@ -143,13 +143,13 @@ class TestSender: XCTestCase {
     }
 
     func testIsValidEmail() throws {
-        XCTAssert(try user.isValidEmail())
-        XCTAssertFalse(try "".isValidEmail())
-        XCTAssertFalse(try "a".isValidEmail())
-        XCTAssertFalse(try "@gmail.com".isValidEmail())
-        XCTAssertFalse(try "user@.com".isValidEmail())
-        XCTAssertFalse(try "user@user".isValidEmail())
-        XCTAssertFalse(try "user@user.a".isValidEmail())
-        XCTAssertFalse(try "user@user.".isValidEmail())
+        XCTAssert(try user.isValidEmail(), "\(user) should be a valid email.")
+        XCTAssertFalse(try "".isValidEmail(), "Blank email should be in invalid email.")
+        XCTAssertFalse(try "a".isValidEmail(), "`a` should be in invalid email.")
+        XCTAssertFalse(try "@gmail.com".isValidEmail(), "`@gmail.com` should be in invalid email.")
+        XCTAssertFalse(try "user@.com".isValidEmail(), "`user@.com` should be in invalid email.")
+        XCTAssertFalse(try "user@user".isValidEmail(), "`user@user` should be in invalid email.")
+        XCTAssertFalse(try "user@user.a".isValidEmail(), "`user@user.a` should be in invalid email.")
+        XCTAssertFalse(try "user@user.".isValidEmail(), "`user@user.` should be in invalid email.")
     }
 }

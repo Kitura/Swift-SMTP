@@ -34,7 +34,7 @@ class TestDataSender: XCTestCase {
         let x = expectation(description: "Send mail with non ASCII character.")
         let mail = Mail(from: from, to: [to], subject: "Non ASCII", text: "💦")
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -45,7 +45,7 @@ class TestDataSender: XCTestCase {
         let fileAttachment = Attachment(filePath: imgFilePath)
         let mail = Mail(from: from, to: [to], subject: "File attachment", attachments: [fileAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -56,7 +56,7 @@ class TestDataSender: XCTestCase {
         let htmlAttachment = Attachment(htmlContent: html)
         let mail = Mail(from: from, to: [to], subject: "HTML alternative attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -67,7 +67,7 @@ class TestDataSender: XCTestCase {
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
         let mail = Mail(from: from, to: [to], subject: "HTML attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -79,7 +79,7 @@ class TestDataSender: XCTestCase {
         let dataAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
         let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [dataAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -91,7 +91,7 @@ class TestDataSender: XCTestCase {
         let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>hi</html>", relatedAttachments: [fileAttachment])
         let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
@@ -103,7 +103,7 @@ class TestDataSender: XCTestCase {
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
         let mail = Mail(from: from, to: [to], subject: "Multiple attachments", text: text, attachments: [fileAttachment, htmlAttachment])
         smtp.send(mail) { (err) in
-            XCTAssertNil(err)
+            XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)

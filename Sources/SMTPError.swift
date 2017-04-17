@@ -51,6 +51,10 @@ public enum SMTPError: Error, CustomStringConvertible {
     // SMTP
     /// An unknown errored occured while sending an email.
     case unknownError
+
+    /// Swift 3.1 on Linux contains a bug in base64 encoding which causes errors 
+    /// in Kitura-SMTP. Please use 3.0.2 or >=3.1.1.
+    case swift_3_1_on_linux_not_supported
     
     // SMTPSocket
     /// Error converting Data read from socket to a String.
@@ -74,6 +78,7 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .noAccessToken: return "Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token."
         case .createEmailRegexFailed: return "Failed to create RegularExpression that can check if an email is valid."
         case .unknownError: return "An unknown errored occured while sending an email."
+        case .swift_3_1_on_linux_not_supported: return "Swift 3.1 on Linux contains a bug in base64 encoding which causes errors in Kitura-SMTP. Please use 3.0.2 or >=3.1.1."
         case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
         case .badResponse(let command, let response): return "Bad response received for command. command: (\(command)), response: \(response)"
         case .invalidEmail(let email): return "Invalid email provided for User: \(email)."

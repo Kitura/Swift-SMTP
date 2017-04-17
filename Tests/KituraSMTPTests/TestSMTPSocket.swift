@@ -34,7 +34,7 @@ class TestSMTPSocket: XCTestCase {
 extension TestSMTPSocket {
     func testGetResponseCode() throws {
         let responseCode = try SMTPSocket.getResponseCode("250-smtp.gmail.com at your service, [66.68.56.204]", command: .ehlo(""))
-        XCTAssertEqual(responseCode, ResponseCode(250))
+        XCTAssertEqual(responseCode, ResponseCode(250), "result: \(responseCode) != expected: \(ResponseCode(250))")
     }
 
     func testGetResponseCodeBadResponse() {
@@ -42,7 +42,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.getResponseCode("250-SIZE 35882577", command: .starttls)
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail()
+                XCTFail("Error should be SMTPError(.badResponse) but received no error or incorrect error.")
                 return
             }
         }
@@ -53,7 +53,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.getResponseCode("", command: .auth(.cramMD5, "credentials"))
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail()
+                XCTFail("Error should be SMTPError(.badResponse) but received no error or incorrect error.")
                 return
             }
         }
@@ -63,12 +63,12 @@ extension TestSMTPSocket {
 extension TestSMTPSocket {
     func testGetResponseMessageGood() {
         let responseMessage = SMTPSocket.getResponseMessage("250 OK")
-        XCTAssertEqual(responseMessage, "OK")
+        XCTAssertEqual(responseMessage, "OK", "result: \(responseMessage) != expected: \"OK\"")
     }
 
     func testGetResponseMessageTooShort() {
         let responseMessage = SMTPSocket.getResponseMessage("NO")
-        XCTAssertEqual(responseMessage, "")
+        XCTAssertEqual(responseMessage, "", "result: \(responseMessage) != expected: \"\"")
     }
 }
 
@@ -77,11 +77,11 @@ extension TestSMTPSocket {
         let ehloResponsesGood = "250 OK\(CRLF)250 GREAT\(CRLF)"
         let responses = try SMTPSocket.parseResponses(ehloResponsesGood, command: .ehlo(domainName))
         guard responses.count == 2 else {
-            XCTFail()
+            XCTFail("Should return 2 responses but returned \(responses.count)")
             return
         }
-        XCTAssertEqual(responses[0].response, "250 OK")
-        XCTAssertEqual(responses[1].response, "250 GREAT")
+        XCTAssertEqual(responses[0].response, "250 OK", "First response: \(responses[0].response) != expected \"250 OK\"")
+        XCTAssertEqual(responses[1].response, "250 GREAT", "Second response: \(responses[1].response) != expected \"250 GREAT\"")
     }
 
     func testParseResponsesBad() {
@@ -90,7 +90,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.parseResponses(ehloResponsesBad, command: .ehlo(domainName))
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail()
+                XCTFail("Should return SMTPError(.badResponse), but returned different error or no error.")
                 return
             }
         }

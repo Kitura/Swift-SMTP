@@ -8,7 +8,6 @@ Swift package for sending emails to an SMTP server.
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
-- Asynchronous
 
 ## Usage
 

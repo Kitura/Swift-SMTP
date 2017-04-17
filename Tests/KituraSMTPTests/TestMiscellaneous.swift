@@ -17,6 +17,10 @@
 import XCTest
 @testable import KituraSMTP
 
+#if os(Linux) && !swift(>=3.1)
+    import Foundation
+#endif
+
 class TestMiscellaneous: XCTestCase {
     static var allTests: [(String, (TestMiscellaneous) -> () throws -> Void)] {
         return [
@@ -40,25 +44,37 @@ class TestMiscellaneous: XCTestCase {
 extension TestMiscellaneous {
     func testMailHeaders() {
         let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["key": "val"]).headers
-        XCTAssert(headers.contains("TO: =?UTF-8?Q?Megaman?= <kiturasmtp@gmail.com>"))
-        XCTAssert(headers.contains("CC: =?UTF-8?Q?Roll?= <kiturasmtp2@gmail.com>"))
-        XCTAssert(headers.contains("SUBJECT: =?UTF-8?Q?Test?="))
-        XCTAssert(headers.contains("MIME-VERSION: 1.0 (Kitura-SMTP)"))
-        XCTAssert(headers.contains("KEY: val"))
+
+        let to_ = "TO: =?UTF-8?Q?Megaman?= <kiturasmtp@gmail.com>"
+        XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")
+
+        let cc_ = "CC: =?UTF-8?Q?Roll?= <kiturasmtp2@gmail.com>"
+        XCTAssert(headers.contains(cc_), "Mail header did not contain \(cc_)")
+
+        let subject = "SUBJECT: =?UTF-8?Q?Test?="
+        XCTAssert(headers.contains(subject), "Mail header did not contain \(subject)")
+
+        let mimeVersion = "MIME-VERSION: 1.0 (Kitura-SMTP)"
+        XCTAssert(headers.contains(mimeVersion), "Mail header did not contain \(mimeVersion)")
+
+        let additionalHeader = "KEY: val"
+        XCTAssert(headers.contains(additionalHeader), "Mail header did not contain \(additionalHeader)")
     }
     
     func testDateFormatter() {
         let date = Date(timeIntervalSince1970: 0)
         let formatter = DateFormatter.smtpDateFormatter
         formatter.timeZone = TimeZone(secondsFromGMT: 3600 * 9)
-        XCTAssertEqual(formatter.string(from: date), "Thu, 1 Jan 1970 09:00:00 +0900")
+        let result = formatter.string(from: date)
+        let expected = "Thu, 1 Jan 1970 09:00:00 +0900"
+        XCTAssertEqual(result, expected, "result: \(result) != expected: \(expected)")
     }
     
     func testTakeLast1() {
         let arr = [a, b, ab]
         let last = arr.takeLast { $0.contains("a") }.0
         if let last = last {
-            XCTAssertEqual(last, ["a", "c"])
+            XCTAssertEqual(last, ab, "result: \(last) != expected: \(ab)")
         } else {
             XCTFail()
         }
@@ -68,7 +84,7 @@ extension TestMiscellaneous {
         let arr = [a, b, ab]
         let last = arr.takeLast { $0.contains("b") }.0
         if let last = last {
-            XCTAssertEqual(last, ["b"])
+            XCTAssertEqual(last, b, "result: \(last) != expected: \(b)")
         } else {
             XCTFail()
         }
@@ -79,24 +95,33 @@ extension TestMiscellaneous {
 extension TestMiscellaneous {
     func testMimeWithName() {
         let user = User(name: "Bob", email: "bob@gmail.com")
-        XCTAssertEqual(user.mime, "=?UTF-8?Q?Bob?= <bob@gmail.com>")
+        let expected = "=?UTF-8?Q?Bob?= <bob@gmail.com>"
+        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
     }
     
     func testMimeNoName() {
         let user = User(email: "bob@gmail.com")
-        XCTAssertEqual(user.mime, "bob@gmail.com")
+        let expected = "bob@gmail.com"
+        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
     }
 }
 
 // Utils
 extension TestMiscellaneous {
     func testMimeEncoded() {
-        XCTAssertEqual("Water you up to?".mimeEncoded, "=?UTF-8?Q?Water_you_up_to??=")
+        let result = "Water you up to?".mimeEncoded
+        let expected = "=?UTF-8?Q?Water_you_up_to??="
+        XCTAssertEqual(result, expected, "result: \(String(describing: result)) != expected: \(expected)")
     }
     
     func testBase64Encoded() {
-        XCTAssertEqual(randomText1.base64Encoded, randomText1Encoded)
-        XCTAssertEqual(randomText2.base64Encoded, randomText2Encoded)
-        XCTAssertEqual(randomText3.base64Encoded, randomText3Encoded)
+        let result1 = randomText1.base64Encoded
+        XCTAssertEqual(result1, randomText1Encoded, "result: \(result1) != expected: \(randomText1Encoded)")
+
+        let result2 = randomText2.base64Encoded
+        XCTAssertEqual(result2, randomText2Encoded, "result: \(result2) != expected: \(randomText2Encoded)")
+
+        let result3 = randomText3.base64Encoded
+        XCTAssertEqual(result3, randomText3Encoded, "result: \(result3) != expected: \(randomText3Encoded)")
     }
 }

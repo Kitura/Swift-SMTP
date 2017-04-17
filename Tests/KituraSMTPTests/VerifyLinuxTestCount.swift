@@ -56,6 +56,11 @@
             linuxCount = TestSMTPSocket.allTests.count
             darwinCount = Int(TestSMTPSocket.defaultTestSuite().testCaseCount)
             XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestSMTPSocket.allTests")
+
+            // TestSwift31Linux
+            linuxCount = TestSwift31Linux.allTests.count
+            darwinCount = Int(TestSwift31Linux.defaultTestSuite().testCaseCount)
+            XCTAssertEqual(linuxCount, darwinCount, "\(darwinCount - linuxCount) tests are missing from TestSwift31.allTests")
         }
     }
 #endif
