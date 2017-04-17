@@ -2,6 +2,11 @@
 
 Swift package for sending emails to an SMTP server.
 
+[![Build Status - Master](https://travis-ci.com/IBM-Swift/Kitura-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Kitura-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
+![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
+![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
+![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
+
 ## Features
 
 - Connect securely through SSL/TLS if available
@@ -9,6 +14,7 @@ Swift package for sending emails to an SMTP server.
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
 - Asynchronous
+- [Documentation](https://ibm-swift.github.io/Kitura-SMTP/)
 
 ## Usage
 
