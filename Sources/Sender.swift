@@ -132,7 +132,7 @@ private extension Sender {
 #endif
 
 private extension Regex {
-    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
+    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
 }
 
 extension String {
