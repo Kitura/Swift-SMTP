@@ -141,6 +141,6 @@ extension String {
             throw SMTPError(.createEmailRegexFailed)
         }
         let range = NSRange(location: 0, length: utf16.count)
-        return !emailRegex.matches(in: self, range: range).isEmpty
+        return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }
