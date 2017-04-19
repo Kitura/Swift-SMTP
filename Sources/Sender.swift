@@ -132,7 +132,7 @@ private extension Sender {
 #endif
 
 private extension Regex {
-    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
+    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
 }
 
 extension String {
@@ -141,6 +141,6 @@ extension String {
             throw SMTPError(.createEmailRegexFailed)
         }
         let range = NSRange(location: 0, length: utf16.count)
-        return !emailRegex.matches(in: self, options: [], range: range).isEmpty
+        return !emailRegex.matches(in: self, range: range).isEmpty
     }
 }
