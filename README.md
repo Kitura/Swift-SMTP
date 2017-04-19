@@ -16,6 +16,12 @@ Swift package for sending emails to an SMTP server.
 - Asynchronous
 - [Documentation](https://ibm-swift.github.io/Kitura-SMTP/)
 
+## Swift Version
+
+macOS: `Swift 3.1`
+
+Linux: `Swift 3.0.2`
+
 ## Usage
 
 Use the `SMTP` struct as a handle to an SMTP server. Most servers will also require a secure connection through SSL/TLS. You can specify an `SSL` config and init an `SMTP` handle with it:
