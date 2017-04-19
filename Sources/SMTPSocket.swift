@@ -16,6 +16,7 @@
 
 import Foundation
 import Socket
+import LoggerAPI
 
 struct SMTPSocket {
     let socket: Socket
@@ -49,10 +50,12 @@ extension SMTPSocket {
 extension SMTPSocket {
     func write(_ commandText: String) throws {
         _ = try socket.write(from: commandText + CRLF)
+         Log.verbose("[Kitura-SMTP client]: \(commandText)")
     }
     
     func write(_ data: Data) throws {
         _ = try socket.write(from: data)
+        Log.verbose("[Kitura-SMTP client]: (sending data)")
     }
     
     func readFromSocket() throws -> String {
@@ -61,6 +64,7 @@ extension SMTPSocket {
         guard let res = String(data: buf, encoding: .utf8) else {
             throw SMTPError(.convertDataUTF8Fail(buf))
         }
+        Log.verbose("[Kitura-SMTP server]: \(res)")
         return res
     }
 }

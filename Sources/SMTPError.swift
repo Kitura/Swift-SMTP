@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import LoggerAPI
 
 /// Error type for KituraSMTP.
 public enum SMTPError: Error, CustomStringConvertible {
@@ -86,6 +87,6 @@ public enum SMTPError: Error, CustomStringConvertible {
     
     init(_ error: SMTPError, file: String = #file, line: Int = #line) {
         self = error
-        print("[Kitura-SMTP Error]: \(self.description) file: \(file) line: \(line).")
+        Log.debug("[Kitura-SMTP Error]: \(self.description) file: \(file) line: \(line).")
     }
 }
