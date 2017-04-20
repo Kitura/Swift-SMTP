@@ -85,8 +85,8 @@ public enum SMTPError: Error, CustomStringConvertible {
         }
     }
     
-    init(_ error: SMTPError, file: String = #file, line: Int = #line) {
+    init(_ error: SMTPError) {
         self = error
-        Log.debug("[Kitura-SMTP Error]: \(self.description) file: \(file) line: \(line).")
+        Log.debug(self.description)
     }
 }
