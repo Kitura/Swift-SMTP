@@ -24,7 +24,13 @@ struct SMTPSocket {
     init() throws {
         socket = try Socket.create()
     }
-    
+}
+
+extension SMTPSocket {
+    func connect(to: String, port: Port) throws {
+        try socket.connect(to: to, port: port)
+    }
+
     func close() {
         socket.close()
     }
@@ -57,7 +63,9 @@ extension SMTPSocket {
         _ = try socket.write(from: data)
         Log.verbose("(sending data)")
     }
-    
+}
+
+extension SMTPSocket {
     func readFromSocket() throws -> String {
         var buf = Data()
         _ = try socket.read(into: &buf)
@@ -67,9 +75,7 @@ extension SMTPSocket {
         Log.verbose(res)
         return res
     }
-}
 
-extension SMTPSocket {
     static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
         var validResponses = [Response]()
         let resArr = responses.components(separatedBy: CRLF)

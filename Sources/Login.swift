@@ -114,7 +114,7 @@ private class LoginHelper {
 
 private extension LoginHelper {
     func connect(_ port: Port) throws {
-        try self.socket.socket.connect(to: hostname, port: port)
+        try self.socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
     
@@ -150,36 +150,35 @@ private extension LoginHelper {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
-        
+
+        var config: SSLService.Configuration
+
         #if os(Linux)
+            // These are untested except `.caCertificateDirectory`.
             switch ssl.config {
-            case .caCertificatePath(ca: let config):
-                let config = SSLService.Configuration(withCACertificateFilePath: config.ca, usingCertificateFile: config.cert, withKeyFile: config.key, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
-                
-            case .caCertificateDirectory(ca: let config):
-                let config = SSLService.Configuration(withCACertificateDirectory: config.ca, usingCertificateFile: config.cert, withKeyFile: config.key, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
-                
-            case .pemCertificate(pem: let config):
-                let config = SSLService.Configuration(withPEMCertificateString: config.pem, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipher)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
-                
-            case .cipherSuite(cipher: let cipher):
-                let config = SSLService.Configuration(withCipherSuite: cipher)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
-                
-            case .chainFile(let config):
-                let config = SSLService.Configuration(withChainFilePath: config.chainFilePath, withPassword: config.password, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipherSuite)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
+            case .caCertificatePath(ca: let c):
+                config = SSLService.Configuration(withCACertificateFilePath: c.ca, usingCertificateFile: c.cert, withKeyFile: c.key, usingSelfSignedCerts: c.selfSigned, cipherSuite: c.cipher)
+
+            case .caCertificateDirectory(ca: let c):
+                config = SSLService.Configuration(withCACertificateDirectory: c.ca, usingCertificateFile: c.cert, withKeyFile: c.key, usingSelfSignedCerts: c.selfSigned, cipherSuite: c.cipher)
+
+            case .pemCertificate(pem: let c):
+                config = SSLService.Configuration(withPEMCertificateString: c.pem, usingSelfSignedCerts: c.selfSigned, cipherSuite: c.cipher)
+
+            case .cipherSuite(cipher: let c):
+                config = SSLService.Configuration(withCipherSuite: c)
+
+            case .chainFile(let c):
+                config = SSLService.Configuration(withChainFilePath: c.chainFilePath, withPassword: c.password, usingSelfSignedCerts: c.selfSigned, cipherSuite: c.cipherSuite)
             }
         #else
             switch ssl.config {
-            case .chainFile(let config):
-                let config = SSLService.Configuration(withChainFilePath: config.chainFilePath, withPassword: config.password, usingSelfSignedCerts: config.selfSigned, cipherSuite: config.cipherSuite)
-                socket.socket.delegate = try SSLService(usingConfiguration: config)
+            case .chainFile(let c):
+                config = SSLService.Configuration(withChainFilePath: c.chainFilePath, withPassword: c.password, usingSelfSignedCerts: c.selfSigned, cipherSuite: c.cipherSuite)
             }
         #endif
+
+        socket.socket.delegate = try SSLService(usingConfiguration: config)
 
         try connect(Ports.ssl.rawValue)
         
