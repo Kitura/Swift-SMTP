@@ -42,9 +42,9 @@ import KituraSMTP
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
                 user: "user@gmail.com",         // username to login 
                 password: "password",           // password to login
-                ssl: ssl)                       /* additional ways to init an `SSL` instance */
+                ssl: ssl)                       /* Additional ways to init an `SSL` instance */
 
-/* Additional parameters available for further customization */
+/* Additional parameters available to further customize `SMTP` handle */
 ```
 
 ### Send email
@@ -77,8 +77,8 @@ let mail = Mail(from: from,
                 to: [to],
                 cc: [roll],
                 bcc: [zero],
-                subject: "Humans and robots living together in harmony and equality.",
-                text: "That was my ultimate wish.")
+                subject: "Robots should be used for the betterment of mankind.",
+                text: "Any other use would be...unethical.")
 
 smtp.send(mail)
 
@@ -89,19 +89,23 @@ smtp.send(mail)
 Create an `Attachment`, attach it to your `Mail`, and send it through the `smtp` handle. Here's an example of how you can send the three supported types of attachments--a local file, HTML, and raw data:
 
 ```swift
+// Create a file `Attachment`
 let fileAttachment = Attachment(filePath: "~/img.png",
                                 // You can add "CONTENT-ID" to reference this in another attachment
                                 additionalHeaders: ["CONTENT-ID": "img001"])
 
+// Create an HTML `Attachment`
 let htmlAttachment = Attachment(htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>", 
                                 related: [fileAttachment]) // to reference `fileAttachment`
 
+// Create a data `Attachment`
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 let dataAttachment = Attachment(data: data, 
                                 mime: "application/json", 
                                 name: "file.json",
                                 inline: false) // send as a standalone attachment
 
+// Create a `Mail` and attach the `Attachment`s
 let mail = Mail(from: from, 
                 to: [to], 
                 subject: "Check out this image and JSON file!", 
