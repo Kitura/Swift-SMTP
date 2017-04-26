@@ -24,7 +24,7 @@ Linux: `Swift 3.0.2` & `Swift 3.1.1` (NOT `Swift 3.1`)
 
 ## Usage
 
-Use the `SMTP` struct as a handle to your SMTP server. If your server requires a TLS/SSL connection, you can specify an `SSL` config and use it to init your `SMTP` handle:
+Use the `SMTP` struct as a handle to your SMTP server. If your server requires a TLS/SSL connection, you can specify an `SSL` config and include it in your `SMTP` handle:
 
 ```swift
 import KituraSMTP
@@ -47,7 +47,7 @@ let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
                 password: "password",           // password to login
                 ssl: ssl)                       // if your SMTP server requires TLS/SSL
                 
-/* Additional parameters available to further customize `SMTP` handle */
+/* Additional parameters available to further customize your `SMTP` handle */
 ```
 
 ### Send email
@@ -84,7 +84,6 @@ let mail = Mail(from: from,
                 text: "Any other use would be...unethical.")
 
 smtp.send(mail)
-
 ```
 
 ### Send attachments
@@ -108,7 +107,7 @@ let dataAttachment = Attachment(data: data,
                                 name: "file.json",
                                 inline: false) // send as a standalone attachment
 
-// Create a `Mail` and attach the `Attachment`s
+// Create a `Mail` and include the `Attachment`s
 let mail = Mail(from: from, 
                 to: [to], 
                 subject: "Check out this image and JSON file!", 
