@@ -43,11 +43,6 @@ extension Sequence {
     }
 }
 
-#if swift(>=3.1) && !swift(>=3.1.1)
-XCTMain([
-    testCase(TestSwift31Linux.allTests.shuffled())
-    ])
-#else
 XCTMain([
     testCase(TestAttachment.allTests.shuffled()),
     testCase(TestAuthEncoder.allTests.shuffled()),
@@ -57,4 +52,3 @@ XCTMain([
     testCase(TestSender.allTests.shuffled()),
     testCase(TestSMTPSocket.allTests.shuffled())
     ].shuffled())
-#endif

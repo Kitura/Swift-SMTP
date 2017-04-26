@@ -136,20 +136,16 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        #if os(Linux) && swift(>=3.1) && !swift(>=3.1.1)
-            completion?([], mails.map { ($0, SMTPError(.swift_3_1_on_linux_not_supported)) })
-        #else
-            Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
-                if let err = err {
-                    completion?([], mails.map { ($0, err) })
-                    return
-                }
-                if let socket = socket {
-                    Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
-                    return
-                }
-                completion?([], mails.map { ($0, SMTPError(.unknownError)) })
-                }.login()
-        #endif
+        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
+            if let err = err {
+                completion?([], mails.map { ($0, err) })
+                return
+            }
+            if let socket = socket {
+                Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
+                return
+            }
+            completion?([], mails.map { ($0, SMTPError(.unknownError)) })
+            }.login()
     }
 }

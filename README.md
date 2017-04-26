@@ -24,26 +24,28 @@ Linux: `Swift 3.0.2` & `Swift 3.1.1` (NOT `Swift 3.1`)
 
 ## Usage
 
-Use the `SMTP` struct as a handle to an SMTP server. Most servers will also require a secure connection through SSL/TLS. You can specify an `SSL` config and init an `SMTP` handle with it:
+Use the `SMTP` struct as a handle to your SMTP server. If your server requires a TLS/SSL connection, you can specify an `SSL` config, and use it to init an `SMTP` handle:
 
 ```swift
 import KituraSMTP
 
+// Create an `SSL` config
 #if os(Linux)
-  let certificateFilePath = "~/cert.pem"
-  let keyFilePath = "~/key.pem"
-  let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: certificateFilePath, withKeyFile: keyFilePath)
+let certificateFilePath = "~/cert.pem"
+let keyFilePath = "~/key.pem"
+let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: certificateFilePath, withKeyFile: keyFilePath)
 #else
-  let chainFilePath = "~/cert.pfx"
-  let certPassword = "password"
-  let ssl = SSL(withChainFilePath: chainFilePath, withPassword: certPassword)
+let chainFilePath = "~/cert.pfx"
+let certPassword = "password"
+let ssl = SSL(withChainFilePath: chainFilePath, withPassword: certPassword)
 #endif
+/* Additional methods available to create an `SSL` config */
 
+// Create your `SMTP` handle
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
-                user: "user@gmail.com",         // username to login 
-                password: "password",           // password to login
-                ssl: ssl)                       /* Additional ways to init an `SSL` instance */
-
+user: "user@gmail.com",         // username to login 
+password: "password",           // password to login
+ssl: ssl)                       // if your SMTP server requires TLS/SSL
 /* Additional parameters available to further customize `SMTP` handle */
 ```
 
@@ -56,14 +58,14 @@ let from = User(name: "Dr. Light", email: "drlight@gmail.com")
 let to = User(name: "Megaman", email: "megaman@gmail.com")
 
 let mail = Mail(from: from,
-                to: [to],
-                subject: "Humans and robots living together in harmony and equality.",
-                text: "That was my ultimate wish.")
+to: [to],
+subject: "Humans and robots living together in harmony and equality.",
+text: "That was my ultimate wish.")
 
 smtp.send(mail) { (err) in
-    if let err = err {
-        print(err)
-    }
+if let err = err {
+print(err)
+}
 }
 ```
 
@@ -74,11 +76,11 @@ let roll = User(name: "Roll", email: "roll@gmail.com")
 let zero = User(name: "Zero", email: "zero@gmail.com")
 
 let mail = Mail(from: from,
-                to: [to],
-                cc: [roll],
-                bcc: [zero],
-                subject: "Robots should be used for the betterment of mankind.",
-                text: "Any other use would be...unethical.")
+to: [to],
+cc: [roll],
+bcc: [zero],
+subject: "Robots should be used for the betterment of mankind.",
+text: "Any other use would be...unethical.")
 
 smtp.send(mail)
 
@@ -91,26 +93,27 @@ Create an `Attachment`, attach it to your `Mail`, and send it through the `smtp`
 ```swift
 // Create a file `Attachment`
 let fileAttachment = Attachment(filePath: "~/img.png",
-                                // You can add "CONTENT-ID" to reference this in another attachment
-                                additionalHeaders: ["CONTENT-ID": "img001"])
+// You can add "CONTENT-ID" to reference this in another attachment
+additionalHeaders: ["CONTENT-ID": "img001"])
 
 // Create an HTML `Attachment`
 let htmlAttachment = Attachment(htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>", 
-                                related: [fileAttachment]) // to reference `fileAttachment`
+related: [fileAttachment]) // to reference `fileAttachment`
 
 // Create a data `Attachment`
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 let dataAttachment = Attachment(data: data, 
-                                mime: "application/json", 
-                                name: "file.json",
-                                inline: false) // send as a standalone attachment
+mime: "application/json", 
+name: "file.json",
+inline: false) // send as a standalone attachment
 
 // Create a `Mail` and attach the `Attachment`s
 let mail = Mail(from: from, 
-                to: [to], 
-                subject: "Check out this image and JSON file!", 
-                attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
+to: [to], 
+subject: "Check out this image and JSON file!", 
+attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
 
+// Send the mail
 smtp.send(mail)
 
 /* Each type of attachment has additional parameters for further customization */
@@ -123,15 +126,15 @@ let mail1: Mail = //...
 let mail2: Mail = //...
 
 smtp.send([mail1, mail2], 
-        progress: { (mail, error) in
-            // this optional callback gets called after each mail is sent
-            // `mail` is the attempted mail, `error` is the error if one occured
-        },
-        completion: { (sent, failed) in
-            // this optional callback gets called after all the mails have been sent
-            // `sent` is an array of the successfully sent mails
-            // `failed` is an array of (Mail, Error)--the failed mails and their corresponding errors
-        }
+progress: { (mail, error) in
+// this optional callback gets called after each mail is sent
+// `mail` is the attempted mail, `error` is the error if one occured
+},
+completion: { (sent, failed) in
+// this optional callback gets called after all the mails have been sent
+// `sent` is an array of the successfully sent mails
+// `failed` is an array of (Mail, Error)--the failed mails and their corresponding errors
+}
 )
 ```
 
