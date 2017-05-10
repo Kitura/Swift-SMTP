@@ -43,10 +43,6 @@ class Sender {
     func send() {
         queue.async { self.sendNext() }
     }
-    
-    deinit {
-        socket.close()
-    }
 }
 
 private extension Sender {
@@ -61,11 +57,15 @@ private extension Sender {
         
         do {
             try send(mail)
-            sent.append(mail)
+            if completion != nil {
+                sent.append(mail)
+            }
             progress?(mail, nil)
             
         } catch {
-            failed.append((mail, error))
+            if completion != nil {
+                failed.append((mail, error))
+            }
             progress?(mail, error)
         }
         
@@ -73,8 +73,8 @@ private extension Sender {
     }
     
     func quit() throws {
-        defer { socket.close() }
-        return try socket.send(.quit)
+        let _: Void = try socket.send(.quit)
+        socket.close()
     }
 }
 
