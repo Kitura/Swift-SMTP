@@ -15,7 +15,7 @@
  **/
 
 import XCTest
-import KituraSMTP
+@testable import KituraSMTP
 
 class TestDataSender: XCTestCase {
     static var allTests: [(String, (TestDataSender) -> () throws -> Void)] {
@@ -107,5 +107,30 @@ class TestDataSender: XCTestCase {
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
+    }
+
+    func testFileCache() throws {
+        let socket = try SMTPSocket()
+//        socket.connect(to: <#T##String#>, port: <#T##Port#>)
+        let dataSender = DataSender(socket: try SMTPSocket())
+        try dataSender.sendFile(at: imgFilePath)
+        let cachedFile = dataSender.cache.object(forKey: imgFilePath as AnyObject)
+        XCTAssertNotNil(cachedFile)
+
+//        let expectation = self.expectation(description: "\(#function)")
+//        let fileAttachment = Attachment(filePath: imgFilePath)
+//        let mail = Mail(from: from, to: [to], subject: #function, attachments: [fileAttachment])
+//        smtp.send([mail, mail]) { (success, fail) in
+//            XCTAssertEqual(success.count, 2)
+//            XCTAssertEqual(fail.count, 0)
+//
+//
+//            expectation.fulfill()
+//        }
+//        waitForExpectations(timeout: testDuration) { (error) in
+//            if let error = error {
+//                XCTFail("\(error)")
+//            }
+//        }
     }
 }
