@@ -80,7 +80,6 @@ class TestDataSender: XCTestCase {
 
     func testSendData() {
         let x = expectation(description: "Send mail with data attachment.")
-        let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
         let dataAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
         let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [dataAttachment])
         smtp.send(mail) { (err) in
@@ -234,7 +233,6 @@ class TestDataSender: XCTestCase {
         group.enter()
 
         var sender: Sender?
-        let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 
         try Login(hostname: hostname,
                   user: user,

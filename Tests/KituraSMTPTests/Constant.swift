@@ -58,6 +58,7 @@ let to2 = User(name: "Roll", email: "kiturasmtp2@gmail.com")
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
 let imgFilePath = root + "/x.png"
+let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 
 // https://www.base64decode.org/
 let randomText1 = "Picture removal detract earnest is by. Esteems met joy attempt way clothes yet demesne tedious. Replying an marianne do it an entrance advanced. Two dare say play when hold. Required bringing me material stanhill jointure is as he. Mutual indeed yet her living result matter him bed whence."
