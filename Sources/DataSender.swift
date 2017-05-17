@@ -116,7 +116,6 @@ extension DataSender {
         #if os(macOS)
             if let data = cache.object(forKey: path as AnyObject) as? Data {
                 try send(data)
-                print("🤢")
                 return
             }
         #else

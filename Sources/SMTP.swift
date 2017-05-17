@@ -147,10 +147,12 @@ public struct SMTP {
                   domainName: domainName,
                   accessToken: accessToken,
                   timeout: timeout) { (socket, err) in
+
                     if let err = err {
                         completion?([], mails.map { ($0, err) })
                         return
                     }
+
                     if let socket = socket {
                         Sender(socket: socket,
                                pending: mails,

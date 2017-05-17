@@ -17,19 +17,24 @@
 import XCTest
 @testable import KituraSMTP
 
+#if os(Linux)
+    import Dispatch
+#endif
+
 class TestDataSender: XCTestCase {
-    static var allTests: [(String, (TestDataSender) -> () throws -> Void)] {
-        return [
-            ("testSendNonASCII", testSendNonASCII),
-            ("testSendFile", testSendFile),
-            ("testSendHTMLAlternative", testSendHTMLAlternative),
-            ("testSendHTML", testSendHTML),
-            ("testSendData", testSendData),
-            ("testSendRelatedAttachment", testSendRelatedAttachment),
-            ("testSendMultipleAttachments", testSendMultipleAttachments)
-        ]
-    }
-    
+    static var allTests = [
+        ("testSendNonASCII", testSendNonASCII),
+        ("testSendFile", testSendFile),
+        ("testSendHTMLAlternative", testSendHTMLAlternative),
+        ("testSendHTML", testSendHTML),
+        ("testSendData", testSendData),
+        ("testSendRelatedAttachment", testSendRelatedAttachment),
+        ("testSendMultipleAttachments", testSendMultipleAttachments),
+        ("testFileCache", testFileCache),
+        ("testHTMLCache", testHTMLCache),
+        ("testDataCache", testDataCache)
+    ]
+
     func testSendNonASCII() {
         let x = expectation(description: "Send mail with non ASCII character.")
         let mail = Mail(from: from, to: [to], subject: "Non ASCII", text: "💦")
@@ -39,7 +44,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendFile() {
         let x = expectation(description: "Send mail with file attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath)
@@ -50,7 +55,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendHTMLAlternative() {
         let x = expectation(description: "Send mail with HTML as alternative to text.")
         let htmlAttachment = Attachment(htmlContent: html)
@@ -61,7 +66,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendHTML() {
         let x = expectation(description: "Send mail with HTML attachment.")
         let htmlAttachment = Attachment(htmlContent: html, alternative: false)
@@ -72,7 +77,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendData() {
         let x = expectation(description: "Send mail with data attachment.")
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
@@ -84,7 +89,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendRelatedAttachment() {
         let x = expectation(description: "Send mail with an attachment that references a related attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
@@ -96,7 +101,7 @@ class TestDataSender: XCTestCase {
         }
         waitForExpectations(timeout: testDuration)
     }
-    
+
     func testSendMultipleAttachments() {
         let x = expectation(description: "Send mail with multiple attachments.")
         let fileAttachment = Attachment(filePath: imgFilePath)
@@ -110,27 +115,162 @@ class TestDataSender: XCTestCase {
     }
 
     func testFileCache() throws {
-        let socket = try SMTPSocket()
-//        socket.connect(to: <#T##String#>, port: <#T##Port#>)
-        let dataSender = DataSender(socket: try SMTPSocket())
-        try dataSender.sendFile(at: imgFilePath)
-        let cachedFile = dataSender.cache.object(forKey: imgFilePath as AnyObject)
+        let expectation = self.expectation(description: "\(#function)")
+        defer {
+            waitForExpectations(timeout: testDuration) { (error) in
+                if let error = error {
+                    XCTFail("\(error)")
+                }
+            }
+        }
+
+        let group = DispatchGroup()
+        group.enter()
+
+        var sender: Sender?
+
+        try Login(hostname: hostname,
+                  user: user,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (socket, error) in
+
+                    XCTAssertNil(error)
+
+                    if let socket = socket {
+                        let attachment = Attachment(filePath: imgFilePath)
+                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+
+                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 2)
+                            XCTAssertEqual(failed.count, 0)
+                            group.leave()
+                        }
+                        sender?.send()
+                    }
+
+            }.login()
+
+        group.wait()
+
+        #if os(macOS)
+            let cachedFile = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
+        #else
+            let cachedFile = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
+        #endif
         XCTAssertNotNil(cachedFile)
 
-//        let expectation = self.expectation(description: "\(#function)")
-//        let fileAttachment = Attachment(filePath: imgFilePath)
-//        let mail = Mail(from: from, to: [to], subject: #function, attachments: [fileAttachment])
-//        smtp.send([mail, mail]) { (success, fail) in
-//            XCTAssertEqual(success.count, 2)
-//            XCTAssertEqual(fail.count, 0)
-//
-//
-//            expectation.fulfill()
-//        }
-//        waitForExpectations(timeout: testDuration) { (error) in
-//            if let error = error {
-//                XCTFail("\(error)")
-//            }
-//        }
+        expectation.fulfill()
+    }
+
+    func testHTMLCache() throws {
+        let expectation = self.expectation(description: "\(#function)")
+        defer {
+            waitForExpectations(timeout: testDuration) { (error) in
+                if let error = error {
+                    XCTFail("\(error)")
+                }
+            }
+        }
+
+        let group = DispatchGroup()
+        group.enter()
+
+        var sender: Sender?
+
+        try Login(hostname: hostname,
+                  user: user,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (socket, error) in
+
+                    XCTAssertNil(error)
+
+                    if let socket = socket {
+                        let attachment = Attachment(htmlContent: html)
+                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+
+                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 2)
+                            XCTAssertEqual(failed.count, 0)
+                            group.leave()
+                        }
+                        sender?.send()
+                    }
+
+            }.login()
+
+        group.wait()
+
+        #if os(macOS)
+            let cachedFile = sender?.dataSender.cache.object(forKey: html as AnyObject)
+        #else
+            let cachedFile = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
+        #endif
+        XCTAssertNotNil(cachedFile)
+
+        expectation.fulfill()
+    }
+
+    func testDataCache() throws {
+        let expectation = self.expectation(description: "\(#function)")
+        defer {
+            waitForExpectations(timeout: testDuration) { (error) in
+                if let error = error {
+                    XCTFail("\(error)")
+                }
+            }
+        }
+
+        let group = DispatchGroup()
+        group.enter()
+
+        var sender: Sender?
+        let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
+
+        try Login(hostname: hostname,
+                  user: user,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (socket, error) in
+
+                    XCTAssertNil(error)
+
+                    if let socket = socket {
+                        let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
+                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+
+                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 2)
+                            XCTAssertEqual(failed.count, 0)
+                            group.leave()
+                        }
+                        sender?.send()
+                    }
+                    
+            }.login()
+        
+        group.wait()
+
+        #if os(macOS)
+            let cachedFile = sender?.dataSender.cache.object(forKey: data as AnyObject)
+        #else
+            let cachedFile = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
+        #endif
+        XCTAssertNotNil(cachedFile)
+        
+        expectation.fulfill()
     }
 }
