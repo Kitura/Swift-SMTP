@@ -17,65 +17,65 @@
 import Foundation
 
 struct DataSender {
-    let mail: Mail
-    let socket: SMTPSocket
+    fileprivate let socket: SMTPSocket
+    fileprivate let cache = NSCache<AnyObject, AnyObject>()
     
-    init(mail: Mail, socket: SMTPSocket) {
-        self.mail = mail
+    init(socket: SMTPSocket) {
         self.socket = socket
     }
-    
-    func send() throws {
-        try sendHeader()
+
+    func send(_ mail: Mail) throws {
+        try sendHeaders(mail.headers)
         
         if mail.hasAttachment {
-            try sendMixed()
+            try sendMixed(mail)
         } else {
-            try sendText()
+            try sendText(mail.text)
         }
     }
 }
 
 private extension DataSender {
-    func sendHeader() throws {
-        try send(mail.headers)
+    func sendHeaders(_ headers: String) throws {
+        try send(headers)
     }
     
-    func sendText() throws {
-        let text = mail.text.embeddedText()
-        try send(text)
+    func sendText(_ text: String) throws {
+        let embeddedText = text.embeddedText()
+        try send(embeddedText)
     }
     
-    func sendMixed() throws {
+    func sendMixed(_ mail: Mail) throws {
         let boundary = String.createBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
         
         try send(mixedHeader)
         try send(boundary.startLine)
         
-        if let alternative = mail.alternative {
-            try sendAlternative(alternative)
-        } else {
-            try sendText()
-        }
+        try sendAlternative(mail)
         
         if let attachments = mail.attachments {
             try sendAttachments(attachments, boundary: boundary)
         }
     }
     
-    func sendAlternative(_ alternative: Attachment) throws {
-        let boundary = String.createBoundary()
-        let alternativeHeader = String.alternativeHeader(boundary: boundary)
-        try send(alternativeHeader)
-        
-        try send(boundary.startLine)
-        try sendText()
-        
-        try send(boundary.startLine)
-        try sendAttachment(alternative)
-        
-        try send(boundary.endLine)
+    func sendAlternative(_ mail: Mail) throws {
+        if let alternative = mail.alternative {
+            let boundary = String.createBoundary()
+            let alternativeHeader = String.alternativeHeader(boundary: boundary)
+            try send(alternativeHeader)
+
+            try send(boundary.startLine)
+            try sendText(mail.text)
+
+            try send(boundary.startLine)
+            try sendAttachment(alternative)
+
+            try send(boundary.endLine)
+            return
+        }
+
+        try sendText(mail.text)
     }
     
     func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
@@ -113,11 +113,21 @@ private extension DataSender {
     }
     
     func sendFile(at path: String) throws {
+        if let data = cache.object(forKey: path as AnyObject) as? Data {
+            try send(data)
+            return
+        }
+
         guard let file = FileHandle(forReadingAtPath: path) else {
             throw SMTPError(.fileNotFound(path))
         }
+
         let data = file.readDataToEndOfFile().base64EncodedData()
+
         file.closeFile()
+
+        cache.setObject(data as AnyObject, forKey: path as AnyObject)
+
         try send(data)
     }
     

@@ -61,16 +61,18 @@ struct Login {
             // ensures we can call `wait` and timeout if needed.
             queue.async {
                 do {
-                    try LoginHelper(hostname: self.hostname,
-                                    user: self.user,
-                                    password: self.password,
-                                    port: self.port,
-                                    ssl: self.ssl,
-                                    authMethods: self.authMethods,
-                                    domainName: self.domainName,
-                                    accessToken: self.accessToken).login { (socket, err) in
-                                        group.leave()
-                                        self.callback(socket, err)
+                    var loginHelper = try LoginHelper(hostname: self.hostname,
+                                                      user: self.user,
+                                                      password: self.password,
+                                                      port: self.port,
+                                                      ssl: self.ssl,
+                                                      authMethods: self.authMethods,
+                                                      domainName: self.domainName,
+                                                      accessToken: self.accessToken)
+
+                    loginHelper.login { (socket, err) in
+                        group.leave()
+                        self.callback(socket, err)
                     }
                 } catch {
                     group.leave()
@@ -85,7 +87,7 @@ struct Login {
     }
 }
 
-private class LoginHelper {
+private struct LoginHelper {
     let hostname: String
     let user: String
     let password: String
@@ -108,7 +110,7 @@ private class LoginHelper {
         socket = try SMTPSocket()
     }
 
-    func login(callback: LoginCallback) {
+    mutating func login(callback: LoginCallback) {
         do {
             try connect(port)
             try login()
@@ -127,7 +129,7 @@ private extension LoginHelper {
 }
 
 private extension LoginHelper {
-    func login() throws {
+    mutating func login() throws {
         var serverInfo = try getServerInfo()
 
         if let ssl = ssl, doesStarttls(serverInfo) {
@@ -156,7 +158,7 @@ private extension LoginHelper {
         return serverInfo.contains { $0.message.contains("STARTTLS") }
     }
 
-    func starttls(_ ssl: SSL) throws {
+    mutating func starttls(_ ssl: SSL) throws {
         try starttls()
         socket.close()
         socket = try SMTPSocket()

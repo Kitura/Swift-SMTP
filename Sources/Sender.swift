@@ -32,12 +32,14 @@ class Sender {
     fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
+    fileprivate var dataSender: DataSender
     
     init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress
         self.completion = completion
+        dataSender = DataSender(socket: socket)
     }
     
     func send() {
@@ -85,7 +87,7 @@ private extension Sender {
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()
-        try DataSender(mail: mail, socket: socket).send()
+        try dataSender.send(mail)
         try dataEnd()
     }
     
