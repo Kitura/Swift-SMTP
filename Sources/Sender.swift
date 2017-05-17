@@ -51,6 +51,8 @@ private extension Sender {
     func sendNext() {
         if pending.isEmpty {
             completion?(sent, failed)
+            progress = nil
+            completion = nil
             try? quit()
             return
         }
