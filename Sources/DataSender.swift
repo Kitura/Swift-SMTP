@@ -17,67 +17,67 @@
 import Foundation
 
 struct DataSender {
-    let mail: Mail
-    let socket: SMTPSocket
-    
-    init(mail: Mail, socket: SMTPSocket) {
-        self.mail = mail
+    fileprivate let socket: SMTPSocket
+    fileprivate let cache = NSCache<AnyObject, AnyObject>()
+
+    init(socket: SMTPSocket) {
         self.socket = socket
     }
-    
-    func send() throws {
-        try sendHeader()
-        
+
+    func send(_ mail: Mail) throws {
+        try sendHeaders(mail.headers)
+
         if mail.hasAttachment {
-            try sendMixed()
+            try sendMixed(mail)
         } else {
-            try sendText()
+            try sendText(mail.text)
         }
     }
 }
 
 private extension DataSender {
-    func sendHeader() throws {
-        try send(mail.headers)
+    func sendHeaders(_ headers: String) throws {
+        try send(headers)
     }
-    
-    func sendText() throws {
-        let text = mail.text.embeddedText()
-        try send(text)
+
+    func sendText(_ text: String) throws {
+        let embeddedText = text.embeddedText()
+        try send(embeddedText)
     }
-    
-    func sendMixed() throws {
+
+    func sendMixed(_ mail: Mail) throws {
         let boundary = String.createBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
-        
+
         try send(mixedHeader)
         try send(boundary.startLine)
-        
-        if let alternative = mail.alternative {
-            try sendAlternative(alternative)
-        } else {
-            try sendText()
-        }
-        
+
+        try sendAlternative(mail)
+
         if let attachments = mail.attachments {
             try sendAttachments(attachments, boundary: boundary)
         }
     }
-    
-    func sendAlternative(_ alternative: Attachment) throws {
-        let boundary = String.createBoundary()
-        let alternativeHeader = String.alternativeHeader(boundary: boundary)
-        try send(alternativeHeader)
-        
-        try send(boundary.startLine)
-        try sendText()
-        
-        try send(boundary.startLine)
-        try sendAttachment(alternative)
-        
-        try send(boundary.endLine)
+
+    func sendAlternative(_ mail: Mail) throws {
+        if let alternative = mail.alternative {
+            let boundary = String.createBoundary()
+            let alternativeHeader = String.alternativeHeader(boundary: boundary)
+            try send(alternativeHeader)
+
+            try send(boundary.startLine)
+            try sendText(mail.text)
+
+            try send(boundary.startLine)
+            try sendAttachment(alternative)
+
+            try send(boundary.endLine)
+            return
+        }
+
+        try sendText(mail.text)
     }
-    
+
     func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
         for attachement in attachments {
             try send(boundary.startLine)
@@ -85,47 +85,68 @@ private extension DataSender {
         }
         try send(boundary.endLine)
     }
-    
+
     func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
-        
+
         if attachment.hasRelated {
             relatedBoundary = String.createBoundary()
             let relatedHeader = String.relatedHeader(boundary: relatedBoundary)
             try send(relatedHeader)
             try send(relatedBoundary.startLine)
         }
-        
+
         let attachmentHeader = attachment.headers + CRLF
         try send(attachmentHeader)
-        
+
         switch attachment.type {
         case .file(let file): try sendFile(at: file.path)
         case .html(let html): try sendHTML(html.content)
         case .data(let data): try sendData(data.data)
         }
-        
+
         try send("")
-        
+
         if let relatedAttachments = attachment.relatedAttachments {
             try sendAttachments(relatedAttachments, boundary: relatedBoundary)
         }
     }
-    
+
     func sendFile(at path: String) throws {
+        #if os(macOS)
+            if let data = cache.object(forKey: path as AnyObject) as? Data {
+                try send(data)
+                return
+            }
+        #else
+            if let data = cache.object(forKey: NSString(string: path) as AnyObject) as? Data {
+                try send(data)
+                return
+            }
+        #endif
+
         guard let file = FileHandle(forReadingAtPath: path) else {
             throw SMTPError(.fileNotFound(path))
         }
+
         let data = file.readDataToEndOfFile().base64EncodedData()
+
         file.closeFile()
+
+        #if os(macOS)
+            cache.setObject(data as AnyObject, forKey: path as AnyObject)
+        #else
+            cache.setObject(NSData(data: data) as AnyObject, forKey: NSString(string: path) as AnyObject)
+        #endif
+
         try send(data)
     }
-    
+
     func sendHTML(_ html: String) throws {
         let encodedHTML = html.base64Encoded
         try send(encodedHTML)
     }
-    
+
     func sendData(_ data: Data) throws {
         let encodedData = data.base64EncodedData()
         try send(encodedData)
@@ -136,7 +157,7 @@ private extension DataSender {
     func send(_ text: String) throws {
         try socket.write(text)
     }
-    
+
     func send(_ data: Data) throws {
         try socket.write(data)
     }
@@ -146,21 +167,21 @@ private extension String {
     static func createBoundary() -> String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
-    
+
     static let plainTextHeader = "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)CONTENT-DISPOSITION: inline\(CRLF)"
-    
+
     static func mixedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)"
     }
-    
+
     static func alternativeHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)"
     }
-    
+
     static func relatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
     }
-    
+
     func embeddedText() -> String {
         return "\(String.plainTextHeader)\(CRLF)\(self)\(CRLF)"
     }

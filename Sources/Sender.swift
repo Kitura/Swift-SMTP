@@ -32,20 +32,18 @@ class Sender {
     fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
+    fileprivate var dataSender: DataSender
     
     init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress
         self.completion = completion
+        dataSender = DataSender(socket: socket)
     }
     
     func send() {
         queue.async { self.sendNext() }
-    }
-    
-    deinit {
-        socket.close()
     }
 }
 
@@ -61,11 +59,15 @@ private extension Sender {
         
         do {
             try send(mail)
-            sent.append(mail)
+            if completion != nil {
+                sent.append(mail)
+            }
             progress?(mail, nil)
             
         } catch {
-            failed.append((mail, error))
+            if completion != nil {
+                failed.append((mail, error))
+            }
             progress?(mail, error)
         }
         
@@ -73,8 +75,8 @@ private extension Sender {
     }
     
     func quit() throws {
-        defer { socket.close() }
-        return try socket.send(.quit)
+        let _: Void = try socket.send(.quit)
+        socket.close()
     }
 }
 
@@ -85,7 +87,7 @@ private extension Sender {
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
         try data()
-        try DataSender(mail: mail, socket: socket).send()
+        try dataSender.send(mail)
         try dataEnd()
     }
     

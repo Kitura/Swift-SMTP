@@ -76,7 +76,8 @@ public struct SMTP {
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, user: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods, domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
+    public init(hostname: String, user: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods,
+                domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
         self.hostname = hostname
         self.user = user
         self.password = password
@@ -136,16 +137,27 @@ public struct SMTP {
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
-        Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: accessToken, timeout: timeout) { (socket, err) in
-            if let err = err {
-                completion?([], mails.map { ($0, err) })
-                return
-            }
-            if let socket = socket {
-                Sender(socket: socket, pending: mails, progress: progress, completion: completion).send()
-                return
-            }
-            completion?([], mails.map { ($0, SMTPError(.unknownError)) })
+        Login(hostname: hostname,
+              user: user,
+              password: password,
+              port: port,
+              ssl: ssl,
+              authMethods: authMethods,
+              domainName: domainName,
+              accessToken: accessToken,
+              timeout: timeout) { (socket, err) in
+                if let err = err {
+                    completion?([], mails.map { ($0, err) })
+                    return
+                }
+                if let socket = socket {
+                    Sender(socket: socket,
+                           pending: mails,
+                           progress: progress,
+                           completion: completion).send()
+                    return
+                }
+                completion?([], mails.map { ($0, SMTPError(.unknownError)) })
             }.login()
     }
 }

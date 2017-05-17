@@ -24,7 +24,7 @@ Linux: `Swift 3.0.2` & `Swift 3.1.1` (NOT `Swift 3.1`)
 
 ## Usage
 
-Use the `SMTP` struct as a handle to your SMTP server. If your server requires a TLS/SSL connection, you can specify an `SSL` config and include it in your `SMTP` handle:
+Use the `SMTP` struct as a handle to your SMTP server. If your server requires a SSL/TLS connection, you can specify an `SSL` config and include it in your `SMTP` handle:
 
 ```swift
 import KituraSMTP
@@ -45,7 +45,7 @@ import KituraSMTP
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
                 user: "user@gmail.com",         // username to login 
                 password: "password",           // password to login
-                ssl: ssl)                       // if your SMTP server requires TLS/SSL
+                ssl: ssl)                       // if your SMTP server requires SSL/TLS
                 
 /* Additional parameters available to further customize your `SMTP` handle */
 ```
@@ -55,11 +55,11 @@ let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
 Create a `Mail` object and use your `smtp` handle to send it. To set the sender and receiver of an email, use the `User` struct:
 
 ```swift
-let from = User(name: "Dr. Light", email: "drlight@gmail.com")
-let to = User(name: "Megaman", email: "megaman@gmail.com")
+let drLight = User(name: "Dr. Light", email: "drlight@gmail.com")
+let megaman = User(name: "Megaman", email: "megaman@gmail.com")
 
-let mail = Mail(from: from,
-                to: [to],
+let mail = Mail(from: drLight,
+                to: [megaman],
                 subject: "Humans and robots living together in harmony and equality.",
                 text: "That was my ultimate wish.")
 
@@ -76,8 +76,8 @@ Add Cc and Bcc:
 let roll = User(name: "Roll", email: "roll@gmail.com")
 let zero = User(name: "Zero", email: "zero@gmail.com")
 
-let mail = Mail(from: from,
-                to: [to],
+let mail = Mail(from: drLight,
+                to: [megaman],
                 cc: [roll],
                 bcc: [zero],
                 subject: "Robots should be used for the betterment of mankind.",
@@ -135,7 +135,7 @@ smtp.send([mail1, mail2],
     // `sent` is an array of the successfully sent `Mail`s.
     // `failed` is an array of (Mail, Error)--the failed `Mail`s and their corresponding errors.
     completion: { (sent, failed) in
-   }
+    }
 )
 ```
 
