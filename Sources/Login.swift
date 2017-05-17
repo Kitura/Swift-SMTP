@@ -22,21 +22,22 @@ import SSLService
     import Dispatch
 #endif
 
-typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
+typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)?
 
-struct Login {
-    private let hostname: String
-    private let user: String
-    private let password: String
-    private let port: Port
-    private let ssl: SSL?
-    private let authMethods: [AuthMethod]
-    private let domainName: String
-    private let accessToken: String?
-    private let timeout: Int
-    private let callback: LoginCallback
+class Login {
+    fileprivate let hostname: String
+    fileprivate let user: String
+    fileprivate let password: String
+    fileprivate let port: Port
+    fileprivate let ssl: SSL?
+    fileprivate let authMethods: [AuthMethod]
+    fileprivate let domainName: String
+    fileprivate let accessToken: String?
+    fileprivate let timeout: Int
+    fileprivate var callback: LoginCallback
+    fileprivate var socket: SMTPSocket
 
-    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: @escaping LoginCallback) {
+    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: LoginCallback) throws {
         self.hostname = hostname
         self.user = user
         self.password = password
@@ -47,6 +48,7 @@ struct Login {
         self.accessToken = accessToken
         self.timeout = timeout
         self.callback = callback
+        socket = try SMTPSocket()
     }
 
     func login() {
@@ -61,75 +63,33 @@ struct Login {
             // ensures we can call `wait` and timeout if needed.
             queue.async {
                 do {
-                    var loginHelper = try LoginHelper(hostname: self.hostname,
-                                                      user: self.user,
-                                                      password: self.password,
-                                                      port: self.port,
-                                                      ssl: self.ssl,
-                                                      authMethods: self.authMethods,
-                                                      domainName: self.domainName,
-                                                      accessToken: self.accessToken)
-
-                    loginHelper.login { (socket, err) in
-                        group.leave()
-                        self.callback(socket, err)
-                    }
-                } catch {
+                    try self.connect(self.port)
+                    try self.loginToServer()
                     group.leave()
-                    self.callback(nil, error)
+                    self.callback?(self.socket, nil)
+                    self.callback = nil
+                } catch {
+                    self.callback?(nil, error)
+                    self.callback = nil
                 }
             }
 
             if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
-                self.callback(nil, SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
+                self.callback?(nil, SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
             }
         }
     }
 }
 
-private struct LoginHelper {
-    let hostname: String
-    let user: String
-    let password: String
-    let port: Port
-    let ssl: SSL?
-    let authMethods: [AuthMethod]
-    let domainName: String
-    let accessToken: String?
-    var socket: SMTPSocket
-
-    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?) throws {
-        self.hostname = hostname
-        self.user = user
-        self.password = password
-        self.port = port
-        self.ssl = ssl
-        self.authMethods = authMethods
-        self.domainName = domainName
-        self.accessToken = accessToken
-        socket = try SMTPSocket()
-    }
-
-    mutating func login(callback: LoginCallback) {
-        do {
-            try connect(port)
-            try login()
-            callback(socket, nil)
-        } catch {
-            callback(nil, error)
-        }
-    }
-}
-
-private extension LoginHelper {
+private extension Login {
     func connect(_ port: Port) throws {
         try socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
 }
 
-private extension LoginHelper {
-    mutating func login() throws {
+private extension Login {
+    func loginToServer() throws {
         var serverInfo = try getServerInfo()
 
         if let ssl = ssl, doesStarttls(serverInfo) {
@@ -158,7 +118,7 @@ private extension LoginHelper {
         return serverInfo.contains { $0.message.contains("STARTTLS") }
     }
 
-    mutating func starttls(_ ssl: SSL) throws {
+    func starttls(_ ssl: SSL) throws {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
@@ -171,39 +131,39 @@ private extension LoginHelper {
             switch ssl.config {
             case .caCertificatePath(ca: let config):
                 sslConfig = SSLService.Configuration(withCACertificateFilePath: config.ca,
-                                                  usingCertificateFile: config.cert,
-                                                  withKeyFile: config.key,
-                                                  usingSelfSignedCerts: config.selfSigned,
-                                                  cipherSuite: config.cipher)
+                                                     usingCertificateFile: config.cert,
+                                                     withKeyFile: config.key,
+                                                     usingSelfSignedCerts: config.selfSigned,
+                                                     cipherSuite: config.cipher)
 
             case .caCertificateDirectory(ca: let config):
                 sslConfig = SSLService.Configuration(withCACertificateDirectory: config.ca,
-                                                  usingCertificateFile: config.cert,
-                                                  withKeyFile: config.key,
-                                                  usingSelfSignedCerts: config.selfSigned,
-                                                  cipherSuite: config.cipher)
+                                                     usingCertificateFile: config.cert,
+                                                     withKeyFile: config.key,
+                                                     usingSelfSignedCerts: config.selfSigned,
+                                                     cipherSuite: config.cipher)
 
             case .pemCertificate(pem: let config):
                 sslConfig = SSLService.Configuration(withPEMCertificateString: config.pem,
-                                                  usingSelfSignedCerts: config.selfSigned,
-                                                  cipherSuite: config.cipher)
+                                                     usingSelfSignedCerts: config.selfSigned,
+                                                     cipherSuite: config.cipher)
 
             case .cipherSuite(cipher: let cipher):
                 sslConfig = SSLService.Configuration(withCipherSuite: cipher)
 
             case .chainFile(let config):
                 sslConfig = SSLService.Configuration(withChainFilePath: config.chainFilePath,
-                                                  withPassword: config.password,
-                                                  usingSelfSignedCerts: config.selfSigned,
-                                                  cipherSuite: config.cipherSuite)
+                                                     withPassword: config.password,
+                                                     usingSelfSignedCerts: config.selfSigned,
+                                                     cipherSuite: config.cipherSuite)
             }
         #else
             switch ssl.config {
             case .chainFile(let config):
                 sslConfig = SSLService.Configuration(withChainFilePath: config.chainFilePath,
-                                                  withPassword: config.password,
-                                                  usingSelfSignedCerts: config.selfSigned,
-                                                  cipherSuite: config.cipherSuite)
+                                                     withPassword: config.password,
+                                                     usingSelfSignedCerts: config.selfSigned,
+                                                     cipherSuite: config.cipherSuite)
             }
         #endif
 
@@ -226,7 +186,7 @@ private extension LoginHelper {
     }
 }
 
-private extension LoginHelper {
+private extension Login {
     func loginCramMD5() throws {
         let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
         try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password))
@@ -251,7 +211,7 @@ private extension LoginHelper {
     }
 }
 
-private extension LoginHelper {
+private extension Login {
     func ehlo() throws -> [Response] {
         return try socket.send(.ehlo(domainName))
     }
