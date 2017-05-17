@@ -18,12 +18,7 @@ import Foundation
 
 struct DataSender {
     fileprivate let socket: SMTPSocket
-
-//    #if os(macOS)
     fileprivate let cache = NSCache<AnyObject, AnyObject>()
-//    #else
-//    fileprivate let cache = NSCache<NSString, NSData>()
-//    #endif
 
     init(socket: SMTPSocket) {
         self.socket = socket
