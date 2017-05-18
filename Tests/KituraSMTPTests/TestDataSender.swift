@@ -15,11 +15,8 @@
  **/
 
 import XCTest
+import Dispatch
 @testable import KituraSMTP
-
-#if os(Linux)
-    import Dispatch
-#endif
 
 class TestDataSender: XCTestCase {
     static var allTests = [
