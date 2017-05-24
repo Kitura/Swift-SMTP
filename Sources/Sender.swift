@@ -31,7 +31,7 @@ class Sender {
     fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
-    let dataSender: DataSender
+    var dataSender: DataSender
 
     init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
