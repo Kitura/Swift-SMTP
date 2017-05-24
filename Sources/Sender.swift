@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import Socket
 
 #if os(Linux)
     import Dispatch
@@ -25,13 +24,13 @@ public typealias Progress = ((Mail, Error?) -> Void)?
 public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
 class Sender {
-    var socket: SMTPSocket
-    var pending: [Mail]
-    var progress: Progress
-    var completion: Completion
-    let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
-    var sent = [Mail]()
-    var failed = [(Mail, Error)]()
+    fileprivate var socket: SMTPSocket
+    fileprivate var pending: [Mail]
+    fileprivate var progress: Progress
+    fileprivate var completion: Completion
+    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
+    fileprivate var sent = [Mail]()
+    fileprivate var failed = [(Mail, Error)]()
     let dataSender: DataSender
     
     init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {

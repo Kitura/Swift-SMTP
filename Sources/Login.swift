@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import Socket
 import SSLService
 
 #if os(Linux)
