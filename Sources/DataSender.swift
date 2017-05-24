@@ -18,13 +18,13 @@ import Foundation
 
 struct DataSender {
     let socket: SMTPSocket
-    let cache = NSCache<AnyObject, AnyObject>()
+    lazy var cache = NSCache<AnyObject, AnyObject>()
 
     init(socket: SMTPSocket) {
         self.socket = socket
     }
 
-    func send(_ mail: Mail) throws {
+    mutating func send(_ mail: Mail) throws {
         try sendHeaders(mail.headers)
 
         if mail.hasAttachment {
@@ -45,7 +45,7 @@ extension DataSender {
         try send(embeddedText)
     }
 
-    func sendMixed(_ mail: Mail) throws {
+    mutating func sendMixed(_ mail: Mail) throws {
         let boundary = String.createBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
 
@@ -59,7 +59,7 @@ extension DataSender {
         }
     }
 
-    func sendAlternative(_ mail: Mail) throws {
+    mutating func sendAlternative(_ mail: Mail) throws {
         if let alternative = mail.alternative {
             let boundary = String.createBoundary()
             let alternativeHeader = String.alternativeHeader(boundary: boundary)
@@ -78,7 +78,7 @@ extension DataSender {
         try sendText(mail.text)
     }
 
-    func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
+    mutating func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
         for attachement in attachments {
             try send(boundary.startLine)
             try sendAttachment(attachement)
@@ -86,7 +86,7 @@ extension DataSender {
         try send(boundary.endLine)
     }
 
-    func sendAttachment(_ attachment: Attachment) throws {
+    mutating func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
 
         if attachment.hasRelated {
@@ -112,7 +112,7 @@ extension DataSender {
         }
     }
 
-    func sendFile(at path: String) throws {
+    mutating func sendFile(at path: String) throws {
         #if os(macOS)
             if let data = cache.object(forKey: path as AnyObject) as? Data {
                 try send(data)
@@ -140,7 +140,7 @@ extension DataSender {
         #endif
     }
 
-    func sendHTML(_ html: String) throws {
+    mutating func sendHTML(_ html: String) throws {
         #if os(macOS)
             if let encodedHTML = cache.object(forKey: html as AnyObject) as? String {
                 try send(encodedHTML)
@@ -163,7 +163,7 @@ extension DataSender {
         #endif
     }
 
-    func sendData(_ data: Data) throws {
+    mutating func sendData(_ data: Data) throws {
         #if os(macOS)
             if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
                 try send(encodedData)

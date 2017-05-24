@@ -1,7 +1,7 @@
 import PackageDescription
 
-#if os(Linux) && swift(>=3.1) && !swift(>=3.1.1)
-print("Swift 3.1 not supported on Linux. Please use Swift >=3.1.1.")
+#if os(Linux) && !swift(>=3.1.1)
+print("Please use Swift >=3.1.1.")
 #else
 let package = Package(
     name: "KituraSMTP",
