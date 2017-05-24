@@ -32,8 +32,8 @@ class Sender {
     let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     var sent = [Mail]()
     var failed = [(Mail, Error)]()
-    let dataSender: DataSender
-    
+    var dataSender: DataSender
+
     init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
         self.socket = socket
         self.pending = pending
@@ -41,7 +41,7 @@ class Sender {
         self.completion = completion
         dataSender = DataSender(socket: socket)
     }
-    
+
     func send() {
         queue.async { self.sendNext() }
     }
@@ -56,26 +56,26 @@ private extension Sender {
             try? quit()
             return
         }
-        
+
         let mail = pending.removeFirst()
-        
+
         do {
             try send(mail)
             if completion != nil {
                 sent.append(mail)
             }
             progress?(mail, nil)
-            
+
         } catch {
             if completion != nil {
                 failed.append((mail, error))
             }
             progress?(mail, error)
         }
-        
+
         queue.async { self.sendNext() }
     }
-    
+
     func quit() throws {
         let _: Void = try socket.send(.quit)
         socket.close()
@@ -92,7 +92,7 @@ private extension Sender {
         try dataSender.send(mail)
         try dataEnd()
     }
-    
+
     private func getRecipientEmails(from mail: Mail) -> [String] {
         var recipientEmails = mail.to.map { $0.email }
         if let cc = mail.cc {
@@ -103,27 +103,27 @@ private extension Sender {
         }
         return recipientEmails
     }
-    
+
     private func validateEmails(_ emails: [String]) throws {
         for email in emails where try !email.isValidEmail() {
             throw SMTPError(.invalidEmail(email))
         }
     }
-    
+
     private func sendMail(_ from: String) throws {
         return try socket.send(.mail(from))
     }
-    
+
     private func sendTo(_ emails: [String]) throws {
         for email in emails {
             let _: Void = try socket.send(.rcpt(email))
         }
     }
-    
+
     private func data() throws {
         return try socket.send(.data)
     }
-    
+
     private func dataEnd() throws {
         return try socket.send(.dataEnd)
     }
