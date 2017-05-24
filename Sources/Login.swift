@@ -51,8 +51,7 @@ class Login {
     }
 
     func login() {
-        let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Login.queue", attributes: .concurrent)
-        queue.async {
+        DispatchQueue.global().async {
 
             let group = DispatchGroup()
             group.enter()
@@ -60,7 +59,7 @@ class Login {
             // Yet another thread is created here because trying to connect on a
             // "bad" port will hang that thread. Doing this on a separate one
             // ensures we can call `wait` and timeout if needed.
-            queue.async {
+            DispatchQueue.global().async {
                 do {
                     try self.connect(self.port)
                     try self.loginToServer()
@@ -68,6 +67,7 @@ class Login {
                     self.callback?(self.socket, nil)
                     self.callback = nil
                 } catch {
+                    group.leave()
                     self.callback?(nil, error)
                     self.callback = nil
                 }
@@ -75,6 +75,7 @@ class Login {
 
             if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
                 self.callback?(nil, SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
+                self.callback = nil
             }
         }
     }

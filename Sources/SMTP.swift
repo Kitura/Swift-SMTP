@@ -103,8 +103,8 @@ public struct SMTP {
     ///                   success.
     public func send(_ mail: Mail, completion: ((Error?) -> Void)? = nil) {
         send([mail]) { (_, failed) in
-            if let err = failed.first?.1 {
-                completion?(err)
+            if let error = failed.first?.1 {
+                completion?(error)
             } else {
                 completion?(nil)
             }
@@ -146,13 +146,11 @@ public struct SMTP {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: accessToken,
-                  timeout: timeout) { (socket, err) in
-
-                    if let err = err {
-                        completion?([], mails.map { ($0, err) })
+                  timeout: timeout) { (socket, error) in
+                    if let error = error {
+                        completion?([], mails.map { ($0, error) })
                         return
                     }
-
                     if let socket = socket {
                         Sender(socket: socket,
                                pending: mails,

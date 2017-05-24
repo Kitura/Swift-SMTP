@@ -28,7 +28,6 @@ class Sender {
     fileprivate var pending: [Mail]
     fileprivate var progress: Progress
     fileprivate var completion: Completion
-    fileprivate let queue = DispatchQueue(label: "com.ibm.Kitura-SMTP.Sender.queue")
     fileprivate var sent = [Mail]()
     fileprivate var failed = [(Mail, Error)]()
     var dataSender: DataSender
@@ -42,7 +41,7 @@ class Sender {
     }
 
     func send() {
-        queue.async { self.sendNext() }
+        DispatchQueue.global().async { self.sendNext() }
     }
 }
 
@@ -72,7 +71,7 @@ private extension Sender {
             progress?(mail, error)
         }
 
-        queue.async { self.sendNext() }
+        DispatchQueue.global().async { self.sendNext() }
     }
 
     func quit() throws {
