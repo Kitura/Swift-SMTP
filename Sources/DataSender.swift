@@ -115,13 +115,11 @@ extension DataSender {
     mutating func sendData(_ data: Data) throws {
         #if os(macOS)
             if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
-                try send(encodedData)
-                return
+                return try send(encodedData)
             }
         #else
             if let encodedData = cache.object(forKey: NSData(data: data) as AnyObject) as? Data {
-                try send(encodedData)
-                return
+                return try send(encodedData)
             }
         #endif
 
@@ -138,13 +136,11 @@ extension DataSender {
     mutating func sendFile(at path: String) throws {
         #if os(macOS)
             if let data = cache.object(forKey: path as AnyObject) as? Data {
-                try send(data)
-                return
+                return try send(data)
             }
         #else
             if let data = cache.object(forKey: NSString(string: path) as AnyObject) as? Data {
-                try send(data)
-                return
+                return try send(data)
             }
         #endif
 
@@ -166,13 +162,11 @@ extension DataSender {
     mutating func sendHTML(_ html: String) throws {
         #if os(macOS)
             if let encodedHTML = cache.object(forKey: html as AnyObject) as? String {
-                try send(encodedHTML)
-                return
+                return try send(encodedHTML)
             }
         #else
             if let encodedHTML = cache.object(forKey: NSString(string: html) as AnyObject) as? String {
-                try send(encodedHTML)
-                return
+                return try send(encodedHTML)
             }
         #endif
 
