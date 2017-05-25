@@ -20,34 +20,33 @@ import XCTest
 class TestAttachment: XCTestCase {
     static var allTests: [(String, (TestAttachment) -> () throws -> Void)] {
         return [
+            ("testDataAttachmentHeaders", testDataAttachmentHeaders),
             ("testFileAttachmentHeaders", testFileAttachmentHeaders),
-            ("testHTMLAttachmentHeaders", testHTMLAttachmentHeaders),
-            ("testDataAttachmentHeaders", testDataAttachmentHeaders)
+            ("testHTMLAttachmentHeaders", testHTMLAttachmentHeaders)
         ]
     }
-    
-    func testFileAttachmentHeaders() {
-        let headers = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"]).headers
-        XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?x.png?=\""))
-        XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
-        XCTAssert(headers.contains("CONTENT-ID: megaman-pic"))
-        XCTAssert(headers.contains("CONTENT-TYPE: application/octet-stream"))
-        
-    }
-    
-    func testHTMLAttachmentHeaders() {
-        let headers = Attachment(htmlContent: html).headers
-        XCTAssert(headers.contains("CONTENT-TYPE: text/html; charset=utf-8"))
-        XCTAssert(headers.contains("CONTENT-DISPOSITION: inline"))
-        XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
-        
-    }
-    
+
     func testDataAttachmentHeaders() {
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
         let headers = Attachment(data: data, mime: "application/json", name: "file.json").headers
         XCTAssert(headers.contains("CONTENT-TYPE: application/json"))
         XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?file.json?=\""))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
+    }
+
+    func testFileAttachmentHeaders() {
+        let headers = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"]).headers
+        XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?x.png?=\""))
+        XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
+        XCTAssert(headers.contains("CONTENT-ID: megaman-pic"))
+        XCTAssert(headers.contains("CONTENT-TYPE: application/octet-stream"))
+    }
+
+    func testHTMLAttachmentHeaders() {
+        let headers = Attachment(htmlContent: html).headers
+        XCTAssert(headers.contains("CONTENT-TYPE: text/html; charset=utf-8"))
+        XCTAssert(headers.contains("CONTENT-DISPOSITION: inline"))
+        XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
+
     }
 }

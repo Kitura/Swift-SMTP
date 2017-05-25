@@ -20,11 +20,11 @@ import LoggerAPI
 /// Error type for KituraSMTP.
 public enum SMTPError: Error, CustomStringConvertible {
     // AuthCredentials
-    /// Hashing server challenge with MD5 algorithm failed.
-    case md5HashChallengeFail
-    
     /// Error decoding string.
     case base64DecodeFail(String)
+
+    /// Hashing server challenge with MD5 algorithm failed.
+    case md5HashChallengeFail
     
     // DataSender
     /// File not found at path while trying to send file `Attachment`.
@@ -49,11 +49,11 @@ public enum SMTPError: Error, CustomStringConvertible {
     case createEmailRegexFailed
 
     // SMTPSocket
-    /// Error converting Data read from socket to a String.
-    case convertDataUTF8Fail(Data)
-    
     /// Bad response received for command.
     case badResponse(String, String)
+
+    /// Error converting Data read from socket to a String.
+    case convertDataUTF8Fail(Data)
     
     // User
     /// Invalid email provided for `User`.
@@ -62,15 +62,15 @@ public enum SMTPError: Error, CustomStringConvertible {
     /// Description of the `SMTPError`.
     public var description: String {
         switch self {
-        case .md5HashChallengeFail: return "Hashing server challenge with MD5 algorithm failed."
         case .base64DecodeFail(let s): return "Error decoding string: \(s)."
+        case .md5HashChallengeFail: return "Hashing server challenge with MD5 algorithm failed."
         case .fileNotFound(let p): return "File not found at path while trying to send file `Attachment`: \(p)."
         case .couldNotConnectToServer(let s, let t): return "Could not connect to server (\(s)) within specified timeout (\(t) seconds). Ensure your server can connect through port 587 or specify which port to connect on. Some SMTP servers may require a longer timeout."
         case .noSupportedAuthMethods(let hostname): return "The preferred authorization methods could not be found on \(hostname). Connecting with SSL may be required."
         case .noAccessToken: return "Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token."
         case .createEmailRegexFailed: return "Failed to create RegularExpression that can check if an email is valid."
-        case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
         case .badResponse(let command, let response): return "Bad response received for command. command: (\(command)), response: \(response)"
+        case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
         case .invalidEmail(let email): return "Invalid email provided for User: \(email)."
         }
     }

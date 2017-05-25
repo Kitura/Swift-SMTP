@@ -118,12 +118,10 @@
 </ul>
 <a href='#swift-version' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='swift-version'>Swift Version</h2>
 
-<p>macOS: <code>Swift 3.1</code></p>
-
-<p>Linux: <code>Swift 3.0.2</code> &amp; <code>Swift 3.1.1</code> (NOT <code>Swift 3.1</code>)</p>
+<p>macOS &amp; Linux: <code>Swift 3.1.1</code></p>
 <a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
 
-<p>Use the <code>SMTP</code> struct as a handle to your SMTP server. If your server requires a TLS/SSL connection, you can specify an <code>SSL</code> config and include it in your <code>SMTP</code> handle:</p>
+<p>Use the <code>SMTP</code> struct as a handle to your SMTP server. If your server requires a SSL/TLS connection, you can specify an <code>SSL</code> config and include it in your <code>SMTP</code> handle:</p>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">KituraSMTP</span>
 
 <span class="c1">// Create an `SSL` config</span>
@@ -142,18 +140,18 @@
 <span class="k">let</span> <span class="nv">smtp</span> <span class="o">=</span> <span class="kt">SMTP</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="s">"smtp.gmail.com"</span><span class="p">,</span>     <span class="c1">// SMTP server address</span>
                 <span class="nv">user</span><span class="p">:</span> <span class="s">"user@gmail.com"</span><span class="p">,</span>         <span class="c1">// username to login </span>
                 <span class="nv">password</span><span class="p">:</span> <span class="s">"password"</span><span class="p">,</span>           <span class="c1">// password to login</span>
-                <span class="nv">ssl</span><span class="p">:</span> <span class="n">ssl</span><span class="p">)</span>                       <span class="c1">// if your SMTP server requires TLS/SSL</span>
+                <span class="nv">ssl</span><span class="p">:</span> <span class="n">ssl</span><span class="p">)</span>                       <span class="c1">// if your SMTP server requires SSL/TLS</span>
 
 <span class="cm">/* Additional parameters available to further customize your `SMTP` handle */</span>
 </code></pre>
 <a href='#send-email' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-email'>Send email</h3>
 
 <p>Create a <code>Mail</code> object and use your <code>smtp</code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
-<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">from</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
-<span class="k">let</span> <span class="nv">to</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">drLight</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">megaman</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span>
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span>
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
+                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
                 <span class="nv">subject</span><span class="p">:</span> <span class="s">"Humans and robots living together in harmony and equality."</span><span class="p">,</span>
                 <span class="nv">text</span><span class="p">:</span> <span class="s">"That was my ultimate wish."</span><span class="p">)</span>
 
@@ -168,8 +166,8 @@
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">roll</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Roll"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"roll@gmail.com"</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">zero</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Zero"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"zero@gmail.com"</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span>
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span>
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
+                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
                 <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="n">roll</span><span class="p">],</span>
                 <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="n">zero</span><span class="p">],</span>
                 <span class="nv">subject</span><span class="p">:</span> <span class="s">"Robots should be used for the betterment of mankind."</span><span class="p">,</span>
@@ -221,7 +219,7 @@
     <span class="c1">// `sent` is an array of the successfully sent `Mail`s.</span>
     <span class="c1">// `failed` is an array of (Mail, Error)--the failed `Mail`s and their corresponding errors.</span>
     <span class="nv">completion</span><span class="p">:</span> <span class="p">{</span> <span class="p">(</span><span class="n">sent</span><span class="p">,</span> <span class="n">failed</span><span class="p">)</span> <span class="k">in</span>
-   <span class="p">}</span>
+    <span class="p">}</span>
 <span class="p">)</span>
 </code></pre>
 <a href='#acknowledgements' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='acknowledgements'>Acknowledgements</h2>
@@ -238,7 +236,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-04-26)</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-05-25)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

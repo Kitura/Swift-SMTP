@@ -18,34 +18,14 @@ import XCTest
 @testable import KituraSMTP
 
 class TestLogin: XCTestCase {
-    static var allTests: [(String, (TestLogin) -> () throws -> Void)] {
-        return [
-            ("testLogin", testLogin),
-            ("testPlain", testPlain),
-            ("testBadCredentials", testBadCredentials),
-            ("testPort0", testPort0),
-            ("testBadPort", testBadPort)
-        ]
-    }
-    
-    func testLogin() throws {
-        let x = expectation(description: "Login with Login auth.")
-        try Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
-        }.login()
-        waitForExpectations(timeout: testDuration)
-    }
-    
-    func testPlain() throws {
-        let x = expectation(description: "Login with Plain auth.")
-        try Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
-            }.login()
-        waitForExpectations(timeout: testDuration)
-    }
-    
+    static var allTests = [
+        ("testBadCredentials", testBadCredentials),
+        ("testBadPort", testBadPort),
+        ("testLogin", testLogin),
+        ("testPlain", testPlain),
+        ("testPort0", testPort0)
+    ]
+
     func testBadCredentials() throws {
         let x = expectation(description: "Fail login with bad credentials.")
         try Login(hostname: hostname, user: user, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
@@ -57,16 +37,7 @@ class TestLogin: XCTestCase {
             }.login()
         waitForExpectations(timeout: testDuration)
     }
-    
-    func testPort0() throws {
-        let x = expectation(description: "Fail login because port can't be 0.")
-        try Login(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
-            XCTAssertNotNil(err, "Should get error here, but error was nil.")
-            x.fulfill()
-            }.login()
-        waitForExpectations(timeout: testDuration)
-    }
-    
+
     func testBadPort() throws {
         let x = expectation(description: "Login timeout because bad port.")
         try Login(hostname: hostname, user: user, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
@@ -75,6 +46,33 @@ class TestLogin: XCTestCase {
             } else {
                 XCTFail("Received different error other than SMTPError(.couldNotConnectToServer) or no error at all.")
             }
+            }.login()
+        waitForExpectations(timeout: testDuration)
+    }
+
+    func testLogin() throws {
+        let x = expectation(description: "Login with Login auth.")
+        try Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNil(err, String(describing: err))
+            x.fulfill()
+            }.login()
+        waitForExpectations(timeout: testDuration)
+    }
+
+    func testPlain() throws {
+        let x = expectation(description: "Login with Plain auth.")
+        try Login(hostname: hostname, user: user, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNil(err, String(describing: err))
+            x.fulfill()
+            }.login()
+        waitForExpectations(timeout: testDuration)
+    }
+
+    func testPort0() throws {
+        let x = expectation(description: "Fail login because port can't be 0.")
+        try Login(hostname: hostname, user: user, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+            XCTAssertNotNil(err, "Should get error here, but error was nil.")
+            x.fulfill()
             }.login()
         waitForExpectations(timeout: testDuration)
     }

@@ -100,9 +100,9 @@ extension DataSender {
         try send(attachmentHeader)
 
         switch attachment.type {
+        case .data(let data): try sendData(data.data)
         case .file(let file): try sendFile(at: file.path)
         case .html(let html): try sendHTML(html.content)
-        case .data(let data): try sendData(data.data)
         }
 
         try send("")
@@ -110,6 +110,29 @@ extension DataSender {
         if let relatedAttachments = attachment.relatedAttachments {
             try sendAttachments(relatedAttachments, boundary: relatedBoundary)
         }
+    }
+
+    mutating func sendData(_ data: Data) throws {
+        #if os(macOS)
+            if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
+                try send(encodedData)
+                return
+            }
+        #else
+            if let encodedData = cache.object(forKey: NSData(data: data) as AnyObject) as? Data {
+                try send(encodedData)
+                return
+            }
+        #endif
+
+        let encodedData = data.base64EncodedData()
+        try send(encodedData)
+
+        #if os(macOS)
+            cache.setObject(encodedData as AnyObject, forKey: data as AnyObject)
+        #else
+            cache.setObject(NSData(data: encodedData) as AnyObject, forKey: NSData(data: data) as AnyObject)
+        #endif
     }
 
     mutating func sendFile(at path: String) throws {
@@ -160,29 +183,6 @@ extension DataSender {
             cache.setObject(encodedHTML as AnyObject, forKey: html as AnyObject)
         #else
             cache.setObject(NSString(string: encodedHTML) as AnyObject, forKey: NSString(string: html) as AnyObject)
-        #endif
-    }
-
-    mutating func sendData(_ data: Data) throws {
-        #if os(macOS)
-            if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
-                try send(encodedData)
-                return
-            }
-        #else
-            if let encodedData = cache.object(forKey: NSData(data: data) as AnyObject) as? Data {
-                try send(encodedData)
-                return
-            }
-        #endif
-
-        let encodedData = data.base64EncodedData()
-        try send(encodedData)
-
-        #if os(macOS)
-            cache.setObject(encodedData as AnyObject, forKey: data as AnyObject)
-        #else
-            cache.setObject(NSData(data: encodedData) as AnyObject, forKey: NSData(data: data) as AnyObject)
         #endif
     }
 }

@@ -18,14 +18,23 @@ import XCTest
 @testable import KituraSMTP
 
 class TestAuthEncoder: XCTestCase {
-    static var allTests: [(String, (TestAuthEncoder) -> () throws -> Void)] {
-        return [
-            ("testCramMD5", testCramMD5),
-            ("testLogin", testLogin),
-            ("testPlain", testPlain),
-            ("testXOAuth2", testXOAuth2),
-            ("testBase64Decoder", testBase64Decoder)
-        ]
+    static var allTests = [
+        ("testBase64Decoder", testBase64Decoder),
+        ("testCramMD5", testCramMD5),
+        ("testLogin", testLogin),
+        ("testPlain", testPlain),
+        ("testXOAuth2", testXOAuth2)
+    ]
+
+    func testBase64Decoder() throws {
+        let randomText1Decoded = try randomText1Encoded.base64Decoded()
+        XCTAssertEqual(randomText1Decoded, randomText1, "result: \(randomText1Decoded) != expected: \(randomText1)")
+
+        let randomText2Decoded = try randomText2Encoded.base64Decoded()
+        XCTAssertEqual(randomText2Decoded, randomText2, "result: \(randomText2Decoded) != expected: \(randomText2)")
+
+        let randomText3Decoded = try randomText3Encoded.base64Decoded()
+        XCTAssertEqual(randomText3Decoded, randomText3, "result: \(randomText3Decoded) != expected: \(randomText3)")
     }
 
     func testCramMD5() throws {
@@ -68,16 +77,5 @@ class TestAuthEncoder: XCTestCase {
         let expected = "dXNlcj1mb29AYmFyLmNvbQFhdXRoPUJlYXJlciB0b2tlbgEB"
         let result = AuthEncoder.xoauth2(user: user, accessToken: token)
         XCTAssertEqual(result, expected, "result: \(result) != expected: \(expected)")
-    }
-
-    func testBase64Decoder() throws {
-        let randomText1Decoded = try randomText1Encoded.base64Decoded()
-        XCTAssertEqual(randomText1Decoded, randomText1, "result: \(randomText1Decoded) != expected: \(randomText1)")
-
-        let randomText2Decoded = try randomText2Encoded.base64Decoded()
-        XCTAssertEqual(randomText2Decoded, randomText2, "result: \(randomText2Decoded) != expected: \(randomText2)")
-
-        let randomText3Decoded = try randomText3Encoded.base64Decoded()
-        XCTAssertEqual(randomText3Decoded, randomText3, "result: \(randomText3Decoded) != expected: \(randomText3)")
     }
 }

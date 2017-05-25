@@ -21,6 +21,22 @@ public struct Attachment {
     let type: AttachmentType
     let additionalHeaders: [String: String]?
     let relatedAttachments: [Attachment]?
+
+    /// Initialize a data `Attachment`.
+    ///
+    /// - Parameters:
+    ///     - data: Raw data to be sent as attachment.
+    ///     - mime: MIME type of the data.
+    ///     - name: File name which will be presented in the mail.
+    ///     - inline: Indicates if attachment is inline. To embed the attachment
+    ///               in mail content, set to `true`. To send as standalone
+    ///               attachment, set to `false`. Defaults to `false`.
+    ///     - additionalHeaders: Additional headers for the attachment.
+    ///                          (optional)
+    ///     - related: Related `Attachment`s of this attachment. (optional)
+    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
+        self.init(type: .data(data: data, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
+    }
     
     /// Initialize an `Attachment` from a local file.
     ///
@@ -56,22 +72,6 @@ public struct Attachment {
         self.init(type: .html(content: htmlContent, characterSet: characterSet, alternative: alternative), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
     }
     
-    /// Initialize a data `Attachment`.
-    ///
-    /// - Parameters:
-    ///     - data: Raw data to be sent as attachment.
-    ///     - mime: MIME type of the data.
-    ///     - name: File name which will be presented in the mail.
-    ///     - inline: Indicates if attachment is inline. To embed the attachment
-    ///               in mail content, set to `true`. To send as standalone
-    ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment.
-    ///                          (optional)
-    ///     - related: Related `Attachment`s of this attachment. (optional)
-    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
-        self.init(type: .data(data: data, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
-    }
-    
     private init(type: AttachmentType, additionalHeaders: [String: String]?, relatedAttachments: [Attachment]?) {
         self.type = type
         self.additionalHeaders = additionalHeaders
@@ -81,9 +81,9 @@ public struct Attachment {
 
 extension Attachment {
     enum AttachmentType {
+        case data(data: Data, mime: String, name: String, inline: Bool)
         case file(path: String, mime: String, name: String, inline: Bool)
         case html(content: String, characterSet: String, alternative: Bool)
-        case data(data: Data, mime: String, name: String, inline: Bool)
     }
 }
 
@@ -91,7 +91,15 @@ extension Attachment {
     private var headersDictionary: [String: String] {
         var result = [String: String]()
         switch type {
-            
+
+        case .data(let data):
+            result["CONTENT-TYPE"] = data.mime
+            var attachmentDisposition = data.inline ? "inline" : "attachment"
+            if let mime = data.name.mimeEncoded {
+                attachmentDisposition.append("; filename=\"\(mime)\"")
+            }
+            result["CONTENT-DISPOSITION"] = attachmentDisposition
+
         case .file(let file):
             result["CONTENT-TYPE"] = file.mime
             var attachmentDisposition = file.inline ? "inline" : "attachment"
@@ -103,14 +111,6 @@ extension Attachment {
         case .html(let html):
             result["CONTENT-TYPE"] = "text/html; charset=\(html.characterSet)"
             result["CONTENT-DISPOSITION"] = "inline"
-            
-        case .data(let data):
-            result["CONTENT-TYPE"] = data.mime
-            var attachmentDisposition = data.inline ? "inline" : "attachment"
-            if let mime = data.name.mimeEncoded {
-                attachmentDisposition.append("; filename=\"\(mime)\"")
-            }
-            result["CONTENT-DISPOSITION"] = attachmentDisposition
         }
         
         result["CONTENT-TRANSFER-ENCODING"] = "BASE64"
