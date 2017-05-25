@@ -17,7 +17,7 @@
 import Foundation
 import LoggerAPI
 
-/// Error type for KituraSMTP.
+/// Error type for SwiftSMTP.
 public enum SMTPError: Error, CustomStringConvertible {
     // AuthCredentials
     /// Error decoding string.

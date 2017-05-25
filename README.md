@@ -1,8 +1,8 @@
-# Kitura-SMTP
+# Swift-SMTP
 
 Swift package for sending emails to an SMTP server.
 
-[![Build Status - Master](https://travis-ci.com/IBM-Swift/Kitura-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Kitura-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
+[![Build Status - Master](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 ![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
@@ -14,7 +14,7 @@ Swift package for sending emails to an SMTP server.
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
 - Asynchronous
-- [Documentation](https://ibm-swift.github.io/Kitura-SMTP/)
+- [Documentation](https://ibm-swift.github.io/Swift-SMTP/)
 
 ## Swift Version
 
@@ -25,7 +25,7 @@ macOS & Linux: `Swift 3.1.1`
 Use the `SMTP` struct as a handle to your SMTP server. If your server requires a SSL/TLS connection, you can specify an `SSL` config and include it in your `SMTP` handle:
 
 ```swift
-import KituraSMTP
+import SwiftSMTP
 
 // Create an `SSL` config
 #if os(Linux)
@@ -139,7 +139,7 @@ smtp.send([mail1, mail2],
 
 ## Acknowledgements
 
-`Kitura-SMTP` was inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP), two Swift packages that can also be used to send emails to an SMTP server.
+`Swift-SMTP` was inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP), two Swift packages that can also be used to send emails to an SMTP server.
 
 ## License
 

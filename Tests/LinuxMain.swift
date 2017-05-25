@@ -16,7 +16,7 @@
 
 import XCTest
 import Glibc
-@testable import KituraSMTPTests
+@testable import SwiftSMTPTests
 
 srand(UInt32(time(nil)))
 

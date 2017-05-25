@@ -4,7 +4,7 @@ import PackageDescription
 print("Please use Swift >=3.1.1.")
 #else
 let package = Package(
-    name: "KituraSMTP",
+    name: "SwiftSMTP",
     dependencies: [
         .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0, minor: 12),
         .Package(url: "https://github.com/IBM-Swift/BlueSSLService.git", majorVersion: 0, minor: 12),

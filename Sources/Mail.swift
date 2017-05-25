@@ -20,7 +20,7 @@ import Foundation
 public struct Mail {
 
     /// UUID of the `Mail`.
-    public let id = UUID().uuidString + ".Kitura-SMTP"
+    public let id = UUID().uuidString + ".Swift-SMTP"
 
     let from: User
     let to: [User]
@@ -77,7 +77,7 @@ extension Mail {
         }
 
         fields["SUBJECT"] = subject.mimeEncoded ?? ""
-        fields["MIME-VERSION"] = "1.0 (Kitura-SMTP)"
+        fields["MIME-VERSION"] = "1.0 (Swift-SMTP)"
 
         if let additionalHeaders = additionalHeaders {
             for (key, value) in additionalHeaders {
