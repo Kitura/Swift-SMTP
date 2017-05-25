@@ -52,7 +52,6 @@ class Login {
 
     func login() {
         DispatchQueue.global().async {
-
             let group = DispatchGroup()
             group.enter()
 
@@ -64,20 +63,22 @@ class Login {
                     try self.connect(self.port)
                     try self.loginToServer()
                     group.leave()
-                    self.callback?(self.socket, nil)
-                    self.callback = nil
+                    self.done(socket: self.socket, error: nil)
                 } catch {
                     group.leave()
-                    self.callback?(nil, error)
-                    self.callback = nil
+                    self.done(socket: nil, error: error)
                 }
             }
 
             if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
-                self.callback?(nil, SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
-                self.callback = nil
+                self.done(socket: nil, error: SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
             }
         }
+    }
+
+    private func done(socket: SMTPSocket?, error: Error?) {
+        callback?(socket, error)
+        callback = nil
     }
 }
 
@@ -86,9 +87,7 @@ private extension Login {
         try socket.connect(to: hostname, port: port)
         _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
-}
 
-private extension Login {
     func loginToServer() throws {
         var serverInfo = try getServerInfo()
 

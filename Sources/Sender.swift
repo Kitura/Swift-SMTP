@@ -41,7 +41,9 @@ class Sender {
     }
 
     func send() {
-        DispatchQueue.global().async { self.sendNext() }
+        DispatchQueue.global().async {
+            self.sendNext()
+        }
     }
 }
 
@@ -71,7 +73,9 @@ private extension Sender {
             progress?(mail, error)
         }
 
-        DispatchQueue.global().async { self.sendNext() }
+        DispatchQueue.global().async {
+            self.sendNext()
+        }
     }
 
     func quit() throws {
