@@ -15,7 +15,6 @@
  **/
 
 import Foundation
-import SSLService
 
 #if os(Linux)
     import Dispatch
@@ -121,52 +120,7 @@ private extension Login {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
-
-        var sslConfig: SSLService.Configuration
-
-        // Only `.caCertificateDirectory` on Linux and `.chainFile` on macOS
-        // have been tested.
-        #if os(Linux)
-            switch ssl.config {
-            case .caCertificatePath(ca: let config):
-                sslConfig = SSLService.Configuration(withCACertificateFilePath: config.ca,
-                                                     usingCertificateFile: config.cert,
-                                                     withKeyFile: config.key,
-                                                     usingSelfSignedCerts: config.selfSigned,
-                                                     cipherSuite: config.cipher)
-
-            case .caCertificateDirectory(ca: let config):
-                sslConfig = SSLService.Configuration(withCACertificateDirectory: config.ca,
-                                                     usingCertificateFile: config.cert,
-                                                     withKeyFile: config.key,
-                                                     usingSelfSignedCerts: config.selfSigned,
-                                                     cipherSuite: config.cipher)
-
-            case .pemCertificate(pem: let config):
-                sslConfig = SSLService.Configuration(withPEMCertificateString: config.pem,
-                                                     usingSelfSignedCerts: config.selfSigned,
-                                                     cipherSuite: config.cipher)
-
-            case .cipherSuite(cipher: let cipher):
-                sslConfig = SSLService.Configuration(withCipherSuite: cipher)
-
-            case .chainFile(let config):
-                sslConfig = SSLService.Configuration(withChainFilePath: config.chainFilePath,
-                                                     withPassword: config.password,
-                                                     usingSelfSignedCerts: config.selfSigned,
-                                                     cipherSuite: config.cipherSuite)
-            }
-        #else
-            switch ssl.config {
-            case .chainFile(let config):
-                sslConfig = SSLService.Configuration(withChainFilePath: config.chainFilePath,
-                                                     withPassword: config.password,
-                                                     usingSelfSignedCerts: config.selfSigned,
-                                                     cipherSuite: config.cipherSuite)
-            }
-        #endif
-
-        socket.socket.delegate = try SSLService(usingConfiguration: sslConfig)
+        socket.setDelegate(try ssl.makeSSLService())
     }
 
     func getAuthMethod(_ serverInfo: [Response]) throws -> AuthMethod {

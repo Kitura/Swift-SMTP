@@ -24,11 +24,13 @@ struct SMTPSocket {
     init() throws {
         socket = try Socket.create()
     }
-}
 
-extension SMTPSocket {
     func connect(to: String, port: Port) throws {
         try socket.connect(to: to, port: port)
+    }
+
+    func setDelegate(_ delegate: SSLServiceDelegate?) {
+        socket.delegate = delegate
     }
 
     func close() {
