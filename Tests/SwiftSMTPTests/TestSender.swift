@@ -46,14 +46,14 @@ class TestSender: XCTestCase {
     }
 
     func testIsValidEmail() throws {
-        XCTAssert(try user.isValidEmail(), "\(user) should be a valid email.")
+        XCTAssert(try email.isValidEmail(), "\(email) should be a valid email.")
         XCTAssertFalse(try "".isValidEmail(), "Blank email should be in invalid email.")
         XCTAssertFalse(try "a".isValidEmail(), "`a` should be in invalid email.")
         XCTAssertFalse(try "@gmail.com".isValidEmail(), "`@gmail.com` should be in invalid email.")
-        XCTAssertFalse(try "user@.com".isValidEmail(), "`user@.com` should be in invalid email.")
-        XCTAssertFalse(try "user@user".isValidEmail(), "`user@user` should be in invalid email.")
-        XCTAssertFalse(try "user@user.a".isValidEmail(), "`user@user.a` should be in invalid email.")
-        XCTAssertFalse(try "user@user.".isValidEmail(), "`user@user.` should be in invalid email.")
+        XCTAssertFalse(try "email@.com".isValidEmail(), "`email@.com` should be in invalid email.")
+        XCTAssertFalse(try "email@email".isValidEmail(), "`email@email` should be in invalid email.")
+        XCTAssertFalse(try "email@email.a".isValidEmail(), "`email@email.a` should be in invalid email.")
+        XCTAssertFalse(try "email@email.".isValidEmail(), "`email@email.` should be in invalid email.")
     }
 
     func testSendMail() {

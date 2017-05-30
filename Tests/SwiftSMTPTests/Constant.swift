@@ -25,8 +25,8 @@ import SwiftSMTP
 let testDuration: Double = 20
 
 let hostname = "smtp.gmail.com"
-let user = "kiturasmtp" + Int.randomEmailNum(4) + "@gmail.com"
-let user2 = "kiturasmtp@gmail.com"
+let email = "kiturasmtp" + Int.randomEmailNum(4) + "@gmail.com"
+let email2 = "kiturasmtp@gmail.com"
 let password = "ibm12345"
 let port = Ports.tls.rawValue
 let secure = true
@@ -51,9 +51,9 @@ let root = #file
     let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
 #endif
 
-let smtp = SMTP(hostname: hostname, user: user, password: password, ssl: ssl)
-let from = User(name: "Dr. Light", email: user)
-let to = User(name: "Megaman", email: user2)
+let smtp = SMTP(hostname: hostname, email: email, password: password, ssl: ssl)
+let from = User(name: "Dr. Light", email: email)
+let to = User(name: "Megaman", email: email2)
 let to2 = User(name: "Roll", email: "kiturasmtp2@gmail.com")
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"

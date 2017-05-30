@@ -51,7 +51,7 @@ class TestDataSender: XCTestCase {
         var sender: Sender?
 
         try Login(hostname: hostname,
-                  user: user,
+                  email: email,
                   password: password,
                   port: port,
                   ssl: ssl,
@@ -104,7 +104,7 @@ class TestDataSender: XCTestCase {
         var sender: Sender?
 
         try Login(hostname: hostname,
-                  user: user,
+                  email: email,
                   password: password,
                   port: port,
                   ssl: ssl,
@@ -157,7 +157,7 @@ class TestDataSender: XCTestCase {
         var sender: Sender?
 
         try Login(hostname: hostname,
-                  user: user,
+                  email: email,
                   password: password,
                   port: port,
                   ssl: ssl,

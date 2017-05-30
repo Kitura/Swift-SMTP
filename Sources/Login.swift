@@ -24,7 +24,7 @@ typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)?
 
 class Login {
     fileprivate let hostname: String
-    fileprivate let user: String
+    fileprivate let email: String
     fileprivate let password: String
     fileprivate let port: Port
     fileprivate let ssl: SSL?
@@ -35,9 +35,9 @@ class Login {
     fileprivate var callback: LoginCallback
     fileprivate var socket: SMTPSocket
 
-    init(hostname: String, user: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: LoginCallback) throws {
+    init(hostname: String, email: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: LoginCallback) throws {
         self.hostname = hostname
-        self.user = user
+        self.email = email
         self.password = password
         self.port = port
         self.ssl = ssl
@@ -142,25 +142,25 @@ private extension Login {
 private extension Login {
     func loginCramMD5() throws {
         let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
-        try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: user, password: password))
+        try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: email, password: password))
     }
 
     func loginLogin() throws {
         _ = try auth(authMethod: .login, credentials: nil)
-        let credentials = AuthEncoder.login(user: user, password: password)
+        let credentials = AuthEncoder.login(user: email, password: password)
         try authUser(credentials.encodedUser)
         try authPassword(credentials.encodedPassword)
     }
 
     func loginPlain() throws {
-        _ = try auth(authMethod: .plain, credentials: AuthEncoder.plain(user: user, password: password))
+        _ = try auth(authMethod: .plain, credentials: AuthEncoder.plain(user: email, password: password))
     }
 
     func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        _ = try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: user, accessToken: accessToken))
+        _ = try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
     }
 }
 

@@ -44,7 +44,7 @@ public enum AuthMethod: String {
 /// Represents a handle to connect to and send emails to an SMTP server.
 public struct SMTP {
     private let hostname: String
-    private let user: String
+    private let email: String
     private let password: String
     private let port: Port
     private let ssl: SSL?
@@ -76,10 +76,10 @@ public struct SMTP {
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, user: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods,
+    public init(hostname: String, email: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods,
                 domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
         self.hostname = hostname
-        self.user = user
+        self.email = email
         self.password = password
         self.port = port
         self.ssl = ssl
@@ -139,7 +139,7 @@ public struct SMTP {
     public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
         do {
             try Login(hostname: hostname,
-                  user: user,
+                  email: email,
                   password: password,
                   port: port,
                   ssl: ssl,
