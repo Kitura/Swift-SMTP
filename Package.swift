@@ -1,7 +1,7 @@
 import PackageDescription
 
 #if os(Linux) && !swift(>=3.1.1)
-print("Please use Swift >=3.1.1.")
+fatalError("Please use Swift >=3.1.1.")
 #else
 let package = Package(
     name: "SwiftSMTP",
