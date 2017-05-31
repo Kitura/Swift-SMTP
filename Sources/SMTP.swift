@@ -37,8 +37,6 @@ public enum AuthMethod: String {
     case plain = "PLAIN"
     /// XOAUTH2 authentication. Requires a valid access token.
     case xoauth2 = "XOAUTH2"
-
-    static fileprivate let defaultAuthMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
 }
 
 /// Represents a handle to connect to and send emails to an SMTP server.
@@ -62,10 +60,9 @@ public struct SMTP {
     ///     - password: Password to log in to server.
     ///     - port: `Port` to connect to the server on. Defaults to `587`.
     ///     - ssl: `SSL` containing configuration info for connecting securely
-    ///            through SSL/TLS. (optional)
+    ///            through SSL/TLS.
     ///     - authMethods: `AuthMethod`s to use to log in to the
-    ///                    server. Defaults to all supported ones--currently
-    ///                    `CRAM-MD5`, `LOGIN`, `PLAIN`, `XOAUTH2`.
+    ///                    server. Defaults to `CRAM-MD5`, `LOGIN`, and `PLAIN`.
     ///     - domainName: Client domain name used when communicating with the
     ///                   server. Defaults to `localhost`.
     ///     - accessToken: Access token used if logging in through `XOAUTH2`.
@@ -76,8 +73,7 @@ public struct SMTP {
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, email: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = AuthMethod.defaultAuthMethods,
-                domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
+    public init(hostname: String, email: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = [], domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
         self.hostname = hostname
         self.email = email
         self.password = password
@@ -87,7 +83,9 @@ public struct SMTP {
         if !authMethods.isEmpty {
             self.authMethods = authMethods
         } else {
-            self.authMethods = AuthMethod.defaultAuthMethods
+            self.authMethods = [AuthMethod.cramMD5,
+                                AuthMethod.login,
+                                AuthMethod.plain]
         }
 
         self.domainName = domainName
