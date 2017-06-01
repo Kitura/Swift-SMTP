@@ -43,7 +43,14 @@ public struct Mail {
     ///     - text: Text of the `Mail`. (optional)
     ///     - attachments: Array of `Attachment`s for the `Mail`. (optional)
     ///     - additionalHeaders: Additional headers for the `Mail`. (optional)
-    public init(from: User, to: [User], cc: [User]? = nil, bcc: [User]? = nil, subject: String = "", text: String = "", attachments: [Attachment]? = nil, additionalHeaders: [String: String]? = nil) {
+    public init(from: User,
+                to: [User],
+                cc: [User]? = nil,
+                bcc: [User]? = nil,
+                subject: String = "",
+                text: String = "",
+                attachments: [Attachment]? = nil,
+                additionalHeaders: [String: String]? = nil) {
         self.from = from
         self.to = to
         self.cc = cc
