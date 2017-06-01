@@ -132,18 +132,16 @@ private extension Sender {
 }
 
 #if os(Linux) && !swift(>=3.1)
-    private typealias Regex = RegularExpression
-#else
-    private typealias Regex = NSRegularExpression
+    private typealias NSRegularExpression = RegularExpression
 #endif
 
-private extension Regex {
-    static let emailRegex = try? Regex(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
+private extension NSRegularExpression {
+    static let emailRegex = try? NSRegularExpression(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
 }
 
 extension String {
     func isValidEmail() throws -> Bool {
-        guard let emailRegex = Regex.emailRegex else {
+        guard let emailRegex = NSRegularExpression.emailRegex else {
             throw SMTPError(.createEmailRegexFailed)
         }
         let range = NSRange(location: 0, length: utf16.count)

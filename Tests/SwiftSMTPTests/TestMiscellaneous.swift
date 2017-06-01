@@ -52,10 +52,10 @@ extension TestMiscellaneous {
     func testMailHeaders() {
         let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["key": "val"]).headers
 
-        let to_ = "TO: =?UTF-8?Q?Megaman?= <kiturasmtp@gmail.com>"
+        let to_ = "TO: =?UTF-8?Q?Megaman?= <\(email)>"
         XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")
 
-        let cc_ = "CC: =?UTF-8?Q?Roll?= <kiturasmtp2@gmail.com>"
+        let cc_ = "CC: =?UTF-8?Q?Roll?= <\(email)>"
         XCTAssert(headers.contains(cc_), "Mail header did not contain \(cc_)")
 
         let subject = "SUBJECT: =?UTF-8?Q?Test?="
