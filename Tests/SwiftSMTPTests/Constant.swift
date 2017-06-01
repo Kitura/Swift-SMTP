@@ -25,12 +25,11 @@ import SwiftSMTP
 let testDuration: Double = 20
 
 let hostname = "smtp.gmail.com"
-let email = "kiturasmtp" + Int.randomEmailNum(4) + "@gmail.com"
-let email2 = "kiturasmtp@gmail.com"
+let email = "kiturasmtp@gmail.com"
 let password = "ibm12345"
 let port = Ports.tls.rawValue
 let secure = true
-let authMethods: [AuthMethod] = [.cramMD5, .login, .plain, .xoauth2]
+let authMethods: [AuthMethod] = [.cramMD5, .login, .plain]
 let domainName = "localhost"
 let timeout = 10
 
@@ -53,8 +52,8 @@ let root = #file
 
 let smtp = SMTP(hostname: hostname, email: email, password: password, ssl: ssl)
 let from = User(name: "Dr. Light", email: email)
-let to = User(name: "Megaman", email: email2)
-let to2 = User(name: "Roll", email: "kiturasmtp2@gmail.com")
+let to = User(name: "Megaman", email: email)
+let to2 = User(name: "Roll", email: email)
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
 let imgFilePath = root + "/x.png"
@@ -67,16 +66,3 @@ let randomText2 = "Brillo viento gas esa contar hay. Alla no toda lune faro daba
 let randomText2Encoded = "QnJpbGxvIHZpZW50byBnYXMgZXNhIGNvbnRhciBoYXkuIEFsbGEgbm8gdG9kYSBsdW5lIGZhcm8gZGFiYSBlbiBwZXJvLiBJciBydW1pYXIgYWx0dXJhIGlkIHZlbmlhbi4gRWwgcm9idXN0byBoYWJsYWRvIHlhIGRpYXJpb3MgdHUgaGFjZXJsYSBtZXJtYWRvLiBMYXMgc3VzIHJlbnVuY2lhYmEgbGxhbWFyYWRhcyBtaXN0ZXJpb3NhIGRvc2NpZW50YXMgZmF2b3JjaWxsbyBkb3MgcGllLiBVbmEgZXJhIGZ1ZSBwZWRpcnNlbG9zIHBlcmlvZGljb3MgZG9zY2llbnRhcyBhY3R1YWxpZGFkIGNvbi4gRXhpZ2lhbiB1biBlbiBvaCBhbGd1bm9zIGFkaXZpbm8gcGFyZXpjYSBub3RhcmlvIHlvLiBFcmVzIG9ybyBkb3MgbWFsIGx1bmUgdml2byBzZXBhIGxlcyBzZWRhLiBUaW8gZW5lcmdpYSB1bmEgZXNhIGFidWx0YXIgcG9yIHR1ZmlsbG8gc2lyZW5hcyBwZXJzb25hIHN1c3Bpcm8uIE1lIHBhbmRlcm8gdGFyZGFiYSBwZWRpcm1lIHB1ZXJ0YXMgc28gc2VuYWxlcyBsYS4="
 let randomText3 = "Intueor veritas suo majoris attinet rem res aggredi similia mei. Disputari abducerem ob ex ha interitum conflatos concipiam. Curam plura aequo rem etc serio fecto caput. Ea posterum lectorem remanere experiar videamus gi cognitum vi. Ad invenit accepit to petitis ea usitata ad. Hoc nam quibus hos oculis cumque videam ita. Res cau infinitum quadratam sanguinem."
 let randomText3Encoded = "SW50dWVvciB2ZXJpdGFzIHN1byBtYWpvcmlzIGF0dGluZXQgcmVtIHJlcyBhZ2dyZWRpIHNpbWlsaWEgbWVpLiBEaXNwdXRhcmkgYWJkdWNlcmVtIG9iIGV4IGhhIGludGVyaXR1bSBjb25mbGF0b3MgY29uY2lwaWFtLiBDdXJhbSBwbHVyYSBhZXF1byByZW0gZXRjIHNlcmlvIGZlY3RvIGNhcHV0LiBFYSBwb3N0ZXJ1bSBsZWN0b3JlbSByZW1hbmVyZSBleHBlcmlhciB2aWRlYW11cyBnaSBjb2duaXR1bSB2aS4gQWQgaW52ZW5pdCBhY2NlcGl0IHRvIHBldGl0aXMgZWEgdXNpdGF0YSBhZC4gSG9jIG5hbSBxdWlidXMgaG9zIG9jdWxpcyBjdW1xdWUgdmlkZWFtIGl0YS4gUmVzIGNhdSBpbmZpbml0dW0gcXVhZHJhdGFtIHNhbmd1aW5lbS4="
-
-private extension Int {
-    static func randomEmailNum(_ max: Int) -> String {
-        #if os(Linux)
-            srand(UInt32(time(nil)))
-            let r = Int(random() % max)
-        #else
-            let r = Int(arc4random_uniform(UInt32(max)))
-        #endif
-        if r == 0 { return "" }
-        return String(r)
-    }
-}
