@@ -14,7 +14,8 @@ matrix:
 
 before_install:
     - git clone https://github.com/IBM-Swift/Package-Builder.git
-    - git clone -b addSwiftSMTP https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git
+    # - git clone -b addSwiftSMTP https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git
+    - git clone -b addSwiftSMTP git@github.com:IBM-Swift/Kitura-TestingCredentials.git
     - test -n "$SWIFT_VERSION" && echo "$SWIFT_VERSION" > .swift-version || echo "SWIFT_VERSION not set, using $(cat .swift-version)"
 
 script:
