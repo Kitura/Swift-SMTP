@@ -15,11 +15,10 @@
  **/
 
 import SwiftSMTP
+import Foundation
 
 #if os(Linux)
     import Glibc
-#else
-    import Foundation
 #endif
 
 let testDuration: Double = 20
