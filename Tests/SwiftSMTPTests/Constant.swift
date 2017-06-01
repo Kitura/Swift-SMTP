@@ -31,7 +31,7 @@ let localPort: SwiftSMTP.Port? = nil
 let localSecure: Bool? = nil
 let localAuthMethods: [AuthMethod]? = nil
 
-var hostname: String = {
+let hostname: String = {
     if let localHostname = localHostname {
         return localHostname
     } else {
@@ -39,37 +39,37 @@ var hostname: String = {
     }
 }()
 
-var email: String = {
+let email: String = {
     if let localEmail = localEmail {
         return localEmail
-    } else {
-        let path = root + credentialsDir + "email.txt"
-        guard
-            let file = FileHandle(forReadingAtPath: path),
-            let email = String(data: file.readDataToEndOfFile(), encoding: .utf8)
-            else {
-                fatalError("Could not get email to login for tests.")
-        }
-        return email
     }
+    let path = credentialsDir + "/email.txt"
+    guard
+        let file = FileHandle(forReadingAtPath: path),
+        let email = String(data: file.readDataToEndOfFile(), encoding: .utf8)
+        else {
+            fatalError("Could not get email to login for tests.")
+    }
+    file.closeFile()
+    return email
 }()
 
-var password: String = {
+let password: String = {
     if let localPassword = localPassword {
         return localPassword
-    } else {
-        let path = root + credentialsDir + "password.txt"
-        guard
-            let file = FileHandle(forReadingAtPath: path),
-            let password = String(data: file.readDataToEndOfFile(), encoding: .utf8)
-            else {
-                fatalError("Could not get email to login for tests.")
-        }
-        return password
     }
+    let path = credentialsDir + "/password.txt"
+    guard
+        let file = FileHandle(forReadingAtPath: path),
+        let password = String(data: file.readDataToEndOfFile(), encoding: .utf8)
+        else {
+            fatalError("Could not get password to login for tests.")
+    }
+    file.closeFile()
+    return password
 }()
 
-var port: SwiftSMTP.Port = {
+let port: SwiftSMTP.Port = {
     if let localPort = localPort {
         return localPort
     } else {
@@ -77,7 +77,7 @@ var port: SwiftSMTP.Port = {
     }
 }()
 
-var secure: Bool = {
+let secure: Bool = {
     if let localSecure = localSecure {
         return localSecure
     } else {
@@ -85,7 +85,7 @@ var secure: Bool = {
     }
 }()
 
-var authMethods: [AuthMethod] = {
+let authMethods: [AuthMethod] = {
     if let localAuthMethods = localAuthMethods {
         return localAuthMethods
     } else {
@@ -101,7 +101,7 @@ let cert = root + "/cert.pem"
 let key = root + "/key.pem"
 let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
 #else
-let cert = root + "/cert.pfx"
+let cert = testsDir + "/cert.pfx"
 let certPassword = "kitura"
 let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
 #endif
@@ -112,17 +112,16 @@ let to = User(name: "Megaman", email: email)
 let to2 = User(name: "Roll", email: email)
 let text = "Humans and robots living together in harmony and equality. That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
-let imgFilePath = root + "/x.png"
+let imgFilePath = testsDir + "/x.png"
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 
-let root = #file
-    .characters
-    .split(separator: "/", omittingEmptySubsequences: false)
-    .dropLast(1)
-    .map { String($0) }
-    .joined(separator: "/")
+let credentialsDir: String = {
+    return URL(fileURLWithPath: #file).appendingPathComponent("../../../Kitura-TestingCredentials/Swift-SMTP").standardized.path
+}()
 
-let credentialsDir = "/Kitura-TestCredentials/Swift-SMTP/"
+let testsDir: String = {
+     return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path
+}()
 
 // https://www.base64decode.org/
 let randomText1 = "Picture removal detract earnest is by. Esteems met joy attempt way clothes yet demesne tedious. Replying an marianne do it an entrance advanced. Two dare say play when hold. Required bringing me material stanhill jointure is as he. Mutual indeed yet her living result matter him bed whence."
