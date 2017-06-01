@@ -23,7 +23,7 @@ import Foundation
 
 let testDuration: Double = 20
 
-// Fill in these values with your login info for local testing
+// Fill in your own SMTP login info for local testing
 let localHostname: String? = nil
 let localEmail: String? = nil
 let localPassword: String? = nil
@@ -43,14 +43,13 @@ let email: String = {
     if let localEmail = localEmail {
         return localEmail
     }
-    let path = credentialsDir + "/email.txt"
+    let url = credentialsDir.appendingPathComponent("/email.txt")
     guard
-        let file = FileHandle(forReadingAtPath: path),
-        let email = String(data: file.readDataToEndOfFile(), encoding: .utf8)
+        let data = try? Data(contentsOf: url),
+        let email = String(data: data, encoding: .utf8)
         else {
             fatalError("Could not get email to login for tests.")
     }
-    file.closeFile()
     return email
 }()
 
@@ -58,14 +57,13 @@ let password: String = {
     if let localPassword = localPassword {
         return localPassword
     }
-    let path = credentialsDir + "/password.txt"
+    let url = credentialsDir.appendingPathComponent("/password.txt")
     guard
-        let file = FileHandle(forReadingAtPath: path),
-        let password = String(data: file.readDataToEndOfFile(), encoding: .utf8)
+        let data = try? Data(contentsOf: url),
+        let password = String(data: data, encoding: .utf8)
         else {
             fatalError("Could not get password to login for tests.")
     }
-    file.closeFile()
     return password
 }()
 
@@ -115,12 +113,12 @@ let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/
 let imgFilePath = testsDir + "/x.png"
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 
-let credentialsDir: String = {
-    return URL(fileURLWithPath: #file).appendingPathComponent("../../../Kitura-TestingCredentials/Swift-SMTP").standardized.path
+let credentialsDir: URL = {
+    return URL(fileURLWithPath: #file).appendingPathComponent("../../../Kitura-TestingCredentials/Swift-SMTP").standardized
 }()
 
 let testsDir: String = {
-     return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path
+    return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path
 }()
 
 // https://www.base64decode.org/
