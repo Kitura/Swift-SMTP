@@ -73,7 +73,15 @@ public struct SMTP {
     ///     Some servers like Gmail support IPv6, and if your network does not,
     ///     you will first attempt to connect via IPv6, then timeout, and fall
     ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    public init(hostname: String, email: String, password: String, port: Port = Ports.tls.rawValue, ssl: SSL? = nil, authMethods: [AuthMethod] = [], domainName: String = "localhost", accessToken: String? = nil, timeout: Int = 10) {
+    public init(hostname: String,
+                email: String,
+                password: String,
+                port: Port = Ports.tls.rawValue,
+                ssl: SSL? = nil,
+                authMethods: [AuthMethod] = [],
+                domainName: String = "localhost",
+                accessToken: String? = nil,
+                timeout: Int = 10) {
         self.hostname = hostname
         self.email = email
         self.password = password
@@ -134,27 +142,29 @@ public struct SMTP {
     ///     - Each call to `send` queues it's `Mail`s and sends them one by one.
     ///       To send `Mail`s concurrently, send them in separate calls to
     ///       `send`.
-    public func send(_ mails: [Mail], progress: Progress = nil, completion: Completion = nil) {
+    public func send(_ mails: [Mail],
+                     progress: Progress = nil,
+                     completion: Completion = nil) {
         do {
             try Login(hostname: hostname,
-                  email: email,
-                  password: password,
-                  port: port,
-                  ssl: ssl,
-                  authMethods: authMethods,
-                  domainName: domainName,
-                  accessToken: accessToken,
-                  timeout: timeout) { (socket, error) in
-                    if let error = error {
-                        completion?([], mails.map { ($0, error) })
-                        return
-                    }
-                    if let socket = socket {
-                        Sender(socket: socket,
-                               pending: mails,
-                               progress: progress,
-                               completion: completion).send()
-                    }
+                      email: email,
+                      password: password,
+                      port: port,
+                      ssl: ssl,
+                      authMethods: authMethods,
+                      domainName: domainName,
+                      accessToken: accessToken,
+                      timeout: timeout) { (socket, error) in
+                        if let error = error {
+                            completion?([], mails.map { ($0, error) })
+                            return
+                        }
+                        if let socket = socket {
+                            Sender(socket: socket,
+                                   pending: mails,
+                                   progress: progress,
+                                   completion: completion).send()
+                        }
                 }.login()
         } catch {
             completion?([], mails.map { ($0, error) })

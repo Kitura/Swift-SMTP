@@ -35,7 +35,16 @@ class Login {
     fileprivate var callback: LoginCallback
     fileprivate var socket: SMTPSocket
 
-    init(hostname: String, email: String, password: String, port: Port, ssl: SSL?, authMethods: [AuthMethod], domainName: String, accessToken: String?, timeout: Int, callback: LoginCallback) throws {
+    init(hostname: String,
+         email: String,
+         password: String,
+         port: Port,
+         ssl: SSL?,
+         authMethods: [AuthMethod],
+         domainName: String,
+         accessToken: String?,
+         timeout: Int,
+         callback: LoginCallback) throws {
         self.hostname = hostname
         self.email = email
         self.password = password
