@@ -97,8 +97,8 @@ let domainName = "localhost"
 let timeout = 10
 
 #if os(Linux)
-let cert = root + "/cert.pem"
-let key = root + "/key.pem"
+let cert = testsDir + "/cert.pem"
+let key = testsDir + "/key.pem"
 let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
 #else
 let cert = testsDir + "/cert.pfx"
