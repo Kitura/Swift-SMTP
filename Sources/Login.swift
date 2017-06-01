@@ -79,7 +79,9 @@ class Login {
             }
 
             if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
-                self.done(socket: nil, error: SMTPError(.couldNotConnectToServer(self.hostname, self.timeout)))
+                self.done(socket: nil,
+                          error: SMTPError(.couldNotConnectToServer(self.hostname,
+                                                                    self.timeout)))
             }
         }
     }
@@ -93,7 +95,8 @@ class Login {
 private extension Login {
     func connect(_ port: Port) throws {
         try socket.connect(to: hostname, port: port)
-        _ = try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
+        _ = try SMTPSocket.parseResponses(try socket.readFromSocket(),
+                                          command: .connect)
     }
 
     func loginToServer() throws {
@@ -138,7 +141,9 @@ private extension Login {
             if resArr.first == "AUTH" {
                 let args = resArr.dropFirst()
                 for arg in args {
-                    if let authMethod = AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
+                    if  let authMethod = AuthMethod(rawValue: arg),
+                        authMethods.contains(authMethod)
+                    {
                         return authMethod
                     }
                 }
@@ -150,8 +155,11 @@ private extension Login {
 
 private extension Login {
     func loginCramMD5() throws {
-        let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
-        try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: email, password: password))
+        let challenge = try auth(authMethod: .cramMD5,
+                                 credentials: nil).message
+        try authPassword(try AuthEncoder.cramMD5(challenge: challenge,
+                                                 user: email,
+                                                 password: password))
     }
 
     func loginLogin() throws {
@@ -162,14 +170,18 @@ private extension Login {
     }
 
     func loginPlain() throws {
-        _ = try auth(authMethod: .plain, credentials: AuthEncoder.plain(user: email, password: password))
+        _ = try auth(authMethod: .plain,
+                     credentials: AuthEncoder.plain(user: email,
+                                                    password: password))
     }
 
     func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        _ = try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
+        _ = try auth(authMethod: .xoauth2,
+                     credentials: AuthEncoder.xoauth2(user: email,
+                                                      accessToken: accessToken))
     }
 }
 
@@ -189,11 +201,11 @@ private extension Login {
     func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
         return try socket.send(.auth(authMethod, credentials))
     }
-    
+
     func authUser(_ user: String) throws {
         return try socket.send(.authUser(user))
     }
-    
+
     func authPassword(_ password: String) throws {
         return try socket.send(.authPassword(password))
     }

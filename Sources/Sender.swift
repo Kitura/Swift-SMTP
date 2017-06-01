@@ -32,7 +32,10 @@ class Sender {
     fileprivate var failed = [(Mail, Error)]()
     var dataSender: DataSender
 
-    init(socket: SMTPSocket, pending: [Mail], progress: Progress, completion: Completion) {
+    init(socket: SMTPSocket,
+         pending: [Mail],
+         progress: Progress,
+         completion: Completion) {
         self.socket = socket
         self.pending = pending
         self.progress = progress

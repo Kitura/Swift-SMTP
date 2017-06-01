@@ -60,12 +60,13 @@ public struct SMTP {
     ///     - password: Password to log in to server.
     ///     - port: `Port` to connect to the server on. Defaults to `587`.
     ///     - ssl: `SSL` containing configuration info for connecting securely
-    ///            through SSL/TLS.
+    ///            through SSL/TLS. (optional)
     ///     - authMethods: `AuthMethod`s to use to log in to the
     ///                    server. Defaults to `CRAM-MD5`, `LOGIN`, and `PLAIN`.
     ///     - domainName: Client domain name used when communicating with the
     ///                   server. Defaults to `localhost`.
     ///     - accessToken: Access token used if logging in through `XOAUTH2`.
+    ///                    (optional)
     ///     - timeout: How long to try connecting to the server to before
     ///                returning an error. Defaults to `10` seconds.
     ///
@@ -106,7 +107,7 @@ public struct SMTP {
     /// - Parameters:
     ///     - mail: `Mail` object to send.
     ///     - completion: Callback when sending finishes. `Error` is nil on
-    ///                   success.
+    ///                   success. (optional)
     public func send(_ mail: Mail, completion: ((Error?) -> Void)? = nil) {
         send([mail]) { (_, failed) in
             if let error = failed.first?.1 {

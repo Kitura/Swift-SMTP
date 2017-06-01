@@ -28,7 +28,15 @@ class TestLogin: XCTestCase {
 
     func testBadCredentials() throws {
         let x = expectation(description: "Fail login with bad credentials.")
-        try Login(hostname: hostname, email: email, password: "", port: port, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        try Login(hostname: hostname,
+                  email: email,
+                  password: "",
+                  port: port,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .badResponse = err {
                 x.fulfill()
             } else {
@@ -40,7 +48,15 @@ class TestLogin: XCTestCase {
 
     func testBadPort() throws {
         let x = expectation(description: "Login timeout because bad port.")
-        try Login(hostname: hostname, email: email, password: password, port: 1, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        try Login(hostname: hostname,
+                  email: email,
+                  password: password,
+                  port: 1,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, err) in
             if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
                 x.fulfill()
             } else {
@@ -52,7 +68,15 @@ class TestLogin: XCTestCase {
 
     func testLogin() throws {
         let x = expectation(description: "Login with Login auth.")
-        try Login(hostname: hostname, email: email, password: password, port: port, ssl: ssl, authMethods: [.login], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        try Login(hostname: hostname,
+                  email: email,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: [.login],
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
             }.login()
@@ -61,7 +85,15 @@ class TestLogin: XCTestCase {
 
     func testPlain() throws {
         let x = expectation(description: "Login with Plain auth.")
-        try Login(hostname: hostname, email: email, password: password, port: port, ssl: ssl, authMethods: [.plain], domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        try Login(hostname: hostname,
+                  email: email,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: [.plain],
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
             }.login()
@@ -70,7 +102,15 @@ class TestLogin: XCTestCase {
 
     func testPort0() throws {
         let x = expectation(description: "Fail login because port can't be 0.")
-        try Login(hostname: hostname, email: email, password: password, port: 0, ssl: ssl, authMethods: authMethods, domainName: domainName, accessToken: nil, timeout: timeout) { (_, err) in
+        try Login(hostname: hostname,
+                  email: email,
+                  password: password,
+                  port: 0,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, err) in
             XCTAssertNotNil(err, "Should get error here, but error was nil.")
             x.fulfill()
             }.login()

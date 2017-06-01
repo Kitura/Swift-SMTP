@@ -34,8 +34,18 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related `Attachment`s of this attachment. (optional)
-    public init(data: Data, mime: String, name: String, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
-        self.init(type: .data(data: data, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
+    public init(data: Data,
+                mime: String,
+                name: String,
+                inline: Bool = false,
+                additionalHeaders: [String: String]? = nil,
+                relatedAttachments: [Attachment]? = nil) {
+        self.init(type: .data(data: data,
+                              mime: mime,
+                              name: name,
+                              inline: inline),
+                  additionalHeaders: additionalHeaders,
+                  relatedAttachments: relatedAttachments)
     }
     
     /// Initialize an `Attachment` from a local file.
@@ -52,9 +62,19 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment. 
     ///                          (optional)
     ///     - related: Related `Attachment`s of this attachment. (optional)
-    public init(filePath: String, mime: String = "application/octet-stream", name: String? = nil, inline: Bool = false, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
+    public init(filePath: String,
+                mime: String = "application/octet-stream",
+                name: String? = nil,
+                inline: Bool = false,
+                additionalHeaders: [String: String]? = nil,
+                relatedAttachments: [Attachment]? = nil) {
         let name = name ?? NSString(string: filePath).lastPathComponent
-        self.init(type: .file(path: filePath, mime: mime, name: name, inline: inline), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
+        self.init(type: .file(path: filePath,
+                              mime: mime,
+                              name: name,
+                              inline: inline),
+                  additionalHeaders: additionalHeaders,
+                  relatedAttachments: relatedAttachments)
     }
     
     /// Initialize an HTML `Attachment`.
@@ -68,11 +88,21 @@ public struct Attachment {
     ///     - additionalHeaders: Additional headers for the attachment.
     ///                          (optional)
     ///     - related: Related `Attachment`s of this attachment. (optional)
-    public init(htmlContent: String, characterSet: String = "utf-8", alternative: Bool = true, additionalHeaders: [String: String]? = nil, relatedAttachments: [Attachment]? = nil) {
-        self.init(type: .html(content: htmlContent, characterSet: characterSet, alternative: alternative), additionalHeaders: additionalHeaders, relatedAttachments: relatedAttachments)
+    public init(htmlContent: String,
+                characterSet: String = "utf-8",
+                alternative: Bool = true,
+                additionalHeaders: [String: String]? = nil,
+                relatedAttachments: [Attachment]? = nil) {
+        self.init(type: .html(content: htmlContent,
+                              characterSet: characterSet,
+                              alternative: alternative),
+                  additionalHeaders: additionalHeaders,
+                  relatedAttachments: relatedAttachments)
     }
     
-    private init(type: AttachmentType, additionalHeaders: [String: String]?, relatedAttachments: [Attachment]?) {
+    private init(type: AttachmentType,
+                 additionalHeaders: [String: String]?,
+                 relatedAttachments: [Attachment]?) {
         self.type = type
         self.additionalHeaders = additionalHeaders
         self.relatedAttachments = relatedAttachments

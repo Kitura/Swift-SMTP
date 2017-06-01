@@ -24,7 +24,7 @@ public struct User {
     ///  Initializes a `User`.
     ///
     /// - Parameters:
-    ///     - name: Display name for the user. Defaults to nil.
+    ///     - name: Display name for the user. (optional)
     ///     - email: Email address for the user.
     public init(name: String? = nil, email: String) {
         self.name = name

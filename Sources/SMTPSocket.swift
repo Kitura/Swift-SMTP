@@ -83,7 +83,9 @@ extension SMTPSocket {
         let resArr = responses.components(separatedBy: CRLF)
         for res in resArr {
             if res == "" { break }
-            validResponses.append(Response(code: try getResponseCode(res, command: command), message: getResponseMessage(res), response: res))
+            validResponses.append(Response(code: try getResponseCode(res, command: command),
+                                           message: getResponseMessage(res),
+                                           response: res))
         }
         return validResponses
     }

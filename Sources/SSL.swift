@@ -75,7 +75,10 @@ public struct SSL {
     ///		- password:					Password for the chain file (optional).
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
-    public init(withChainFilePath chainFilePath: String? = nil, withPassword password: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
+    public init(withChainFilePath chainFilePath: String? = nil,
+                withPassword password: String? = nil,
+                usingSelfSignedCerts selfSigned: Bool = true,
+                cipherSuite: String? = nil) {
         config = SSLService.Configuration(withChainFilePath: chainFilePath,
                                           withPassword: password,
                                           usingSelfSignedCerts: selfSigned,
