@@ -1,5 +1,7 @@
 # Swift-SMTP
 
+![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png)
+
 Swift package for sending emails to an SMTP server.
 
 [![Build Status - Master](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
