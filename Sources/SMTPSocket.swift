@@ -14,6 +14,9 @@
  * limitations under the License.
  **/
 
+// TODO
+// Add more code comments
+
 import Foundation
 import Socket
 import LoggerAPI
@@ -39,6 +42,11 @@ struct SMTPSocket {
 }
 
 extension SMTPSocket {
+    // TODO
+    // Reuse code here to avoid duplication
+    // @discardableResult to suppress warning if result is unused
+
+    /*
     func send(_ command: Command) throws {
         try write(command.text)
         _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)
@@ -48,7 +56,9 @@ extension SMTPSocket {
         try write(command.text)
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)[0]
     }
-    
+ */
+
+    @discardableResult
     func send(_ command: Command) throws -> [Response] {
         try write(command.text)
         return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
@@ -94,6 +104,9 @@ extension SMTPSocket {
         guard response.characters.count >= 3 else {
             throw SMTPError(.badResponse(command.text, response))
         }
+
+        // TODO
+        // Use string.to(index:) here
         let range = response.startIndex..<response.index(response.startIndex, offsetBy: 3)
         guard let responseCode = Int(response[range]), command.expectedResponseCodes.contains(ResponseCode(responseCode)) else {
             throw SMTPError(.badResponse(command.text, response))
@@ -102,6 +115,8 @@ extension SMTPSocket {
     }
     
     static func getResponseMessage(_ response: String) -> String {
+        // TODO
+        // Use string.from(index:) here
         if response.characters.count < 4 { return "" }
         let range = response.index(response.startIndex, offsetBy: 4)..<response.endIndex
         return response[range]

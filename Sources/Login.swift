@@ -44,6 +44,8 @@ class Login {
          domainName: String,
          accessToken: String?,
          timeout: Int,
+         // TODO
+        // Shouldn't this be @escaping?
          callback: LoginCallback) throws {
         self.hostname = hostname
         self.email = email
@@ -62,6 +64,9 @@ class Login {
         DispatchQueue.global().async {
             let group = DispatchGroup()
             group.enter()
+
+            // TODO
+            // Explain this?
 
             // Yet another thread is created here because trying to connect on a
             // "bad" port will hang that thread. Doing this on a separate one
@@ -195,18 +200,18 @@ private extension Login {
     }
 
     func starttls() throws {
-        return try socket.send(.starttls)
+        try socket.send(.starttls)
     }
 
     func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
-        return try socket.send(.auth(authMethod, credentials))
+        return try socket.send(.auth(authMethod, credentials))[0]
     }
 
     func authUser(_ user: String) throws {
-        return try socket.send(.authUser(user))
+        try socket.send(.authUser(user))
     }
 
     func authPassword(_ password: String) throws {
-        return try socket.send(.authPassword(password))
+        try socket.send(.authPassword(password))
     }
 }

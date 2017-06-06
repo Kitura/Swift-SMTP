@@ -82,7 +82,7 @@ private extension Sender {
     }
 
     func quit() throws {
-        let _: Void = try socket.send(.quit)
+        try socket.send(.quit)
         socket.close()
     }
 }
@@ -116,21 +116,21 @@ private extension Sender {
     }
 
     private func sendMail(_ from: String) throws {
-        return try socket.send(.mail(from))
+        try socket.send(.mail(from))
     }
 
     private func sendTo(_ emails: [String]) throws {
         for email in emails {
-            let _: Void = try socket.send(.rcpt(email))
+            try socket.send(.rcpt(email))
         }
     }
 
     private func data() throws {
-        return try socket.send(.data)
+        try socket.send(.data)
     }
 
     private func dataEnd() throws {
-        return try socket.send(.dataEnd)
+        try socket.send(.dataEnd)
     }
 }
 
@@ -147,7 +147,10 @@ extension String {
         guard let emailRegex = NSRegularExpression.emailRegex else {
             throw SMTPError(.createEmailRegexFailed)
         }
-        let range = NSRange(location: 0, length: utf16.count)
+        // TODO
+        // utf8.count, self.count
+
+        let range = NSRange(location: 0, length: utf8.count)
         return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }

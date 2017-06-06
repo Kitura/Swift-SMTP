@@ -14,6 +14,9 @@
  * limitations under the License.
  **/
 
+// TODO
+// Add code comments
+
 import Foundation
 
 struct DataSender {

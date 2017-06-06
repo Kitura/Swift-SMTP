@@ -19,6 +19,9 @@ import Foundation
 /// Represents a `Mail`'s attachment.
 public struct Attachment {
     let type: AttachmentType
+
+    // TODO
+    // Any semantic difference between nil and empty dict/array?
     let additionalHeaders: [String: String]?
     let relatedAttachments: [Attachment]?
 
@@ -144,9 +147,11 @@ extension Attachment {
         }
         
         result["CONTENT-TRANSFER-ENCODING"] = "BASE64"
-        
+
         if let additionalHeaders = additionalHeaders {
             for (key, value) in additionalHeaders {
+                // TODO
+                // OK to overwrite headers with difference cases?
                 result[key.uppercased()] = value
             }
         }

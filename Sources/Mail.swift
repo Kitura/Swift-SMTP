@@ -28,6 +28,9 @@ public struct Mail {
     let bcc: [User]?
     let subject: String
     let text: String
+
+    // TODO
+    // Semantics of nil vs. empty dict/arrays
     let attachments: [Attachment]?
     let alternative: Attachment?
     let additionalHeaders: [String: String]?
@@ -111,6 +114,9 @@ extension Mail {
 extension DateFormatter {
     static let smtpDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
+
+        // TODO
+        // What about other locales?
         formatter.locale = Locale(identifier: "en-US")
         formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss ZZZ"
         return formatter
@@ -124,6 +130,8 @@ extension Date {
 }
 
 extension Array {
+    // TODO
+    // Use array.index(where:) instead
     func takeLast(where condition: (Element) -> Bool) -> (Element?, Array) {
         var index: Int?
         for i in (0 ..< count).reversed() {
