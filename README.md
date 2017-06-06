@@ -17,6 +17,7 @@ Swift package for sending emails to an SMTP server.
 - Add custom headers
 - Asynchronous
 - [Documentation](https://ibm-swift.github.io/Swift-SMTP/)
+- [Demo & blog post](https://developer.ibm.com/swift/2017/05/31/4675/)
 
 ## Swift Version
 
