@@ -20,7 +20,7 @@ import Foundation
     import Dispatch
 #endif
 
-typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)?
+typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
 
 class Login {
     fileprivate let hostname: String
@@ -32,7 +32,7 @@ class Login {
     fileprivate let domainName: String
     fileprivate let accessToken: String?
     fileprivate let timeout: Int
-    fileprivate var callback: LoginCallback
+    fileprivate var callback: LoginCallback?
     fileprivate var socket: SMTPSocket
 
     init(hostname: String,
@@ -44,9 +44,7 @@ class Login {
          domainName: String,
          accessToken: String?,
          timeout: Int,
-         // TODO
-        // Shouldn't this be @escaping?
-         callback: LoginCallback) throws {
+         callback: LoginCallback?) throws {
         self.hostname = hostname
         self.email = email
         self.password = password
@@ -64,9 +62,6 @@ class Login {
         DispatchQueue.global().async {
             let group = DispatchGroup()
             group.enter()
-
-            // TODO
-            // Explain this?
 
             // Yet another thread is created here because trying to connect on a
             // "bad" port will hang that thread. Doing this on a separate one
@@ -204,13 +199,14 @@ private extension Login {
     }
 
     func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
+        // TODO: - check bounds
         return try socket.send(.auth(authMethod, credentials))[0]
     }
 
     func authUser(_ user: String) throws {
         try socket.send(.authUser(user))
     }
-
+    
     func authPassword(_ password: String) throws {
         try socket.send(.authPassword(password))
     }

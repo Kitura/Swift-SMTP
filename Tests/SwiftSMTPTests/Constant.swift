@@ -25,8 +25,8 @@ let testDuration: Double = 20
 
 // Fill in your own SMTP login info for local testing
 let localHostname: String? = nil
-let localEmail: String? = nil
-let localPassword: String? = nil
+let localEmail: String? = "swiftsmtp999@gmail.com"
+let localPassword: String? = "DFp8[~&7R/R85Vw9"
 let localPort: SwiftSMTP.Port? = nil
 let localSecure: Bool? = nil
 let localAuthMethods: [AuthMethod]? = nil

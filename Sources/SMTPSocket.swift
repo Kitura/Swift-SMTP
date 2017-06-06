@@ -14,50 +14,43 @@
  * limitations under the License.
  **/
 
-// TODO
-// Add more code comments
-
 import Foundation
 import Socket
 import LoggerAPI
 
+// Wrapper around BlueSocket
 struct SMTPSocket {
+    // The socket we use to read and write to
     let socket: Socket
-    
+
+    // Init a new instance of SMTPSocket
     init() throws {
         socket = try Socket.create()
     }
 
+    // Connect to the SMTP server at `port`
     func connect(to: String, port: Port) throws {
         try socket.connect(to: to, port: port)
     }
 
+    // Set the socket's `SSLServiceDelegate` for SSL connections
     func setDelegate(_ delegate: SSLServiceDelegate?) {
         socket.delegate = delegate
     }
 
+    // Close the socket
     func close() {
         socket.close()
     }
 }
 
 extension SMTPSocket {
-    // TODO
-    // Reuse code here to avoid duplication
-    // @discardableResult to suppress warning if result is unused
-
-    /*
-    func send(_ command: Command) throws {
-        try write(command.text)
-        _ = try SMTPSocket.parseResponses(try readFromSocket(), command: command)
-    }
-    
-    func send(_ command: Command) throws -> Response {
-        try write(command.text)
-        return try SMTPSocket.parseResponses(try readFromSocket(), command: command)[0]
-    }
- */
-
+    // Send the `command` to the server
+    // Read the response from the server out of the socket
+    // Parse the server's response for the appropriate responses
+    // Create `Response`s out of those parsed responses and return them
+    // Throws an error if no/invalid response found
+    // Valid responses are `command` specific
     @discardableResult
     func send(_ command: Command) throws -> [Response] {
         try write(command.text)
@@ -66,11 +59,13 @@ extension SMTPSocket {
 }
 
 extension SMTPSocket {
-    func write(_ commandText: String) throws {
-        _ = try socket.write(from: commandText + CRLF)
-         Log.verbose(commandText)
+    // Write `text` to the socket
+    func write(_ text: String) throws {
+        _ = try socket.write(from: text + CRLF)
+         Log.verbose(text)
     }
-    
+
+    // Write `data` to the socket
     func write(_ data: Data) throws {
         _ = try socket.write(from: data)
         Log.verbose("(sending data)")
@@ -78,19 +73,29 @@ extension SMTPSocket {
 }
 
 extension SMTPSocket {
+    // Read all the data out of the socket
+    // Returns a string representation of the data
+    // The string could be one or more responses
+    // Throws an error if a string could not be created from the data
     func readFromSocket() throws -> String {
         var buf = Data()
         _ = try socket.read(into: &buf)
-        guard let res = String(data: buf, encoding: .utf8) else {
+        guard let responses = String(data: buf, encoding: .utf8) else {
             throw SMTPError(.convertDataUTF8Fail(buf))
         }
-        Log.verbose(res)
-        return res
+        Log.verbose(responses)
+        return responses
     }
 
+    // Parses through each response and creates a `Response` from it
+    // Returns an array of these `Response`s
+    // Throws an error if no/invalid response found
     static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
-        var validResponses = [Response]()
         let resArr = responses.components(separatedBy: CRLF)
+        guard !resArr.isEmpty else {
+            throw SMTPError(.badResponse(command.text, responses))
+        }
+        var validResponses = [Response]()
         for res in resArr {
             if res == "" { break }
             validResponses.append(Response(code: try getResponseCode(res, command: command),
@@ -99,7 +104,9 @@ extension SMTPSocket {
         }
         return validResponses
     }
-    
+
+    // Returns a `ResponseCode` extracted from the `response`
+    // Throws an error if no/invalid response code found
     static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
         guard response.characters.count >= 3 else {
             throw SMTPError(.badResponse(command.text, response))
@@ -113,7 +120,8 @@ extension SMTPSocket {
         }
         return ResponseCode(responseCode)
     }
-    
+
+    // Returns the reponse message from the response
     static func getResponseMessage(_ response: String) -> String {
         // TODO
         // Use string.from(index:) here

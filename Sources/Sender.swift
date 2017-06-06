@@ -147,10 +147,8 @@ extension String {
         guard let emailRegex = NSRegularExpression.emailRegex else {
             throw SMTPError(.createEmailRegexFailed)
         }
-        // TODO
-        // utf8.count, self.count
 
-        let range = NSRange(location: 0, length: utf8.count)
+        let range = NSRange(location: 0, length: self.characters.count)
         return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }
