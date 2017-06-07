@@ -16,7 +16,7 @@
 
 import Foundation
 
-// Used to send the content of the email--headers, text, and attachments.
+// Used to send the content of an email--headers, text, and attachments.
 // Should only be invoked after sending the `DATA` command to the server.
 // The email is not actually sent until we have indicated that we are done
 // sending its contents with a `CRLF CRLF`.
@@ -36,7 +36,7 @@ struct DataSender {
 
     // Send the text and attachments of the `mail`
     mutating func send(_ mail: Mail) throws {
-        try sendHeaders(mail.headers)
+        try sendHeaders(mail.headersString)
 
         if mail.hasAttachment {
             try sendMixed(mail)
@@ -66,24 +66,22 @@ extension DataSender {
         try send(mixedHeader)
         try send(boundary.startLine)
 
-        try sendAlternative(mail)
+        try sendAlternative(mail.alternative, text: mail.text)
 
-        if let attachments = mail.attachments {
-            try sendAttachments(attachments, boundary: boundary)
-        }
+        try sendAttachments(mail.attachments, boundary: boundary)
     }
 
     // If `mail` has an attachment that is an alternative to plain text, sends
-    // that attachment.
+    // that attachment and the plain text.
     // Else just sends the plain text.
-    mutating func sendAlternative(_ mail: Mail) throws {
-        if let alternative = mail.alternative {
+    mutating func sendAlternative(_ alternative: Attachment?, text: String) throws {
+        if let alternative = alternative {
             let boundary = String.createBoundary()
             let alternativeHeader = String.alternativeHeader(boundary: boundary)
             try send(alternativeHeader)
 
             try send(boundary.startLine)
-            try sendText(mail.text)
+            try sendText(text)
 
             try send(boundary.startLine)
             try sendAttachment(alternative)
@@ -91,8 +89,8 @@ extension DataSender {
             try send(boundary.endLine)
             return
         }
-
-        try sendText(mail.text)
+        
+        try sendText(text)
     }
 
     // Sends the attachments of a `Mail`.
@@ -115,7 +113,7 @@ extension DataSender {
             try send(relatedBoundary.startLine)
         }
 
-        let attachmentHeader = attachment.headers + CRLF
+        let attachmentHeader = attachment.headersString + CRLF
         try send(attachmentHeader)
 
         switch attachment.type {
@@ -126,8 +124,9 @@ extension DataSender {
 
         try send("")
 
-        if let relatedAttachments = attachment.relatedAttachments {
-            try sendAttachments(relatedAttachments, boundary: relatedBoundary)
+        if attachment.hasRelated {
+            try sendAttachments(attachment.relatedAttachments,
+                                boundary: relatedBoundary)
         }
     }
 
@@ -169,7 +168,7 @@ extension DataSender {
         #endif
 
         guard let file = FileHandle(forReadingAtPath: path) else {
-            throw SMTPError(.fileNotFound(path))
+            throw SMTPError(.fileNotFound(path: path))
         }
 
         let data = file.readDataToEndOfFile().base64EncodedData()
@@ -240,7 +239,7 @@ private extension String {
     }
 
     // Header for an attachment that is related to another attachment.
-    // (Such as an image attachment that can be referenced by its related HTML
+    // (Such as an image attachment that can be referenced by a related HTML
     // attachment)
     static func relatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"

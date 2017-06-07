@@ -21,24 +21,24 @@ import LoggerAPI
 public enum SMTPError: Error, CustomStringConvertible {
     // AuthCredentials
     /// Error decoding string.
-    case base64DecodeFail(String)
+    case base64DecodeFail(string: String)
 
     /// Hashing server challenge with MD5 algorithm failed.
     case md5HashChallengeFail
     
     // DataSender
     /// File not found at path while trying to send file `Attachment`.
-    case fileNotFound(String)
+    case fileNotFound(path: String)
     
     // Login
     /// Could not connect to server within specified timeout. Ensure your
     /// server can connect through `Port` 587 or specify which `Port` to connect
     /// on. Some SMTP servers may require a longer timeout.
-    case couldNotConnectToServer(String, Int)
+    case couldNotConnectToServer(server: String, timeout: Int)
     
     /// The preferred `AuthMethod`s could not be found. Connecting with `SSL`
     /// may be required.
-    case noSupportedAuthMethods(String)
+    case noSupportedAuthMethods(hostname: String)
     
     /// Attempted to login using `XOAUTH2` but `SMTP` instance was initialized 
     /// without an access token.
@@ -50,14 +50,14 @@ public enum SMTPError: Error, CustomStringConvertible {
 
     // SMTPSocket
     /// Bad response received for command.
-    case badResponse(String, String)
+    case badResponse(command: String, response: String)
 
     /// Error converting Data read from socket to a String.
-    case convertDataUTF8Fail(Data)
+    case convertDataUTF8Fail(data: Data)
     
     // User
     /// Invalid email provided for `User`.
-    case invalidEmail(String)
+    case invalidEmail(email: String)
     
     /// Description of the `SMTPError`.
     public var description: String {

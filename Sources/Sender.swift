@@ -100,18 +100,14 @@ private extension Sender {
 
     private func getRecipientEmails(from mail: Mail) -> [String] {
         var recipientEmails = mail.to.map { $0.email }
-        if let cc = mail.cc {
-            recipientEmails += cc.map { $0.email }
-        }
-        if let bcc = mail.bcc {
-            recipientEmails += bcc.map { $0.email }
-        }
+        recipientEmails += mail.cc.map { $0.email }
+        recipientEmails += mail.bcc.map { $0.email }
         return recipientEmails
     }
 
     private func validateEmails(_ emails: [String]) throws {
         for email in emails where try !email.isValidEmail() {
-            throw SMTPError(.invalidEmail(email))
+            throw SMTPError(.invalidEmail(email: email))
         }
     }
 

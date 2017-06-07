@@ -17,13 +17,11 @@
 import Foundation
 
 /// Represents a `Mail`'s attachment.
+/// Different SMTP servers have different attachment size limits.
 public struct Attachment {
     let type: AttachmentType
-
-    // TODO
-    // Any semantic difference between nil and empty dict/array?
-    let additionalHeaders: [String: String]?
-    let relatedAttachments: [Attachment]?
+    let additionalHeaders: [Header]
+    let relatedAttachments: [Attachment]
 
     /// Initialize a data `Attachment`.
     ///
@@ -34,15 +32,16 @@ public struct Attachment {
     ///     - inline: Indicates if attachment is inline. To embed the attachment
     ///               in mail content, set to `true`. To send as standalone
     ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment.
-    ///                          (optional)
-    ///     - related: Related `Attachment`s of this attachment. (optional)
+    ///     - additionalHeaders: Additional headers for the attachment. Defaults
+    ///                          to none.
+    ///     - related: Related `Attachment`s of this attachment. Defaults to 
+    ///                none.
     public init(data: Data,
                 mime: String,
                 name: String,
                 inline: Bool = false,
-                additionalHeaders: [String: String]? = nil,
-                relatedAttachments: [Attachment]? = nil) {
+                additionalHeaders: [Header] = [],
+                relatedAttachments: [Attachment] = []) {
         self.init(type: .data(data: data,
                               mime: mime,
                               name: name,
@@ -62,15 +61,16 @@ public struct Attachment {
     ///     - inline: Indicates if attachment is inline. To embed the attachment 
     ///               in mail content, set to `true`. To send as standalone 
     ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment. 
-    ///                          (optional)
-    ///     - related: Related `Attachment`s of this attachment. (optional)
+    ///     - additionalHeaders: Additional headers for the attachment. Defaults
+    ///                          to none.
+    ///     - related: Related `Attachment`s of this attachment. Defaults to
+    ///                none.
     public init(filePath: String,
                 mime: String = "application/octet-stream",
                 name: String? = nil,
                 inline: Bool = false,
-                additionalHeaders: [String: String]? = nil,
-                relatedAttachments: [Attachment]? = nil) {
+                additionalHeaders: [Header] = [],
+                relatedAttachments: [Attachment] = []) {
         let name = name ?? NSString(string: filePath).lastPathComponent
         self.init(type: .file(path: filePath,
                               mime: mime,
@@ -88,14 +88,15 @@ public struct Attachment {
     ///                     `utf-8`.
     ///     - alternative: Whether the HTML is an alternative for plain text or 
     ///                    not. Defaults to `true`.
-    ///     - additionalHeaders: Additional headers for the attachment.
-    ///                          (optional)
-    ///     - related: Related `Attachment`s of this attachment. (optional)
+    ///     - additionalHeaders: Additional headers for the attachment. Defaults
+    ///                          to none.
+    ///     - related: Related `Attachment`s of this attachment. Defaults to
+    ///                none.
     public init(htmlContent: String,
                 characterSet: String = "utf-8",
                 alternative: Bool = true,
-                additionalHeaders: [String: String]? = nil,
-                relatedAttachments: [Attachment]? = nil) {
+                additionalHeaders: [Header] = [],
+                relatedAttachments: [Attachment] = []) {
         self.init(type: .html(content: htmlContent,
                               characterSet: characterSet,
                               alternative: alternative),
@@ -104,8 +105,8 @@ public struct Attachment {
     }
     
     private init(type: AttachmentType,
-                 additionalHeaders: [String: String]?,
-                 relatedAttachments: [Attachment]?) {
+                 additionalHeaders: [Header],
+                 relatedAttachments: [Attachment]) {
         self.type = type
         self.additionalHeaders = additionalHeaders
         self.relatedAttachments = relatedAttachments
@@ -121,46 +122,42 @@ extension Attachment {
 }
 
 extension Attachment {
-    private var headersDictionary: [String: String] {
-        var result = [String: String]()
-        switch type {
+    private var headers: [Header] {
+        var headers = [Header]()
 
+        switch type {
         case .data(let data):
-            result["CONTENT-TYPE"] = data.mime
+            headers.append(("CONTENT-TYPE", data.mime))
             var attachmentDisposition = data.inline ? "inline" : "attachment"
             if let mime = data.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
-            result["CONTENT-DISPOSITION"] = attachmentDisposition
+            headers.append(("CONTENT-DISPOSITION", attachmentDisposition))
 
         case .file(let file):
-            result["CONTENT-TYPE"] = file.mime
+            headers.append(("CONTENT-TYPE", file.mime))
             var attachmentDisposition = file.inline ? "inline" : "attachment"
             if let mime = file.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
-            result["CONTENT-DISPOSITION"] = attachmentDisposition
-            
-        case .html(let html):
-            result["CONTENT-TYPE"] = "text/html; charset=\(html.characterSet)"
-            result["CONTENT-DISPOSITION"] = "inline"
-        }
-        
-        result["CONTENT-TRANSFER-ENCODING"] = "BASE64"
+            headers.append(("CONTENT-DISPOSITION", attachmentDisposition))
 
-        if let additionalHeaders = additionalHeaders {
-            for (key, value) in additionalHeaders {
-                // TODO
-                // OK to overwrite headers with difference cases?
-                result[key.uppercased()] = value
-            }
+        case .html(let html):
+            headers.append(("CONTENT-TYPE", "text/html; charset=\(html.characterSet)"))
+            headers.append(("CONTENT-DISPOSITION", "inline"))
         }
-        
-        return result
+
+        headers.append(("CONTENT-TRANSFER-ENCODING", "BASE64"))
+
+        for header in additionalHeaders {
+            headers.append((header.header, header.value))
+        }
+
+        return headers
     }
     
-    var headers: String {
-        return headersDictionary.map { (key, value) in
+    var headersString: String {
+        return headers.map { (key, value) in
             return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
@@ -168,7 +165,7 @@ extension Attachment {
 
 extension Attachment {
     var hasRelated: Bool {
-        return relatedAttachments != nil
+        return !relatedAttachments.isEmpty
     }
     
     var isAlternative: Bool {

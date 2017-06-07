@@ -50,7 +50,7 @@ extension String {
             let data = Data(base64Encoded: self),
             let base64Decoded = String(data: data, encoding: .utf8)
             else {
-                throw SMTPError(.base64DecodeFail(self))
+                throw SMTPError(.base64DecodeFail(string: self))
         }
         return base64Decoded
     }
