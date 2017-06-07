@@ -35,7 +35,7 @@ let hostname: String = {
     if let localHostname = localHostname {
         return localHostname
     } else {
-        return "smtp.mail.yahoo.com"
+        return "smtp.gmail.com"
     }
 }()
 
