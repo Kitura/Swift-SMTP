@@ -28,14 +28,14 @@ class TestAttachment: XCTestCase {
 
     func testDataAttachmentHeaders() {
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-        let headers = Attachment(data: data, mime: "application/json", name: "file.json").headers
+        let headers = Attachment(data: data, mime: "application/json", name: "file.json").headersString
         XCTAssert(headers.contains("CONTENT-TYPE: application/json"))
         XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?file.json?=\""))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
     }
 
     func testFileAttachmentHeaders() {
-        let headers = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"]).headers
+        let headers = Attachment(filePath: imgFilePath, additionalHeaders: [("CONTENT-ID", "megaman-pic")]).headersString
         XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?x.png?=\""))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
         XCTAssert(headers.contains("CONTENT-ID: megaman-pic"))
@@ -43,7 +43,7 @@ class TestAttachment: XCTestCase {
     }
 
     func testHTMLAttachmentHeaders() {
-        let headers = Attachment(htmlContent: html).headers
+        let headers = Attachment(htmlContent: html).headersString
         XCTAssert(headers.contains("CONTENT-TYPE: text/html; charset=utf-8"))
         XCTAssert(headers.contains("CONTENT-DISPOSITION: inline"))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))

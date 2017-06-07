@@ -16,16 +16,27 @@
 
 import Foundation
 
+// Used to send the content of an email--headers, text, and attachments.
+// Should only be invoked after sending the `DATA` command to the server.
+// The email is not actually sent until we have indicated that we are done
+// sending its contents with a `CRLF CRLF`.
+// This is handled by `Sender`.
 struct DataSender {
+    // Socket we use to read and write data to
     let socket: SMTPSocket
+
+    // Cache for attachments. This saves us from encoding data or creating
+    // files from local files more than we need to.
     lazy var cache = NSCache<AnyObject, AnyObject>()
 
+    // Init a new instance of `DataSender`
     init(socket: SMTPSocket) {
         self.socket = socket
     }
 
+    // Send the text and attachments of the `mail`
     mutating func send(_ mail: Mail) throws {
-        try sendHeaders(mail.headers)
+        try sendHeaders(mail.headersString)
 
         if mail.hasAttachment {
             try sendMixed(mail)
@@ -36,15 +47,18 @@ struct DataSender {
 }
 
 extension DataSender {
+    // Send the headers of a `Mail`
     func sendHeaders(_ headers: String) throws {
         try send(headers)
     }
 
+    // Send the simple text content of a `Mail`
     func sendText(_ text: String) throws {
         let embeddedText = text.embeddedText()
         try send(embeddedText)
     }
 
+    // Send `mail`'s content that is more than just plain text
     mutating func sendMixed(_ mail: Mail) throws {
         let boundary = String.createBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
@@ -52,21 +66,22 @@ extension DataSender {
         try send(mixedHeader)
         try send(boundary.startLine)
 
-        try sendAlternative(mail)
+        try sendAlternative(mail.alternative, text: mail.text)
 
-        if let attachments = mail.attachments {
-            try sendAttachments(attachments, boundary: boundary)
-        }
+        try sendAttachments(mail.attachments, boundary: boundary)
     }
 
-    mutating func sendAlternative(_ mail: Mail) throws {
-        if let alternative = mail.alternative {
+    // If `mail` has an attachment that is an alternative to plain text, sends
+    // that attachment and the plain text.
+    // Else just sends the plain text.
+    mutating func sendAlternative(_ alternative: Attachment?, text: String) throws {
+        if let alternative = alternative {
             let boundary = String.createBoundary()
             let alternativeHeader = String.alternativeHeader(boundary: boundary)
             try send(alternativeHeader)
 
             try send(boundary.startLine)
-            try sendText(mail.text)
+            try sendText(text)
 
             try send(boundary.startLine)
             try sendAttachment(alternative)
@@ -75,9 +90,10 @@ extension DataSender {
             return
         }
 
-        try sendText(mail.text)
+        try sendText(text)
     }
 
+    // Sends the attachments of a `Mail`.
     mutating func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
         for attachement in attachments {
             try send(boundary.startLine)
@@ -86,6 +102,7 @@ extension DataSender {
         try send(boundary.endLine)
     }
 
+    // Send the `attachment`.
     mutating func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
 
@@ -96,7 +113,7 @@ extension DataSender {
             try send(relatedBoundary.startLine)
         }
 
-        let attachmentHeader = attachment.headers + CRLF
+        let attachmentHeader = attachment.headersString + CRLF
         try send(attachmentHeader)
 
         switch attachment.type {
@@ -107,11 +124,14 @@ extension DataSender {
 
         try send("")
 
-        if let relatedAttachments = attachment.relatedAttachments {
-            try sendAttachments(relatedAttachments, boundary: relatedBoundary)
+        if attachment.hasRelated {
+            try sendAttachments(attachment.relatedAttachments,
+                                boundary: relatedBoundary)
         }
     }
 
+    // Send a data attachment. Data must be base 64 encoded before sending.
+    // Checks if the base 64 encoded version has been cached first.
     mutating func sendData(_ data: Data) throws {
         #if os(macOS)
             if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
@@ -133,6 +153,9 @@ extension DataSender {
         #endif
     }
 
+    // Sends a local file at the given path. File must be base 64 encoded
+    // before sending. Checks the cache first.
+    // Throws an error if file could not be found.
     mutating func sendFile(at path: String) throws {
         #if os(macOS)
             if let data = cache.object(forKey: path as AnyObject) as? Data {
@@ -145,7 +168,7 @@ extension DataSender {
         #endif
 
         guard let file = FileHandle(forReadingAtPath: path) else {
-            throw SMTPError(.fileNotFound(path))
+            throw SMTPError(.fileNotFound(path: path))
         }
 
         let data = file.readDataToEndOfFile().base64EncodedData()
@@ -159,6 +182,8 @@ extension DataSender {
         #endif
     }
 
+    // Send an HTML attachment. HTML must be base 64 encoded before sending.
+    // Checks if the base 64 encoded version is in cache first.
     mutating func sendHTML(_ html: String) throws {
         #if os(macOS)
             if let encodedHTML = cache.object(forKey: html as AnyObject) as? String {
@@ -182,42 +207,56 @@ extension DataSender {
 }
 
 private extension DataSender {
+    // Write `text` to the socket.
     func send(_ text: String) throws {
         try socket.write(text)
     }
 
+    // Write `data` to the socket.
     func send(_ data: Data) throws {
         try socket.write(data)
     }
 }
 
 private extension String {
+    // The SMTP protocol requires unique boundaries between sections of an 
+    // email.
     static func createBoundary() -> String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
 
+    // Header for a plain text email.
     static let plainTextHeader = "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)CONTENT-DISPOSITION: inline\(CRLF)"
 
+    // Header for a mixed type email.
     static func mixedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)"
     }
 
+    // Header for an alternative email.
     static func alternativeHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)"
     }
 
+    // Header for an attachment that is related to another attachment.
+    // (Such as an image attachment that can be referenced by a related HTML
+    // attachment)
     static func relatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
     }
 
+    // Embed the plain text in a plain text header.
     func embeddedText() -> String {
         return "\(String.plainTextHeader)\(CRLF)\(self)\(CRLF)"
     }
-    
+
+    // Added to a boundary to indicate the beginning of the corresponding
+    // section.
     var startLine: String {
         return "--\(self)"
     }
-    
+
+    // Added to a boundary to indicate the end of the corresponding section.
     var endLine: String {
         return "--\(self)--"
     }

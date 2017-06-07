@@ -59,31 +59,29 @@ class TestDataSender: XCTestCase {
                   domainName: domainName,
                   accessToken: nil,
                   timeout: timeout) { (socket, error) in
-
                     XCTAssertNil(error)
 
                     if let socket = socket {
                         let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
                         let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
 
-                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
-                            XCTAssertEqual(sent.count, 2)
+                        sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 1)
                             XCTAssertEqual(failed.count, 0)
                             group.leave()
                         }
                         sender?.send()
                     }
-
             }.login()
 
         group.wait()
 
         #if os(macOS)
-            let cachedFile = sender?.dataSender.cache.object(forKey: data as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: data as AnyObject)
         #else
-            let cachedFile = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
         #endif
-        XCTAssertNotNil(cachedFile)
+        XCTAssertNotNil(cached)
         
         expectation.fulfill()
     }
@@ -112,31 +110,29 @@ class TestDataSender: XCTestCase {
                   domainName: domainName,
                   accessToken: nil,
                   timeout: timeout) { (socket, error) in
-
                     XCTAssertNil(error)
 
                     if let socket = socket {
                         let attachment = Attachment(filePath: imgFilePath)
                         let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
 
-                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
-                            XCTAssertEqual(sent.count, 2)
+                        sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 1)
                             XCTAssertEqual(failed.count, 0)
                             group.leave()
                         }
                         sender?.send()
                     }
-
             }.login()
 
         group.wait()
 
         #if os(macOS)
-            let cachedFile = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
         #else
-            let cachedFile = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
         #endif
-        XCTAssertNotNil(cachedFile)
+        XCTAssertNotNil(cached)
         
         expectation.fulfill()
     }
@@ -165,31 +161,29 @@ class TestDataSender: XCTestCase {
                   domainName: domainName,
                   accessToken: nil,
                   timeout: timeout) { (socket, error) in
-
                     XCTAssertNil(error)
 
                     if let socket = socket {
                         let attachment = Attachment(htmlContent: html)
                         let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
 
-                        sender = Sender(socket: socket, pending: [mail, mail], progress: nil) { (sent, failed) in
-                            XCTAssertEqual(sent.count, 2)
+                        sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
+                            XCTAssertEqual(sent.count, 1)
                             XCTAssertEqual(failed.count, 0)
                             group.leave()
                         }
                         sender?.send()
                     }
-
             }.login()
 
         group.wait()
 
         #if os(macOS)
-            let cachedFile = sender?.dataSender.cache.object(forKey: html as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: html as AnyObject)
         #else
-            let cachedFile = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
+            let cached = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
         #endif
-        XCTAssertNotNil(cachedFile)
+        XCTAssertNotNil(cached)
         
         expectation.fulfill()
     }
@@ -262,7 +256,7 @@ class TestDataSender: XCTestCase {
 
     func testSendRelatedAttachment() {
         let x = expectation(description: "Send mail with an attachment that references a related attachment.")
-        let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
+        let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: [("CONTENT-ID", "megaman-pic")])
         let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>This text is HTML</html>", relatedAttachments: [fileAttachment])
         let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
         smtp.send(mail) { (err) in

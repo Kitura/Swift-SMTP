@@ -71,9 +71,13 @@ public struct SMTP {
     ///                returning an error. Defaults to `10` seconds.
     ///
     /// - Note:
-    ///     Some servers like Gmail support IPv6, and if your network does not,
-    ///     you will first attempt to connect via IPv6, then timeout, and fall
-    ///     back to IPv4. You can avoid this by disabling IPv6 on your machine.
+    ///     - Some servers like Gmail support IPv6, and if your network does 
+    ///       not, you will first attempt to connect via IPv6, then timeout, and 
+    ///       fall back to IPv4. You can avoid this by disabling IPv6 on your 
+    ///       machine.
+    ///
+    ///     - You may need to enable access for less secure apps in your account
+    ///       on the SMTP server.
     public init(hostname: String,
                 email: String,
                 password: String,

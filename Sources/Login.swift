@@ -20,7 +20,7 @@ import Foundation
     import Dispatch
 #endif
 
-typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)?
+typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
 
 class Login {
     fileprivate let hostname: String
@@ -44,7 +44,7 @@ class Login {
          domainName: String,
          accessToken: String?,
          timeout: Int,
-         callback: LoginCallback) throws {
+         callback: @escaping LoginCallback) throws {
         self.hostname = hostname
         self.email = email
         self.password = password
@@ -63,32 +63,29 @@ class Login {
             let group = DispatchGroup()
             group.enter()
 
-            // Yet another thread is created here because trying to connect on a
-            // "bad" port will hang that thread. Doing this on a separate one
-            // ensures we can call `wait` and timeout if needed.
+            // We call `async` again here because trying to connect to an SMTP
+            // server on a port it doesn't accept hangs the entire process.
+            // By calling `async` again, we can call `wait` on a separate thread
+            // and report an error in these cases.
             DispatchQueue.global().async {
                 do {
                     try self.connect(self.port)
                     try self.loginToServer()
                     group.leave()
-                    self.done(socket: self.socket, error: nil)
+                    self.callback(self.socket, nil)
                 } catch {
                     group.leave()
-                    self.done(socket: nil, error: error)
+                    self.callback(nil, error)
                 }
             }
 
             if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
-                self.done(socket: nil,
-                          error: SMTPError(.couldNotConnectToServer(self.hostname,
-                                                                    self.timeout)))
+                self.socket.close()
+                self.callback(nil,
+                              SMTPError(.couldNotConnectToServer(server: self.hostname,
+                                                                 timeout: self.timeout)))
             }
         }
-    }
-
-    private func done(socket: SMTPSocket?, error: Error?) {
-        callback?(socket, error)
-        callback = nil
     }
 }
 
@@ -149,7 +146,7 @@ private extension Login {
                 }
             }
         }
-        throw SMTPError(.noSupportedAuthMethods(hostname))
+        throw SMTPError(.noSupportedAuthMethods(hostname: hostname))
     }
 }
 
@@ -163,25 +160,25 @@ private extension Login {
     }
 
     func loginLogin() throws {
-        _ = try auth(authMethod: .login, credentials: nil)
+        try auth(authMethod: .login, credentials: nil)
         let credentials = AuthEncoder.login(user: email, password: password)
         try authUser(credentials.encodedUser)
         try authPassword(credentials.encodedPassword)
     }
 
     func loginPlain() throws {
-        _ = try auth(authMethod: .plain,
-                     credentials: AuthEncoder.plain(user: email,
-                                                    password: password))
+        try auth(authMethod: .plain,
+                 credentials: AuthEncoder.plain(user: email,
+                                                password: password))
     }
 
     func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        _ = try auth(authMethod: .xoauth2,
-                     credentials: AuthEncoder.xoauth2(user: email,
-                                                      accessToken: accessToken))
+        try auth(authMethod: .xoauth2,
+                 credentials: AuthEncoder.xoauth2(user: email,
+                                                  accessToken: accessToken))
     }
 }
 
@@ -195,18 +192,23 @@ private extension Login {
     }
 
     func starttls() throws {
-        return try socket.send(.starttls)
+        try socket.send(.starttls)
     }
 
+    @discardableResult
     func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
-        return try socket.send(.auth(authMethod, credentials))
+        let response = try socket.send(.auth(authMethod, credentials))
+        guard response.count == 1 else {
+            throw SMTPError(.badResponse(command: "AUTH", response: response.description))
+        }
+        return response[0]
     }
 
     func authUser(_ user: String) throws {
-        return try socket.send(.authUser(user))
+        try socket.send(.authUser(user))
     }
 
     func authPassword(_ password: String) throws {
-        return try socket.send(.authPassword(password))
+        try socket.send(.authPassword(password))
     }
 }

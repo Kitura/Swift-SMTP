@@ -18,39 +18,43 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
-
     /// UUID of the `Mail`.
     public let id = UUID().uuidString + ".Swift-SMTP"
 
     let from: User
     let to: [User]
-    let cc: [User]?
-    let bcc: [User]?
+    let cc: [User]
+    let bcc: [User]
     let subject: String
     let text: String
-    let attachments: [Attachment]?
+    let attachments: [Attachment]
     let alternative: Attachment?
-    let additionalHeaders: [String: String]?
+    let additionalHeaders: [Header]
 
     /// Initializes a `Mail` object.
     ///
     /// - Parameters:
-    ///     - from: `User` to set the `Mail`'s sender to.
+    ///     - from: The `User` that the `Mail` will be sent from.
     ///     - to: Array of `User`s to send the `Mail` to.
-    ///     - cc: Array of `User`s to cc. (optional)
-    ///     - bcc: Array of `User`s to bcc. (optional)
-    ///     - subject: Subject of the `Mail`. (optional)
-    ///     - text: Text of the `Mail`. (optional)
-    ///     - attachments: Array of `Attachment`s for the `Mail`. (optional)
-    ///     - additionalHeaders: Additional headers for the `Mail`. (optional)
+    ///     - cc: Array of `User`s to cc. Defaults to none.
+    ///     - bcc: Array of `User`s to bcc. Defaults to none.
+    ///     - subject: Subject of the `Mail`. Defaults to none.
+    ///     - text: Text of the `Mail`. Defaults to none.
+    ///     - attachments: Array of `Attachment`s for the `Mail`. If the `Mail`
+    ///                    has multiple `Attachment`s that are alternatives to
+    ///                    to plain text, the last one will be used as the
+    ///                    alternative (all the `Attachments` will still be
+    ///                    sent). Defaults to none.
+    ///     - additionalHeaders: Additional headers for the `Mail`. Defaults to
+    ///                          none.
     public init(from: User,
                 to: [User],
-                cc: [User]? = nil,
-                bcc: [User]? = nil,
+                cc: [User] = [],
+                bcc: [User] = [],
                 subject: String = "",
                 text: String = "",
-                attachments: [Attachment]? = nil,
-                additionalHeaders: [String: String]? = nil) {
+                attachments: [Attachment] = [],
+                additionalHeaders: [Header] = []) {
         self.from = from
         self.to = to
         self.cc = cc
@@ -58,45 +62,48 @@ public struct Mail {
         self.subject = subject
         self.text = text
 
-        if let attachments = attachments {
-            let result = attachments.takeLast { $0.isAlternative }
-            self.alternative = result.0
-            self.attachments = result.1
-        } else {
-            self.alternative = nil
-            self.attachments = nil
-        }
+        let (alternative, attachments) = Mail.getAlternative(attachments)
+        self.alternative = alternative
+        self.attachments = attachments
 
         self.additionalHeaders = additionalHeaders
+    }
+
+    private static func getAlternative(_ attachments: [Attachment]) -> (Attachment?, [Attachment]) {
+        let reversed: [Attachment] = attachments.reversed()
+        if let index = reversed.index(where: {( $0.isAlternative )}) {
+            var newAttachments = attachments
+            return (newAttachments.remove(at: index), newAttachments)
+        }
+        return (nil, attachments)
     }
 }
 
 extension Mail {
-    private var headersDictionary: [String: String] {
-        var fields = [String: String]()
-        fields["MESSAGE-ID"] = id
-        fields["DATE"] = Date().smtpFormatted
-        fields["FROM"] = from.mime
-        fields["TO"] = to.map { $0.mime }.joined(separator: ", ")
+    private var headers: [Header] {
+        var headers = [Header]()
+        
+        headers.append(("MESSAGE-ID", id))
+        headers.append(("DATE", Date().smtpFormatted))
+        headers.append(("FROM", from.mime))
+        headers.append(("TO", to.map { $0.mime }.joined(separator: ", ")))
 
-        if let cc = cc {
-            fields["CC"] = cc.map { $0.mime }.joined(separator: ", ")
+        if !cc.isEmpty {
+            headers.append(("CC", cc.map { $0.mime }.joined(separator: ", ")))
         }
 
-        fields["SUBJECT"] = subject.mimeEncoded ?? ""
-        fields["MIME-VERSION"] = "1.0 (Swift-SMTP)"
+        headers.append(("SUBJECT", subject.mimeEncoded ?? ""))
+        headers.append(("MIME-VERSION", "1.0 (Swift-SMTP)"))
 
-        if let additionalHeaders = additionalHeaders {
-            for (key, value) in additionalHeaders {
-                fields[key.uppercased()] = value
-            }
+        for header in additionalHeaders {
+            headers.append((header.header, header.value))
         }
 
-        return fields
+        return headers
     }
 
-    var headers: String {
-        return headersDictionary.map { (key, value) in
+    var headersString: String {
+        return headers.map { (key, value) in
             return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
@@ -104,14 +111,13 @@ extension Mail {
 
 extension Mail {
     var hasAttachment: Bool {
-        return attachments != nil
+        return !attachments.isEmpty || alternative != nil
     }
 }
 
 extension DateFormatter {
     static let smtpDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en-US")
         formatter.dateFormat = "EEE, d MMM yyyy HH:mm:ss ZZZ"
         return formatter
     }()
@@ -120,25 +126,5 @@ extension DateFormatter {
 extension Date {
     var smtpFormatted: String {
         return DateFormatter.smtpDateFormatter.string(from: self)
-    }
-}
-
-extension Array {
-    func takeLast(where condition: (Element) -> Bool) -> (Element?, Array) {
-        var index: Int?
-        for i in (0 ..< count).reversed() {
-            if condition(self[i]) {
-                index = i
-                break
-            }
-        }
-
-        if let index = index {
-            var array = self
-            let ele = array.remove(at: index)
-            return (ele, array)
-        } else {
-            return (nil, self)
-        }
     }
 }

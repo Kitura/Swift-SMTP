@@ -16,15 +16,17 @@
 
 import Foundation
 
+/// Custom header for a `Mail` or `Attachment`.
+public typealias Header = (header: String, value: String)
+
 let CRLF = "\r\n"
 
 extension String {
     var mimeEncoded: String? {
-        guard let encoded = addingPercentEncoding(
-            withAllowedCharacters: .urlQueryAllowed) else {
-                return nil
+        guard let encoded = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            return nil
         }
-        
+
         let quoted = encoded
             .replacingOccurrences(of: "%20", with: "_")
             .replacingOccurrences(of: ",", with: "%2C")

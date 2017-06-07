@@ -82,7 +82,7 @@ private extension Sender {
     }
 
     func quit() throws {
-        let _: Void = try socket.send(.quit)
+        try socket.send(.quit)
         socket.close()
     }
 }
@@ -100,37 +100,33 @@ private extension Sender {
 
     private func getRecipientEmails(from mail: Mail) -> [String] {
         var recipientEmails = mail.to.map { $0.email }
-        if let cc = mail.cc {
-            recipientEmails += cc.map { $0.email }
-        }
-        if let bcc = mail.bcc {
-            recipientEmails += bcc.map { $0.email }
-        }
+        recipientEmails += mail.cc.map { $0.email }
+        recipientEmails += mail.bcc.map { $0.email }
         return recipientEmails
     }
 
     private func validateEmails(_ emails: [String]) throws {
         for email in emails where try !email.isValidEmail() {
-            throw SMTPError(.invalidEmail(email))
+            throw SMTPError(.invalidEmail(email: email))
         }
     }
 
     private func sendMail(_ from: String) throws {
-        return try socket.send(.mail(from))
+        try socket.send(.mail(from))
     }
 
     private func sendTo(_ emails: [String]) throws {
         for email in emails {
-            let _: Void = try socket.send(.rcpt(email))
+            try socket.send(.rcpt(email))
         }
     }
 
     private func data() throws {
-        return try socket.send(.data)
+        try socket.send(.data)
     }
 
     private func dataEnd() throws {
-        return try socket.send(.dataEnd)
+        try socket.send(.dataEnd)
     }
 }
 
@@ -147,7 +143,8 @@ extension String {
         guard let emailRegex = NSRegularExpression.emailRegex else {
             throw SMTPError(.createEmailRegexFailed)
         }
-        let range = NSRange(location: 0, length: utf16.count)
+
+        let range = NSRange(location: 0, length: self.characters.count)
         return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }
