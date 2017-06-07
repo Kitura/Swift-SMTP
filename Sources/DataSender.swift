@@ -89,7 +89,7 @@ extension DataSender {
             try send(boundary.endLine)
             return
         }
-        
+
         try sendText(text)
     }
 

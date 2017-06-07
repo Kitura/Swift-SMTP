@@ -21,7 +21,7 @@ import LoggerAPI
 // Wrapper around BlueSocket
 struct SMTPSocket {
     // The socket we use to read and write to
-    let socket: Socket
+    fileprivate let socket: Socket
 
     // Init a new instance of SMTPSocket
     init() throws {

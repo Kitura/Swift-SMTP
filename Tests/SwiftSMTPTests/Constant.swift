@@ -50,7 +50,7 @@ let email: String = {
         else {
             fatalError("Could not get email to login for tests.")
     }
-    return email
+    return email.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
 }()
 
 let password: String = {
@@ -64,7 +64,7 @@ let password: String = {
         else {
             fatalError("Could not get password to login for tests.")
     }
-    return password
+    return password.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
 }()
 
 let port: SwiftSMTP.Port = {
