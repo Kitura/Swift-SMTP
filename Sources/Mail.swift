@@ -82,7 +82,7 @@ public struct Mail {
 extension Mail {
     private var headers: [Header] {
         var headers = [Header]()
-        
+
         headers.append(("MESSAGE-ID", id))
         headers.append(("DATE", Date().smtpFormatted))
         headers.append(("FROM", from.mime))
@@ -103,8 +103,8 @@ extension Mail {
     }
 
     var headersString: String {
-        return headers.map { (key, value) in
-            return "\(key): \(value)"
+        return headers.map {
+            "\($0.0): \($0.1)"
             }.joined(separator: CRLF)
     }
 }

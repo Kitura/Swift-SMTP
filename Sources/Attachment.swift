@@ -34,7 +34,7 @@ public struct Attachment {
     ///               attachment, set to `false`. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment. Defaults
     ///                          to none.
-    ///     - related: Related `Attachment`s of this attachment. Defaults to 
+    ///     - related: Related `Attachment`s of this attachment. Defaults to
     ///                none.
     public init(data: Data,
                 mime: String,
@@ -49,17 +49,17 @@ public struct Attachment {
                   additionalHeaders: additionalHeaders,
                   relatedAttachments: relatedAttachments)
     }
-    
+
     /// Initialize an `Attachment` from a local file.
     ///
     /// - Parameters:
     ///     - filePath: Path to the local file.
-    ///     - mime: MIME type of the file. Defaults to 
+    ///     - mime: MIME type of the file. Defaults to
     ///             `application/octet-stream`.
-    ///     - name: Name of the file. Defaults to the name component in its 
+    ///     - name: Name of the file. Defaults to the name component in its
     ///             file path.
-    ///     - inline: Indicates if attachment is inline. To embed the attachment 
-    ///               in mail content, set to `true`. To send as standalone 
+    ///     - inline: Indicates if attachment is inline. To embed the attachment
+    ///               in mail content, set to `true`. To send as standalone
     ///               attachment, set to `false`. Defaults to `false`.
     ///     - additionalHeaders: Additional headers for the attachment. Defaults
     ///                          to none.
@@ -79,14 +79,14 @@ public struct Attachment {
                   additionalHeaders: additionalHeaders,
                   relatedAttachments: relatedAttachments)
     }
-    
+
     /// Initialize an HTML `Attachment`.
     ///
     /// - Parameters:
     ///     - htmlContent: Content string of HTML.
     ///     - characterSet: Character encoding of `htmlContent`. Defaults to
     ///                     `utf-8`.
-    ///     - alternative: Whether the HTML is an alternative for plain text or 
+    ///     - alternative: Whether the HTML is an alternative for plain text or
     ///                    not. Defaults to `true`.
     ///     - additionalHeaders: Additional headers for the attachment. Defaults
     ///                          to none.
@@ -103,7 +103,7 @@ public struct Attachment {
                   additionalHeaders: additionalHeaders,
                   relatedAttachments: relatedAttachments)
     }
-    
+
     private init(type: AttachmentType,
                  additionalHeaders: [Header],
                  relatedAttachments: [Attachment]) {
@@ -155,10 +155,10 @@ extension Attachment {
 
         return headers
     }
-    
+
     var headersString: String {
-        return headers.map { (key, value) in
-            return "\(key): \(value)"
+        return headers.map {
+            "\($0.0): \($0.1)"
             }.joined(separator: CRLF)
     }
 }
@@ -167,7 +167,7 @@ extension Attachment {
     var hasRelated: Bool {
         return !relatedAttachments.isEmpty
     }
-    
+
     var isAlternative: Bool {
         if case .html(let html) = type, html.alternative {
             return true
