@@ -35,7 +35,7 @@ class TestAttachment: XCTestCase {
     }
 
     func testFileAttachmentHeaders() {
-        let headers = Attachment(filePath: imgFilePath, additionalHeaders: [("CONTENT-ID", "megaman-pic")]).headersString
+        let headers = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"]).headersString
         XCTAssert(headers.contains("CONTENT-DISPOSITION: attachment; filename=\"=?UTF-8?Q?x.png?=\""))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
         XCTAssert(headers.contains("CONTENT-ID: megaman-pic"))
