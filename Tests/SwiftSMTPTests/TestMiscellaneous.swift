@@ -64,7 +64,7 @@ extension TestMiscellaneous {
     }
 
     func testMailHeaders() {
-        let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: [("header", "val")]).headersString
+        let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["header": "val"]).headersString
 
         let to_ = "TO: =?UTF-8?Q?Megaman?= <\(email)>"
         XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")
@@ -78,9 +78,8 @@ extension TestMiscellaneous {
         let mimeVersion = "MIME-VERSION: 1.0 (Swift-SMTP)"
         XCTAssert(headers.contains(mimeVersion), "Mail header did not contain \(mimeVersion)")
 
-        let additionalHeader = Header("header", "val")
-        XCTAssert(headers.contains(additionalHeader.header), "Mail header did not contain \(additionalHeader.header)")
-        XCTAssert(headers.contains(additionalHeader.value), "Mail header did not contain \(additionalHeader.value)")
+        XCTAssert(headers.contains("HEADER"), "Mail header did not contain \"header\".")
+        XCTAssert(headers.contains("val"), "Mail header did not contain \"val\".")
     }
 }
 

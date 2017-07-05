@@ -29,7 +29,7 @@ public struct Mail {
     let text: String
     let attachments: [Attachment]
     let alternative: Attachment?
-    let additionalHeaders: [Header]
+    let additionalHeaders: [String: String]
 
     /// Initializes a `Mail` object.
     ///
@@ -45,8 +45,9 @@ public struct Mail {
     ///                    to plain text, the last one will be used as the
     ///                    alternative (all the `Attachments` will still be
     ///                    sent). Defaults to none.
-    ///     - additionalHeaders: Additional headers for the `Mail`. Defaults to
-    ///                          none.
+    ///     - additionalHeaders: Additional headers for the `Mail`. Header keys
+    ///                          are capitalized and duplicate keys will 
+    ///                          overwrite each other. Defaults to none.
     public init(from: User,
                 to: [User],
                 cc: [User] = [],
@@ -54,7 +55,7 @@ public struct Mail {
                 subject: String = "",
                 text: String = "",
                 attachments: [Attachment] = [],
-                additionalHeaders: [Header] = []) {
+                additionalHeaders: [String: String] = [:]) {
         self.from = from
         self.to = to
         self.cc = cc
@@ -80,31 +81,30 @@ public struct Mail {
 }
 
 extension Mail {
-    private var headers: [Header] {
-        var headers = [Header]()
-
-        headers.append(("MESSAGE-ID", id))
-        headers.append(("DATE", Date().smtpFormatted))
-        headers.append(("FROM", from.mime))
-        headers.append(("TO", to.map { $0.mime }.joined(separator: ", ")))
+    private var headersDictionary: [String: String] {
+        var dictionary = [String: String]()
+        dictionary["MESSAGE-ID"] = id
+        dictionary["DATE"] = Date().smtpFormatted
+        dictionary["FROM"] = from.mime
+        dictionary["TO"] = to.map { $0.mime }.joined(separator: ", ")
 
         if !cc.isEmpty {
-            headers.append(("CC", cc.map { $0.mime }.joined(separator: ", ")))
+            dictionary["CC"] = cc.map { $0.mime }.joined(separator: ", ")
         }
 
-        headers.append(("SUBJECT", subject.mimeEncoded ?? ""))
-        headers.append(("MIME-VERSION", "1.0 (Swift-SMTP)"))
+        dictionary["SUBJECT"] = subject.mimeEncoded ?? ""
+        dictionary["MIME-VERSION"] = "1.0 (Swift-SMTP)"
 
-        for header in additionalHeaders {
-            headers.append((header.header, header.value))
+        for (key, value) in additionalHeaders {
+            dictionary[key.uppercased()] = value
         }
 
-        return headers
+        return dictionary
     }
 
     var headersString: String {
-        return headers.map {
-            "\($0.0): \($0.1)"
+        return headersDictionary.map { (key, value) in
+            return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
 }

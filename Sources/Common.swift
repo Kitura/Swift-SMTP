@@ -16,9 +16,6 @@
 
 import Foundation
 
-/// Custom header for a `Mail` or `Attachment`.
-public typealias Header = (header: String, value: String)
-
 let CRLF = "\r\n"
 
 extension String {

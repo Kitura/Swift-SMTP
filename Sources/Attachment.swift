@@ -20,7 +20,7 @@ import Foundation
 /// Different SMTP servers have different attachment size limits.
 public struct Attachment {
     let type: AttachmentType
-    let additionalHeaders: [Header]
+    let additionalHeaders: [String: String]
     let relatedAttachments: [Attachment]
 
     /// Initialize a data `Attachment`.
@@ -32,15 +32,16 @@ public struct Attachment {
     ///     - inline: Indicates if attachment is inline. To embed the attachment
     ///               in mail content, set to `true`. To send as standalone
     ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment. Defaults
-    ///                          to none.
+    ///     - additionalHeaders: Additional headers for the attachment. Header
+    ///                          keys are capitalized and duplicate keys will
+    ///                          replace each other. Defaults to none.
     ///     - related: Related `Attachment`s of this attachment. Defaults to
     ///                none.
     public init(data: Data,
                 mime: String,
                 name: String,
                 inline: Bool = false,
-                additionalHeaders: [Header] = [],
+                additionalHeaders: [String: String] = [:],
                 relatedAttachments: [Attachment] = []) {
         self.init(type: .data(data: data,
                               mime: mime,
@@ -61,15 +62,16 @@ public struct Attachment {
     ///     - inline: Indicates if attachment is inline. To embed the attachment
     ///               in mail content, set to `true`. To send as standalone
     ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment. Defaults
-    ///                          to none.
+    ///     - additionalHeaders: Additional headers for the attachment. Header
+    ///                          keys are capitalized and duplicate keys will
+    ///                          replace each other. Defaults to none.
     ///     - related: Related `Attachment`s of this attachment. Defaults to
     ///                none.
     public init(filePath: String,
                 mime: String = "application/octet-stream",
                 name: String? = nil,
                 inline: Bool = false,
-                additionalHeaders: [Header] = [],
+                additionalHeaders: [String: String] = [:],
                 relatedAttachments: [Attachment] = []) {
         let name = name ?? NSString(string: filePath).lastPathComponent
         self.init(type: .file(path: filePath,
@@ -88,14 +90,15 @@ public struct Attachment {
     ///                     `utf-8`.
     ///     - alternative: Whether the HTML is an alternative for plain text or
     ///                    not. Defaults to `true`.
-    ///     - additionalHeaders: Additional headers for the attachment. Defaults
-    ///                          to none.
+    ///     - additionalHeaders: Additional headers for the attachment. Header
+    ///                          keys are capitalized and duplicate keys will
+    ///                          replace each other. Defaults to none.
     ///     - related: Related `Attachment`s of this attachment. Defaults to
     ///                none.
     public init(htmlContent: String,
                 characterSet: String = "utf-8",
                 alternative: Bool = true,
-                additionalHeaders: [Header] = [],
+                additionalHeaders: [String: String] = [:],
                 relatedAttachments: [Attachment] = []) {
         self.init(type: .html(content: htmlContent,
                               characterSet: characterSet,
@@ -105,7 +108,7 @@ public struct Attachment {
     }
 
     private init(type: AttachmentType,
-                 additionalHeaders: [Header],
+                 additionalHeaders: [String: String],
                  relatedAttachments: [Attachment]) {
         self.type = type
         self.additionalHeaders = additionalHeaders
@@ -122,43 +125,43 @@ extension Attachment {
 }
 
 extension Attachment {
-    private var headers: [Header] {
-        var headers = [Header]()
-
+    private var headersDictionary: [String: String] {
+        var dictionary = [String: String]()
         switch type {
+
         case .data(let data):
-            headers.append(("CONTENT-TYPE", data.mime))
+            dictionary["CONTENT-TYPE"] = data.mime
             var attachmentDisposition = data.inline ? "inline" : "attachment"
             if let mime = data.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
-            headers.append(("CONTENT-DISPOSITION", attachmentDisposition))
+            dictionary["CONTENT-DISPOSITION"] = attachmentDisposition
 
         case .file(let file):
-            headers.append(("CONTENT-TYPE", file.mime))
+            dictionary["CONTENT-TYPE"] = file.mime
             var attachmentDisposition = file.inline ? "inline" : "attachment"
             if let mime = file.name.mimeEncoded {
                 attachmentDisposition.append("; filename=\"\(mime)\"")
             }
-            headers.append(("CONTENT-DISPOSITION", attachmentDisposition))
+            dictionary["CONTENT-DISPOSITION"] = attachmentDisposition
 
         case .html(let html):
-            headers.append(("CONTENT-TYPE", "text/html; charset=\(html.characterSet)"))
-            headers.append(("CONTENT-DISPOSITION", "inline"))
+            dictionary["CONTENT-TYPE"] = "text/html; charset=\(html.characterSet)"
+            dictionary["CONTENT-DISPOSITION"] = "inline"
         }
 
-        headers.append(("CONTENT-TRANSFER-ENCODING", "BASE64"))
+        dictionary["CONTENT-TRANSFER-ENCODING"] = "BASE64"
 
-        for header in additionalHeaders {
-            headers.append((header.header, header.value))
+        for (key, value) in additionalHeaders {
+            dictionary[key.uppercased()] = value
         }
 
-        return headers
+        return dictionary
     }
 
     var headersString: String {
-        return headers.map {
-            "\($0.0): \($0.1)"
+        return headersDictionary.map { (key, value) in
+            return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
 }

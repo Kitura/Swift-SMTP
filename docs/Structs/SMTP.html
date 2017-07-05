@@ -88,10 +88,7 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP6Header">Header</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Porta">Port</a>
               </li>
             </ul>
           </li>
@@ -120,9 +117,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTPcFT8hostnameSS5emailSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSi_S0_"></a>
+                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAA3SSLVSg3sslSayAA10AuthMethodOG11authMethodsSS10domainNameSSSg11accessTokenSi7timeouttcfc"></a>
                     <a name="//apple_ref/swift/Method/init(hostname:email:password:port:ssl:authMethods:domainName:accessToken:timeout:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTPcFT8hostnameSS5emailSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSi_S0_">init(hostname:email:password:port:ssl:authMethods:domainName:accessToken:timeout:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAA3SSLVSg3sslSayAA10AuthMethodOG11authMethodsSS10domainNameSSSg11accessTokenSi7timeouttcfc">init(hostname:email:password:port:ssl:authMethods:domainName:accessToken:timeout:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -155,7 +152,7 @@ on the SMTP server.</li>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                 <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                 <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">port</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a></span> <span class="o">=</span> <span class="kt"><a href="../Enums/Ports.html">Ports</a></span><span class="o">.</span><span class="n">tls</span><span class="o">.</span><span class="n">rawValue</span><span class="p">,</span>
+                <span class="nv">port</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9SwiftSMTP4Porta">Port</a></span> <span class="o">=</span> <span class="kt"><a href="../Enums/Ports.html">Ports</a></span><span class="o">.</span><span class="n">tls</span><span class="o">.</span><span class="n">rawValue</span><span class="p">,</span>
                 <span class="nv">ssl</span><span class="p">:</span> <span class="kt"><a href="../Structs/SSL.html">SSL</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                 <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
                 <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
@@ -164,139 +161,15 @@ on the SMTP server.</li>
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>hostname</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Hostname of the SMTP server to connect to. Should not include any scheme–ie <code>smtp.example.com</code> is valid.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>user</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Username to log in to server.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>password</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Password to log in to server.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>port</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>Port</code> to connect to the server on. Defaults to <code>587</code>.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>ssl</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>SSL</code> containing configuration info for connecting securely through SSL/TLS. (optional)</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>authMethods</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>AuthMethod</code>s to use to log in to the server. Defaults to <code>CRAM-MD5</code>, <code>LOGIN</code>, and <code>PLAIN</code>.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>domainName</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Client domain name used when communicating with the server. Defaults to <code>localhost</code>.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessToken</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Access token used if logging in through <code>XOAUTH2</code>. (optional)</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>timeout</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>How long to try connecting to the server to before returning an error. Defaults to <code>10</code> seconds.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_"></a>
+                    <a name="/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF"></a>
                     <a name="//apple_ref/swift/Method/send(_:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_">send(_:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF">send(_:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -315,48 +188,15 @@ on the SMTP server.</li>
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>mail</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>Mail</code> object to send.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Callback when sending finishes. <code>Error</code> is nil on success. (optional)</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_"></a>
+                    <a name="/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF"></a>
                     <a name="//apple_ref/swift/Method/send(_:progress:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_">send(_:progress:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF">send(_:progress:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -395,52 +235,6 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>mails</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Array of <code>Mail</code>s to send.</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>progress</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>(<code>Mail</code>, <code>Error</code>) callback after each <code>Mail</code> is sent. <code>Mail</code> is the <code>Mail</code> sent and <code>Error</code> is the error if it failed. (optional)</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>([<code>Mail</code>], [(<code>Mail</code>, <code>Error</code>)]) callback after all <code>Mail</code>s have been attempted. [<code>Mail</code>] is an array of successfully sent <code>Mail</code>s. [(<code>Mail</code>, <code>Error</code>)] is an array of failed <code>Mail</code>s and their corresponding <code>Error</code>s. (optional)</p>
-
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
@@ -452,7 +246,7 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-06-07)</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-05)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
