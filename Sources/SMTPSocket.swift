@@ -62,13 +62,13 @@ extension SMTPSocket {
     // Write `text` to the socket
     func write(_ text: String) throws {
         _ = try socket.write(from: text + CRLF)
-        Log.verbose(text)
+        Log.debug(text)
     }
 
     // Write `data` to the socket
     func write(_ data: Data) throws {
         _ = try socket.write(from: data)
-        Log.verbose("(sending data)")
+        Log.debug("(sending data)")
     }
 }
 
@@ -83,7 +83,7 @@ extension SMTPSocket {
         guard let responses = String(data: buf, encoding: .utf8) else {
             throw SMTPError(.convertDataUTF8Fail(data: buf))
         }
-        Log.verbose(responses)
+        Log.debug(responses)
         return responses
     }
 
