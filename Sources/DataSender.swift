@@ -41,7 +41,7 @@ struct DataSender {
         if mail.hasAttachment {
             try sendMixed(mail)
         } else {
-            try sendText(mail.text)
+            try send(mail.text)
         }
     }
 }
@@ -50,12 +50,6 @@ extension DataSender {
     // Send the headers of a `Mail`
     func sendHeaders(_ headers: String) throws {
         try send(headers)
-    }
-
-    // Send the simple text content of a `Mail`
-    func sendText(_ text: String) throws {
-        let embeddedText = text.embeddedText()
-        try send(embeddedText)
     }
 
     // Send `mail`'s content that is more than just plain text
@@ -81,7 +75,7 @@ extension DataSender {
             try send(alternativeHeader)
 
             try send(boundary.startLine)
-            try sendText(text)
+            try send(text)
 
             try send(boundary.startLine)
             try sendAttachment(alternative)
@@ -90,7 +84,7 @@ extension DataSender {
             return
         }
 
-        try sendText(text)
+        try send(text)
     }
 
     // Sends the attachments of a `Mail`.
@@ -225,9 +219,6 @@ private extension String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
 
-    // Header for a plain text email.
-    static let plainTextHeader = "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)CONTENT-DISPOSITION: inline\(CRLF)"
-
     // Header for a mixed type email.
     static func mixedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)"
@@ -243,11 +234,6 @@ private extension String {
     // attachment)
     static func relatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
-    }
-
-    // Embed the plain text in a plain text header.
-    func embeddedText() -> String {
-        return "\(String.plainTextHeader)\(CRLF)\(self)\(CRLF)"
     }
 
     // Added to a boundary to indicate the beginning of the corresponding
