@@ -41,7 +41,7 @@ struct DataSender {
         if mail.hasAttachment {
             try sendMixed(mail)
         } else {
-            try send(mail.text)
+            try sendText(mail.text, headersDictionary: mail.headersDictionary)
         }
     }
 }
@@ -52,15 +52,42 @@ extension DataSender {
         try send(headers)
     }
 
+    // Add custom/default headers to a `Mail`'s text and write it to the socket.
+    func sendText(_ text: String, headersDictionary: [String: String]) throws {
+        var embeddedText = ""
+
+        if let contentType = headersDictionary["CONTENT-TYPE"] {
+            embeddedText += "CONTENT-TYPE: \(contentType)\(CRLF)"
+        } else {
+            embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
+        }
+
+        if let contentTransferEncoding = headersDictionary["CONTENT-TRANSFER-ENCODING"] {
+            embeddedText += "CONTENT-TRANSFER-ENCODING: \(contentTransferEncoding)\(CRLF)"
+        } else {
+            embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
+        }
+
+        if let contentDisposition = headersDictionary["CONTENT-DISPOSITION"] {
+            embeddedText += "CONTENT-DISPOSITION: \(contentDisposition)\(CRLF)"
+        } else {
+            embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
+        }
+
+        embeddedText += "\(CRLF)\(text)\(CRLF)"
+        
+        try send(embeddedText)
+    }
+
     // Send `mail`'s content that is more than just plain text
     mutating func sendMixed(_ mail: Mail) throws {
-        let boundary = String.createBoundary()
+        let boundary = String.makeBoundary()
         let mixedHeader = String.mixedHeader(boundary: boundary)
 
         try send(mixedHeader)
         try send(boundary.startLine)
 
-        try sendAlternative(mail.alternative, text: mail.text)
+        try sendAlternative(for: mail)
 
         try sendAttachments(mail.attachments, boundary: boundary)
     }
@@ -68,14 +95,14 @@ extension DataSender {
     // If `mail` has an attachment that is an alternative to plain text, sends
     // that attachment and the plain text.
     // Else just sends the plain text.
-    mutating func sendAlternative(_ alternative: Attachment?, text: String) throws {
-        if let alternative = alternative {
-            let boundary = String.createBoundary()
+    mutating func sendAlternative(for mail: Mail) throws {
+        if let alternative = mail.alternative {
+            let boundary = String.makeBoundary()
             let alternativeHeader = String.alternativeHeader(boundary: boundary)
             try send(alternativeHeader)
 
             try send(boundary.startLine)
-            try send(text)
+            try sendText(mail.text, headersDictionary: mail.headersDictionary)
 
             try send(boundary.startLine)
             try sendAttachment(alternative)
@@ -84,14 +111,14 @@ extension DataSender {
             return
         }
 
-        try send(text)
+        try sendText(mail.text, headersDictionary: mail.headersDictionary)
     }
 
     // Sends the attachments of a `Mail`.
     mutating func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
-        for attachement in attachments {
+        for attachment in attachments {
             try send(boundary.startLine)
-            try sendAttachment(attachement)
+            try sendAttachment(attachment)
         }
         try send(boundary.endLine)
     }
@@ -101,7 +128,7 @@ extension DataSender {
         var relatedBoundary = ""
 
         if attachment.hasRelated {
-            relatedBoundary = String.createBoundary()
+            relatedBoundary = String.makeBoundary()
             let relatedHeader = String.relatedHeader(boundary: relatedBoundary)
             try send(relatedHeader)
             try send(relatedBoundary.startLine)
@@ -215,7 +242,7 @@ private extension DataSender {
 private extension String {
     // The SMTP protocol requires unique boundaries between sections of an 
     // email.
-    static func createBoundary() -> String {
+    static func makeBoundary() -> String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
 
