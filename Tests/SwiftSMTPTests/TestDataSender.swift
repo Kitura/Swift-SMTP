@@ -63,7 +63,7 @@ class TestDataSender: XCTestCase {
 
                     if let socket = socket {
                         let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
-                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+                        let mail = Mail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
 
                         sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
                             XCTAssertEqual(sent.count, 1)
@@ -78,10 +78,11 @@ class TestDataSender: XCTestCase {
 
         #if os(macOS)
             let cached = sender?.dataSender.cache.object(forKey: data as AnyObject)
+            XCTAssertEqual(cached as? Data, data.base64EncodedData())
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
+            XCTAssertEqual(cached as? NSData, NSData(data: data.base64EncodedData()))
         #endif
-        XCTAssertNotNil(cached)
         
         expectation.fulfill()
     }
@@ -114,7 +115,7 @@ class TestDataSender: XCTestCase {
 
                     if let socket = socket {
                         let attachment = Attachment(filePath: imgFilePath)
-                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+                        let mail = Mail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
 
                         sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
                             XCTAssertEqual(sent.count, 1)
@@ -127,13 +128,21 @@ class TestDataSender: XCTestCase {
 
         group.wait()
 
+        guard let file = FileHandle(forReadingAtPath: imgFilePath) else {
+            XCTFail()
+            return
+        }
+        let data = file.readDataToEndOfFile().base64EncodedData()
+        file.closeFile()
+
         #if os(macOS)
             let cached = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
+            XCTAssertEqual(cached as? Data, data)
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
+            XCTAssertEqual(cached as? NSData, NSData(data: data))
         #endif
-        XCTAssertNotNil(cached)
-        
+
         expectation.fulfill()
     }
 
@@ -165,7 +174,7 @@ class TestDataSender: XCTestCase {
 
                     if let socket = socket {
                         let attachment = Attachment(htmlContent: html)
-                        let mail = Mail(from: from, to: [to], subject: #function, attachments: [attachment])
+                        let mail = Mail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
 
                         sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
                             XCTAssertEqual(sent.count, 1)
@@ -180,18 +189,19 @@ class TestDataSender: XCTestCase {
 
         #if os(macOS)
             let cached = sender?.dataSender.cache.object(forKey: html as AnyObject)
+            XCTAssertEqual(cached as? String, html.base64Encoded)
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
+            XCTAssertEqual(cached as? NSString, NSString(string: html.base64Encoded))
         #endif
-        XCTAssertNotNil(cached)
-        
+
         expectation.fulfill()
     }
 
     func testSendData() {
         let x = expectation(description: "Send mail with data attachment.")
         let dataAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
-        let mail = Mail(from: from, to: [to], subject: "Data attachment", attachments: [dataAttachment])
+        let mail = Mail(from: from, to: [to], subject: "Data attachment", text: text, attachments: [dataAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
@@ -202,7 +212,7 @@ class TestDataSender: XCTestCase {
     func testSendFile() {
         let x = expectation(description: "Send mail with file attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath)
-        let mail = Mail(from: from, to: [to], subject: "File attachment", attachments: [fileAttachment])
+        let mail = Mail(from: from, to: [to], subject: "File attachment", text: text, attachments: [fileAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
@@ -257,8 +267,8 @@ class TestDataSender: XCTestCase {
     func testSendRelatedAttachment() {
         let x = expectation(description: "Send mail with an attachment that references a related attachment.")
         let fileAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
-        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>This text is HTML</html>", relatedAttachments: [fileAttachment])
-        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", attachments: [htmlAttachment])
+        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>\(text)</html>", relatedAttachments: [fileAttachment])
+        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment", text: text, attachments: [htmlAttachment])
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()

@@ -81,7 +81,7 @@ public struct Mail {
 }
 
 extension Mail {
-    private var headersDictionary: [String: String] {
+    var headersDictionary: [String: String] {
         var dictionary = [String: String]()
         dictionary["MESSAGE-ID"] = id
         dictionary["DATE"] = Date().smtpFormatted

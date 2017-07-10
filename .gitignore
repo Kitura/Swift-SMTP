@@ -2,4 +2,5 @@
 /.build
 build
 /Packages
+Package.resolved
 /*.xcodeproj
