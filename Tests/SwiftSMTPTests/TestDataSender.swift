@@ -78,10 +78,11 @@ class TestDataSender: XCTestCase {
 
         #if os(macOS)
             let cached = sender?.dataSender.cache.object(forKey: data as AnyObject)
+            XCTAssertEqual(cached as? Data, data.base64EncodedData())
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
+            XCTAssertEqual(cached as? NSData, data.base64EncodedData() as NSData)
         #endif
-        XCTAssertEqual(cached as? Data, data.base64EncodedData())
         
         expectation.fulfill()
     }
@@ -127,12 +128,6 @@ class TestDataSender: XCTestCase {
 
         group.wait()
 
-        #if os(macOS)
-            let cached = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
-        #else
-            let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
-        #endif
-
         guard let file = FileHandle(forReadingAtPath: imgFilePath) else {
             XCTFail()
             return
@@ -140,7 +135,13 @@ class TestDataSender: XCTestCase {
         let data = file.readDataToEndOfFile().base64EncodedData()
         file.closeFile()
 
-        XCTAssertEqual(cached as? Data, data)
+        #if os(macOS)
+            let cached = sender?.dataSender.cache.object(forKey: imgFilePath as AnyObject)
+            XCTAssertEqual(cached as? Data, data)
+        #else
+            let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
+            XCTAssertEqual(cached as? NSData, data as NSData)
+        #endif
         
         expectation.fulfill()
     }
@@ -188,10 +189,11 @@ class TestDataSender: XCTestCase {
 
         #if os(macOS)
             let cached = sender?.dataSender.cache.object(forKey: html as AnyObject)
+            XCTAssertEqual(cached as? String, html.base64Encoded)
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
+            XCTAssertEqual(cached as? NSString, html.base64Encoded as NSString)
         #endif
-        XCTAssertNotNil(cached as? String, html.base64Encoded)
         
         expectation.fulfill()
     }
