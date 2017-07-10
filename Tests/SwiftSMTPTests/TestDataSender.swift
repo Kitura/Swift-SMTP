@@ -81,7 +81,7 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? Data, data.base64EncodedData())
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
-            XCTAssertEqual(cached as? NSData, data.base64EncodedData() as NSData)
+            XCTAssertEqual(cached as? NSData, NSData(data: data.base64EncodedData()))
         #endif
         
         expectation.fulfill()
@@ -140,9 +140,9 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? Data, data)
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
-            XCTAssertEqual(cached as? NSData, data as NSData)
+            XCTAssertEqual(cached as? NSData, NSData(data: data))
         #endif
-        
+
         expectation.fulfill()
     }
 
@@ -192,9 +192,9 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? String, html.base64Encoded)
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
-            XCTAssertEqual(cached as? NSString, html.base64Encoded as NSString)
+            XCTAssertEqual(cached as? NSString, NSString(string: html.base64Encoded))
         #endif
-        
+
         expectation.fulfill()
     }
 
