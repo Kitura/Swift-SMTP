@@ -81,7 +81,7 @@ class TestDataSender: XCTestCase {
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSData(data: data) as AnyObject)
         #endif
-        XCTAssertNotNil(cached)
+        XCTAssertEqual(cached as? Data, data.base64EncodedData())
         
         expectation.fulfill()
     }
@@ -132,7 +132,15 @@ class TestDataSender: XCTestCase {
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: imgFilePath) as AnyObject)
         #endif
-        XCTAssertNotNil(cached)
+
+        guard let file = FileHandle(forReadingAtPath: imgFilePath) else {
+            XCTFail()
+            return
+        }
+        let data = file.readDataToEndOfFile().base64EncodedData()
+        file.closeFile()
+
+        XCTAssertEqual(cached as? Data, data)
         
         expectation.fulfill()
     }
@@ -183,7 +191,7 @@ class TestDataSender: XCTestCase {
         #else
             let cached = sender?.dataSender.cache.object(forKey: NSString(string: html) as AnyObject)
         #endif
-        XCTAssertNotNil(cached)
+        XCTAssertNotNil(cached as? String, html.base64Encoded)
         
         expectation.fulfill()
     }
