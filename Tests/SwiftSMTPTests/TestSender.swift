@@ -26,6 +26,9 @@ class TestSender: XCTestCase {
         ("testBadEmail", testBadEmail),
         ("testIsValidEmail", testIsValidEmail),
         ("testSendMail", testSendMail),
+        ("testSendMailInArray", testSendMailInArray),
+        ("testSendMailNoRecipient", testSendMailNoRecipient),
+        ("testSendNoMail", testSendNoMail),
         ("testSendMailsConcurrently", testSendMailsConcurrently),
         ("testSendMailWithCc", testSendMailWithCc),
         ("testSendMailWithBcc", testSendMailWithBcc),
@@ -57,13 +60,50 @@ class TestSender: XCTestCase {
     }
 
     func testSendMail() {
-        let x = expectation(description: "Send a simple email.")
-        let mail = Mail(from: from, to: [to2], subject: "Simple email", text: text)
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        let mail = Mail(from: from, to: [to], subject: "Simple email", text: text)
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
-        waitForExpectations(timeout: testDuration)
+    }
+    
+    func testSendMailInArray() {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        let mail = Mail(from: from, to: [to], subject: "Simple email", text: text)
+        smtp.send([mail]) { (sent, failed) in
+            XCTAssert(failed.isEmpty)
+            x.fulfill()
+        }
+    }
+
+    func testSendMailNoRecipient() {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        let mail = Mail(from: from, to: [], subject: "Simple email", text: text)
+        smtp.send([mail]) { (err) in
+            if let err = err.1[0].1 as? SMTPError, case .noRecipients = err {
+                x.fulfill()
+            } else {
+                XCTFail("Received different error other than SMTPError(.noRecipients) or no error at all.")
+            }
+        }
+    }
+
+    func testSendNoMail() {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        smtp.send([]) { (sent, failed) in
+            XCTAssert(sent.isEmpty)
+            XCTAssert(failed.isEmpty)
+            x.fulfill()
+        }
     }
 
     func testSendMailsConcurrently() {

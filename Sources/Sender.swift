@@ -89,7 +89,7 @@ private extension Sender {
 
 private extension Sender {
     func send(_ mail: Mail) throws {
-        let recipientEmails = getRecipientEmails(from: mail)
+        let recipientEmails = try getRecipientEmails(from: mail)
         try validateEmails(recipientEmails)
         try sendMail(mail.from.email)
         try sendTo(recipientEmails)
@@ -98,10 +98,15 @@ private extension Sender {
         try dataEnd()
     }
 
-    private func getRecipientEmails(from mail: Mail) -> [String] {
+    private func getRecipientEmails(from mail: Mail) throws -> [String] {
         var recipientEmails = mail.to.map { $0.email }
         recipientEmails += mail.cc.map { $0.email }
         recipientEmails += mail.bcc.map { $0.email }
+
+        guard !recipientEmails.isEmpty else {
+            throw SMTPError(.noRecipients)
+        }
+
         return recipientEmails
     }
 

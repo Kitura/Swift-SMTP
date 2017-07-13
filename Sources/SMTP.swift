@@ -154,6 +154,10 @@ public struct SMTP {
     public func send(_ mails: [Mail],
                      progress: Progress = nil,
                      completion: Completion = nil) {
+        if mails.isEmpty {
+            completion?([], [])
+            return
+        }
         do {
             try Login(hostname: hostname,
                       email: email,

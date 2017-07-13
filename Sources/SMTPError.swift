@@ -45,6 +45,9 @@ public enum SMTPError: Error, CustomStringConvertible {
     case noAccessToken
     
     // Sender
+    /// Mail has no recipients.
+    case noRecipients
+
     /// Failed to create RegularExpression that can check if an email is valid.
     case createEmailRegexFailed
 
@@ -68,6 +71,7 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .couldNotConnectToServer(let s, let t): return "Could not connect to server (\(s)) within specified timeout (\(t) seconds). Ensure your server can connect through port 587 or specify which port to connect on. Some SMTP servers may require a longer timeout."
         case .noSupportedAuthMethods(let hostname): return "The preferred authorization methods could not be found on \(hostname). Connecting with SSL may be required."
         case .noAccessToken: return "Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token."
+        case .noRecipients: return "An email requires at least one recipient."
         case .createEmailRegexFailed: return "Failed to create RegularExpression that can check if an email is valid."
         case .badResponse(let command, let response): return "Bad response received for command. command: (\(command)), response: \(response)"
         case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
