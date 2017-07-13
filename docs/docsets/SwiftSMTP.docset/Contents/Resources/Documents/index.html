@@ -104,7 +104,7 @@
 
 <p>Swift package for sending emails to an SMTP server.</p>
 
-<p><a href="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master"><img src="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master" alt="Build Status - Master"></a>
+<p><a href="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master"><img src="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master" alt="Build Status"></a>
 <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2"></p>
@@ -123,29 +123,19 @@
 <p>macOS &amp; Linux: <code>Swift 3.1.1</code></p>
 <a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
 
-<p>Use the <code>SMTP</code> struct as a handle to your SMTP server. If your server requires a SSL/TLS connection, you can specify an <code>SSL</code> config and include it in your <code>SMTP</code> handle:</p>
+<p>Use the <code>SMTP</code> struct as a handle to your SMTP server:</p>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">SwiftSMTP</span>
-
-<span class="c1">// Create an `SSL` config</span>
-<span class="cp">#if os(Linux)</span>
-    <span class="k">let</span> <span class="nv">certificateFilePath</span> <span class="o">=</span> <span class="s">"~/cert.pem"</span>
-    <span class="k">let</span> <span class="nv">keyFilePath</span> <span class="o">=</span> <span class="s">"~/key.pem"</span>
-    <span class="k">let</span> <span class="nv">ssl</span> <span class="o">=</span> <span class="kt">SSL</span><span class="p">(</span><span class="nv">withCACertificateDirectory</span><span class="p">:</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">usingCertificateFile</span><span class="p">:</span> <span class="n">certificateFilePath</span><span class="p">,</span> <span class="nv">withKeyFile</span><span class="p">:</span> <span class="n">keyFilePath</span><span class="p">)</span>
-<span class="cp">#else</span>
-    <span class="k">let</span> <span class="nv">chainFilePath</span> <span class="o">=</span> <span class="s">"~/cert.pfx"</span>
-    <span class="k">let</span> <span class="nv">certPassword</span> <span class="o">=</span> <span class="s">"password"</span>
-    <span class="k">let</span> <span class="nv">ssl</span> <span class="o">=</span> <span class="kt">SSL</span><span class="p">(</span><span class="nv">withChainFilePath</span><span class="p">:</span> <span class="n">chainFilePath</span><span class="p">,</span> <span class="nv">withPassword</span><span class="p">:</span> <span class="n">certPassword</span><span class="p">)</span>
-<span class="cp">#endif</span>
-<span class="cm">/* Additional methods available to create an `SSL` config */</span>
 
 <span class="c1">// Create your `SMTP` handle</span>
 <span class="k">let</span> <span class="nv">smtp</span> <span class="o">=</span> <span class="kt">SMTP</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="s">"smtp.gmail.com"</span><span class="p">,</span>     <span class="c1">// SMTP server address</span>
                 <span class="nv">user</span><span class="p">:</span> <span class="s">"user@gmail.com"</span><span class="p">,</span>         <span class="c1">// username to login </span>
-                <span class="nv">password</span><span class="p">:</span> <span class="s">"password"</span><span class="p">,</span>           <span class="c1">// password to login</span>
-                <span class="nv">ssl</span><span class="p">:</span> <span class="n">ssl</span><span class="p">)</span>                       <span class="c1">// if your SMTP server requires SSL/TLS</span>
+                <span class="nv">password</span><span class="p">:</span> <span class="s">"password"</span><span class="p">)</span>           <span class="c1">// password to login</span>
 
 <span class="cm">/* Additional parameters available to further customize your `SMTP` handle */</span>
 </code></pre>
+<a href='#ssl' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='ssl'>SSL</h2>
+
+<p>If required, <code>Swift-SMTP</code> automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the <a href="https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html">SSL</a> struct to see how to customize this.</p>
 <a href='#send-email' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-email'>Send email</h3>
 
 <p>Create a <code>Mail</code> object and use your <code>smtp</code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
@@ -238,7 +228,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-05)</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-13)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

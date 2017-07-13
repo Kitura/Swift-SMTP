@@ -60,7 +60,11 @@ public struct SMTP {
     ///     - password: Password to log in to server.
     ///     - port: `Port` to connect to the server on. Defaults to `587`.
     ///     - ssl: `SSL` containing configuration info for connecting securely
-    ///            through SSL/TLS. (optional)
+    ///            through SSL/TLS. If your server has the option to use SSL,
+    ///            Swift-SMTP will automatically attempt to upgrade the 
+    ///            connection. If you don't provide an SSL configuration, 
+    ///            Swift-SMTP defaults to an SSL configuration with no backing 
+    ///            certificates. See `SSL` for other configuration options.
     ///     - authMethods: `AuthMethod`s to use to log in to the
     ///                    server. Defaults to `CRAM-MD5`, `LOGIN`, and `PLAIN`.
     ///     - domainName: Client domain name used when communicating with the

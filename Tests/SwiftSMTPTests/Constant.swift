@@ -104,7 +104,7 @@ let certPassword = "kitura"
 let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
 #endif
 
-let smtp = SMTP(hostname: hostname, email: email, password: password, ssl: ssl)
+let smtp = SMTP(hostname: hostname, email: email, password: password)
 let from = User(name: "Dr. Light", email: email)
 let to = User(name: "Megaman", email: email)
 let to2 = User(name: "Roll", email: email)
