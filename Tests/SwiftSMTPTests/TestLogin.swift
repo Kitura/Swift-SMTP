@@ -23,7 +23,8 @@ class TestLogin: XCTestCase {
         ("testBadPort", testBadPort),
         ("testLogin", testLogin),
         ("testPlain", testPlain),
-        ("testPort0", testPort0)
+        ("testPort0", testPort0),
+        ("testSSL", testSSL)
     ]
 
     func testBadCredentials() throws {
@@ -32,7 +33,7 @@ class TestLogin: XCTestCase {
                   email: email,
                   password: "",
                   port: port,
-                  ssl: ssl,
+                  ssl: nil,
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
@@ -52,7 +53,7 @@ class TestLogin: XCTestCase {
                   email: email,
                   password: password,
                   port: 1,
-                  ssl: ssl,
+                  ssl: nil,
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
@@ -72,7 +73,7 @@ class TestLogin: XCTestCase {
                   email: email,
                   password: password,
                   port: port,
-                  ssl: ssl,
+                  ssl: nil,
                   authMethods: [.login],
                   domainName: domainName,
                   accessToken: nil,
@@ -89,7 +90,7 @@ class TestLogin: XCTestCase {
                   email: email,
                   password: password,
                   port: port,
-                  ssl: ssl,
+                  ssl: nil,
                   authMethods: [.plain],
                   domainName: domainName,
                   accessToken: nil,
@@ -106,7 +107,7 @@ class TestLogin: XCTestCase {
                   email: email,
                   password: password,
                   port: 0,
-                  ssl: ssl,
+                  ssl: nil,
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
@@ -115,5 +116,23 @@ class TestLogin: XCTestCase {
             x.fulfill()
             }.login()
         waitForExpectations(timeout: testDuration)
+    }
+
+    func testSSL() throws {
+        let expectation = self.expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        try Login(hostname: hostname,
+                  email: email,
+                  password: password,
+                  port: port,
+                  ssl: ssl,
+                  authMethods: authMethods,
+                  domainName: domainName,
+                  accessToken: nil,
+                  timeout: timeout) { (_, error) in
+                    XCTAssertNil(error, String(describing: error))
+                    expectation.fulfill()
+            }.login()
     }
 }

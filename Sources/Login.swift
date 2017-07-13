@@ -99,7 +99,7 @@ private extension Login {
     func loginToServer() throws {
         var serverInfo = try getServerInfo()
 
-        if let ssl = ssl, doesStarttls(serverInfo) {
+        if doesStarttls(serverInfo) {
             try starttls(ssl)
             try connect(Ports.ssl.rawValue)
             serverInfo = try getServerInfo()
@@ -125,7 +125,15 @@ private extension Login {
         return serverInfo.contains { $0.message.contains("STARTTLS") }
     }
 
-    func starttls(_ ssl: SSL) throws {
+    func starttls(_ ssl: SSL?) throws {
+        if let ssl = ssl {
+            try starttlsHelper(ssl)
+        } else {
+            try starttlsHelper(SSL())
+        }
+    }
+
+    func starttlsHelper(_ ssl: SSL) throws {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
