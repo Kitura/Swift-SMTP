@@ -37,7 +37,7 @@ let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
 /* Additional parameters available to further customize your `SMTP` handle */
 ```
 
-## SSL
+### SSL
 
 If required, `Swift-SMTP` automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the [SSL](https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html) struct to see how to customize this.
 
