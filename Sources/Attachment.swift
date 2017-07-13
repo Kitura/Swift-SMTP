@@ -32,9 +32,11 @@ public struct Attachment {
     ///     - inline: Indicates if attachment is inline. To embed the attachment
     ///               in mail content, set to `true`. To send as standalone
     ///               attachment, set to `false`. Defaults to `false`.
-    ///     - additionalHeaders: Additional headers for the attachment. Header
-    ///                          keys are capitalized and duplicate keys will
-    ///                          replace each other. Defaults to none.
+    ///     - additionalHeaders: Additional headers for the `Mail`. Header keys
+    ///                          are capitalized and duplicate keys will
+    ///                          overwrite each other. Defaults to none. The
+    ///                          following will be ignored: CONTENT-TYPE,
+    ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
     ///     - related: Related `Attachment`s of this attachment. Defaults to
     ///                none.
     public init(data: Data,
@@ -153,7 +155,12 @@ extension Attachment {
         dictionary["CONTENT-TRANSFER-ENCODING"] = "BASE64"
 
         for (key, value) in additionalHeaders {
-            dictionary[key.uppercased()] = value
+            let keyUppercased = key.uppercased()
+            if  keyUppercased != "CONTENT-TYPE" &&
+                keyUppercased != "CONTENT-DISPOSITION" &&
+                keyUppercased != "CONTENT-TRANSFER-ENCODING" {
+                dictionary[keyUppercased] = value
+            }
         }
 
         return dictionary

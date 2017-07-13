@@ -55,27 +55,10 @@ extension DataSender {
     // Add custom/default headers to a `Mail`'s text and write it to the socket.
     func sendText(_ text: String, headersDictionary: [String: String]) throws {
         var embeddedText = ""
-
-        if let contentType = headersDictionary["CONTENT-TYPE"] {
-            embeddedText += "CONTENT-TYPE: \(contentType)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
-        }
-
-        if let contentTransferEncoding = headersDictionary["CONTENT-TRANSFER-ENCODING"] {
-            embeddedText += "CONTENT-TRANSFER-ENCODING: \(contentTransferEncoding)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
-        }
-
-        if let contentDisposition = headersDictionary["CONTENT-DISPOSITION"] {
-            embeddedText += "CONTENT-DISPOSITION: \(contentDisposition)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
-        }
-
+        embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
+        embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
+        embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
         embeddedText += "\(CRLF)\(text)\(CRLF)"
-        
         try send(embeddedText)
     }
 

@@ -70,7 +70,7 @@ public struct SSL {
     ///
     /// - Parameters:
     ///		- chainFilePath:                        Path to the certificate chain file (optional). *(see note above)*
-    ///		- password:                             Password for the chain file (optional).
+    ///		- password:                             Password for the chain file (optional). If using self-signed certs, a password is required.
     ///		- selfSigned:                           True if certs are `self-signed`, false otherwise. Defaults to true.
     ///     - clientAllowsSelfSignedCertificates:   True if, as a client, connections to self-signed servers are allowed
     ///		- cipherSuite:                          Optional String containing the cipher suite to use.

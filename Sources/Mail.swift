@@ -47,7 +47,9 @@ public struct Mail {
     ///                    sent). Defaults to none.
     ///     - additionalHeaders: Additional headers for the `Mail`. Header keys
     ///                          are capitalized and duplicate keys will 
-    ///                          overwrite each other. Defaults to none.
+    ///                          overwrite each other. Defaults to none. The
+    ///                          following will be ignored: CONTENT-TYPE,
+    ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
     public init(from: User,
                 to: [User],
                 cc: [User] = [],
@@ -96,7 +98,12 @@ extension Mail {
         dictionary["MIME-VERSION"] = "1.0 (Swift-SMTP)"
 
         for (key, value) in additionalHeaders {
-            dictionary[key.uppercased()] = value
+            let keyUppercased = key.uppercased()
+            if  keyUppercased != "CONTENT-TYPE" &&
+                keyUppercased != "CONTENT-DISPOSITION" &&
+                keyUppercased != "CONTENT-TRANSFER-ENCODING" {
+                dictionary[keyUppercased] = value
+            }
         }
 
         return dictionary
