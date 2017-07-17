@@ -41,7 +41,7 @@ struct DataSender {
         if mail.hasAttachment {
             try sendMixed(mail)
         } else {
-            try sendText(mail.text, headersDictionary: mail.headersDictionary)
+            try sendText(mail.text)
         }
     }
 }
@@ -53,36 +53,14 @@ extension DataSender {
     }
 
     // Add custom/default headers to a `Mail`'s text and write it to the socket.
-    func sendText(_ text: String, headersDictionary: [String: String]) throws {
-        var embeddedText = ""
-
-        if let contentType = headersDictionary["CONTENT-TYPE"] {
-            embeddedText += "CONTENT-TYPE: \(contentType)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
-        }
-
-        if let contentTransferEncoding = headersDictionary["CONTENT-TRANSFER-ENCODING"] {
-            embeddedText += "CONTENT-TRANSFER-ENCODING: \(contentTransferEncoding)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
-        }
-
-        if let contentDisposition = headersDictionary["CONTENT-DISPOSITION"] {
-            embeddedText += "CONTENT-DISPOSITION: \(contentDisposition)\(CRLF)"
-        } else {
-            embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
-        }
-
-        embeddedText += "\(CRLF)\(text)\(CRLF)"
-        
-        try send(embeddedText)
+    func sendText(_ text: String) throws {
+        try send(text.embedded)
     }
 
     // Send `mail`'s content that is more than just plain text
     mutating func sendMixed(_ mail: Mail) throws {
         let boundary = String.makeBoundary()
-        let mixedHeader = String.mixedHeader(boundary: boundary)
+        let mixedHeader = String.makeMixedHeader(boundary: boundary)
 
         try send(mixedHeader)
         try send(boundary.startLine)
@@ -98,11 +76,11 @@ extension DataSender {
     mutating func sendAlternative(for mail: Mail) throws {
         if let alternative = mail.alternative {
             let boundary = String.makeBoundary()
-            let alternativeHeader = String.alternativeHeader(boundary: boundary)
+            let alternativeHeader = String.makeAlternativeHeader(boundary: boundary)
             try send(alternativeHeader)
 
             try send(boundary.startLine)
-            try sendText(mail.text, headersDictionary: mail.headersDictionary)
+            try sendText(mail.text)
 
             try send(boundary.startLine)
             try sendAttachment(alternative)
@@ -111,7 +89,7 @@ extension DataSender {
             return
         }
 
-        try sendText(mail.text, headersDictionary: mail.headersDictionary)
+        try sendText(mail.text)
     }
 
     // Sends the attachments of a `Mail`.
@@ -129,7 +107,7 @@ extension DataSender {
 
         if attachment.hasRelated {
             relatedBoundary = String.makeBoundary()
-            let relatedHeader = String.relatedHeader(boundary: relatedBoundary)
+            let relatedHeader = String.makeRelatedHeader(boundary: relatedBoundary)
             try send(relatedHeader)
             try send(relatedBoundary.startLine)
         }
@@ -240,6 +218,17 @@ private extension DataSender {
 }
 
 private extension String {
+    // Embed plain text content of emails with the proper headers so that it is
+    // rendered correctly.
+    var embedded: String {
+        var embeddedText = ""
+        embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
+        embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
+        embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
+        embeddedText += "\(CRLF)\(self)\(CRLF)"
+        return embeddedText
+    }
+
     // The SMTP protocol requires unique boundaries between sections of an 
     // email.
     static func makeBoundary() -> String {
@@ -247,19 +236,19 @@ private extension String {
     }
 
     // Header for a mixed type email.
-    static func mixedHeader(boundary: String) -> String {
+    static func makeMixedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/mixed; boundary=\"\(boundary)\"\(CRLF)"
     }
 
     // Header for an alternative email.
-    static func alternativeHeader(boundary: String) -> String {
+    static func makeAlternativeHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)"
     }
 
     // Header for an attachment that is related to another attachment.
     // (Such as an image attachment that can be referenced by a related HTML
     // attachment)
-    static func relatedHeader(boundary: String) -> String {
+    static func makeRelatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
     }
 
