@@ -75,6 +75,7 @@ class Login {
                     self.callback(self.socket, nil)
                 } catch {
                     group.leave()
+                    self.socket.close()
                     self.callback(nil, error)
                 }
             }
@@ -126,18 +127,14 @@ private extension Login {
     }
 
     func starttls(_ ssl: SSL?) throws {
-        if let ssl = ssl {
-            try starttlsHelper(ssl)
-        } else {
-            try starttlsHelper(SSL())
-        }
-    }
-
-    func starttlsHelper(_ ssl: SSL) throws {
         try starttls()
         socket.close()
         socket = try SMTPSocket()
-        socket.setDelegate(try ssl.makeSSLService())
+        if let ssl = ssl {
+            socket.setDelegate(try ssl.makeSSLService())
+        } else {
+            socket.setDelegate(try SSL().makeSSLService())
+        }
     }
 
     func getAuthMethod(_ serverInfo: [Response]) throws -> AuthMethod {
