@@ -18,9 +18,14 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
-    /// UUID of the `Mail`.
-    public let id = UUID().uuidString + ".Swift-SMTP"
+    private let uuid = UUID().uuidString
 
+    /// message-id https://tools.ietf.org/html/rfc5322#section-3.6.4
+    public var id: String {
+        return "<\(uuid).Swift-SMTP@\(hostname)>"
+    }
+
+    let hostname: String
     let from: User
     let to: [User]
     let cc: [User]
@@ -50,7 +55,8 @@ public struct Mail {
     ///                          overwrite each other. Defaults to none. The
     ///                          following will be ignored: CONTENT-TYPE,
     ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
-    public init(from: User,
+    public init(hostname: String,
+                from: User,
                 to: [User],
                 cc: [User] = [],
                 bcc: [User] = [],
@@ -58,6 +64,7 @@ public struct Mail {
                 text: String = "",
                 attachments: [Attachment] = [],
                 additionalHeaders: [String: String] = [:]) {
+        self.hostname = hostname
         self.from = from
         self.to = to
         self.cc = cc

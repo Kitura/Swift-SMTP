@@ -64,7 +64,7 @@ extension TestMiscellaneous {
     }
 
     func testMailHeaders() {
-        let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["header": "val"]).headersString
+        let headers = smtp.makeMail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["header": "val"]).headersString
 
         let to_ = "TO: =?UTF-8?Q?Megaman?= <\(email)>"
         XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")

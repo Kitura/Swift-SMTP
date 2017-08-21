@@ -2,7 +2,7 @@
 
 ![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png)
 
-Swift package for sending emails to an SMTP server.
+Swift package for sending emails through an SMTP server.
 
 [![Build Status](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
@@ -11,7 +11,7 @@ Swift package for sending emails to an SMTP server.
 
 ## Features
 
-- Connect securely through SSL/TLS if available
+- Connect securely through SSL/TLS when available
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
@@ -49,10 +49,10 @@ Create a `Mail` object and use your `smtp` handle to send it. To set the sender 
 let drLight = User(name: "Dr. Light", email: "drlight@gmail.com")
 let megaman = User(name: "Megaman", email: "megaman@gmail.com")
 
-let mail = Mail(from: drLight,
-                to: [megaman],
-                subject: "Humans and robots living together in harmony and equality.",
-                text: "That was my ultimate wish.")
+let mail = smtp.makeMail(from: drLight,
+                         to: [megaman],
+                         subject: "Humans and robots living together in harmony and equality.",
+                         text: "That was my ultimate wish.")
 
 smtp.send(mail) { (err) in
     if let err = err {
@@ -67,12 +67,12 @@ Add Cc and Bcc:
 let roll = User(name: "Roll", email: "roll@gmail.com")
 let zero = User(name: "Zero", email: "zero@gmail.com")
 
-let mail = Mail(from: drLight,
-                to: [megaman],
-                cc: [roll],
-                bcc: [zero],
-                subject: "Robots should be used for the betterment of mankind.",
-                text: "Any other use would be...unethical.")
+let mail = smtp.makeMail(from: drLight,
+                         to: [megaman],
+                         cc: [roll],
+                         bcc: [zero],
+                         subject: "Robots should be used for the betterment of mankind.",
+                         text: "Any other use would be...unethical.")
 
 smtp.send(mail)
 ```
@@ -99,10 +99,10 @@ let dataAttachment = Attachment(data: data,
                                 inline: false) // send as a standalone attachment
 
 // Create a `Mail` and include the `Attachment`s
-let mail = Mail(from: from, 
-                to: [to], 
-                subject: "Check out this image and JSON file!", 
-                attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
+let mail = smtp.makeMail(from: from,
+                         to: [to],
+                         subject: "Check out this image and JSON file!",
+                         attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
 
 // Send the mail
 smtp.send(mail)
