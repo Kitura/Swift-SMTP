@@ -127,14 +127,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>UUID of the <code>Mail</code>.</p>
+                        <p>message-id <a href="https://tools.ietf.org/html/rfc5322#section-3.6.4">https://tools.ietf.org/html/rfc5322#section-3.6.4</a></p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">id</span> <span class="o">=</span> <span class="kt">UUID</span><span class="p">()</span><span class="o">.</span><span class="n">uuidString</span> <span class="o">+</span> <span class="s">".Swift-SMTP"</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -144,9 +144,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP4MailVAcA4UserV4from_SayAEG2toAG2ccAG3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(from:to:cc:bcc:subject:text:attachments:additionalHeaders:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP4MailVAcA4UserV4from_SayAEG2toAG2ccAG3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc">init(from:to:cc:bcc:subject:text:attachments:additionalHeaders:)</a>
+                    <a name="/s:9SwiftSMTP4MailVACSS8hostname_AA4UserV4fromSayAFG2toAH2ccAH3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(hostname:from:to:cc:bcc:subject:text:attachments:additionalHeaders:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailVACSS8hostname_AA4UserV4fromSayAFG2toAH2ccAH3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc">init(hostname:from:to:cc:bcc:subject:text:attachments:additionalHeaders:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -161,7 +161,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                <span class="nv">from</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span>
                 <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">],</span>
                 <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
                 <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
@@ -171,6 +172,130 @@
                 <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:])</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>hostname</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Hostname of the SMTP server to connect to. Should not
+        include any scheme&ndash;ie <code>smtp.example.com</code> is valid.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>from</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The <code>User</code> that the <code>Mail</code> will be sent from.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>to</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>User</code>s to send the <code>Mail</code> to.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cc</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>User</code>s to cc. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bcc</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>User</code>s to bcc. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>subject</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Subject of the <code>Mail</code>. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>text</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Text of the <code>Mail</code>. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>attachments</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>Attachment</code>s for the <code>Mail</code>. If the <code>Mail</code>
+           has multiple <code>Attachment</code>s that are alternatives to
+           to plain text, the last one will be used as the
+           alternative (all the <code>Attachments</code> will still be
+           sent). Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>additionalHeaders</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional headers for the <code>Mail</code>. Header keys
+                 are capitalized and duplicate keys will 
+                 overwrite each other. Defaults to none. The
+                 following will be ignored: CONTENT-TYPE,
+                 CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -183,8 +308,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

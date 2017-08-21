@@ -98,30 +98,30 @@
         <section class="section">
           <div class="section-content">
             
-            <a href='#swift-smtp' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h1 id='swift-smtp'>Swift-SMTP</h1>
+            <h1 id='swift-smtp' class='heading'>Swift-SMTP</h1>
 
 <p><img src="https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png" alt="Swift-SMTP bird"></p>
 
-<p>Swift package for sending emails to an SMTP server.</p>
+<p>Swift package for sending emails through an SMTP server.</p>
 
 <p><a href="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master"><img src="https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master" alt="Build Status"></a>
 <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2"></p>
-<a href='#features' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='features'>Features</h2>
+<h2 id='features' class='heading'>Features</h2>
 
 <ul>
-<li>Connect securely through SSL/TLS if available</li>
+<li>Connect securely through SSL/TLS when available</li>
 <li>Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2</li>
 <li>Send emails with local file, HTML, and raw data attachments</li>
 <li>Add custom headers</li>
 <li><a href="https://ibm-swift.github.io/Swift-SMTP/">Documentation</a></li>
 <li><a href="https://developer.ibm.com/swift/2017/05/31/4675/">Demo &amp; blog post</a></li>
 </ul>
-<a href='#swift-version' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='swift-version'>Swift Version</h2>
+<h2 id='swift-version' class='heading'>Swift Version</h2>
 
 <p>macOS &amp; Linux: <code>Swift 3.1.1</code></p>
-<a href='#usage' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='usage'>Usage</h2>
+<h2 id='usage' class='heading'>Usage</h2>
 
 <p>Use the <code>SMTP</code> struct as a handle to your SMTP server:</p>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">SwiftSMTP</span>
@@ -133,19 +133,19 @@
 
 <span class="cm">/* Additional parameters available to further customize your `SMTP` handle */</span>
 </code></pre>
-<a href='#ssl' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='ssl'>SSL</h3>
+<h3 id='ssl' class='heading'>SSL</h3>
 
 <p>If required, <code>Swift-SMTP</code> automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the <a href="https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html">SSL</a> struct to see how to customize this.</p>
-<a href='#send-email' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-email'>Send email</h3>
+<h3 id='send-email' class='heading'>Send email</h3>
 
 <p>Create a <code>Mail</code> object and use your <code>smtp</code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">drLight</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">megaman</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
-                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Humans and robots living together in harmony and equality."</span><span class="p">,</span>
-                <span class="nv">text</span><span class="p">:</span> <span class="s">"That was my ultimate wish."</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="n">smtp</span><span class="o">.</span><span class="nf">makeMail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
+                         <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
+                         <span class="nv">subject</span><span class="p">:</span> <span class="s">"Humans and robots living together in harmony and equality."</span><span class="p">,</span>
+                         <span class="nv">text</span><span class="p">:</span> <span class="s">"That was my ultimate wish."</span><span class="p">)</span>
 
 <span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="k">in</span>
     <span class="k">if</span> <span class="k">let</span> <span class="nv">err</span> <span class="o">=</span> <span class="n">err</span> <span class="p">{</span>
@@ -158,16 +158,16 @@
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">roll</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Roll"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"roll@gmail.com"</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">zero</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Zero"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"zero@gmail.com"</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
-                <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="n">roll</span><span class="p">],</span>
-                <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="n">zero</span><span class="p">],</span>
-                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Robots should be used for the betterment of mankind."</span><span class="p">,</span>
-                <span class="nv">text</span><span class="p">:</span> <span class="s">"Any other use would be...unethical."</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="n">smtp</span><span class="o">.</span><span class="nf">makeMail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
+                         <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">megaman</span><span class="p">],</span>
+                         <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="n">roll</span><span class="p">],</span>
+                         <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="n">zero</span><span class="p">],</span>
+                         <span class="nv">subject</span><span class="p">:</span> <span class="s">"Robots should be used for the betterment of mankind."</span><span class="p">,</span>
+                         <span class="nv">text</span><span class="p">:</span> <span class="s">"Any other use would be...unethical."</span><span class="p">)</span>
 
 <span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
 </code></pre>
-<a href='#send-attachments' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-attachments'>Send attachments</h3>
+<h3 id='send-attachments' class='heading'>Send attachments</h3>
 
 <p>Create an <code>Attachment</code>, attach it to your <code>Mail</code>, and send it through the <code>smtp</code> handle. Here&rsquo;s an example of how you can send the three supported types of attachments&ndash;a local file, HTML, and raw data:</p>
 <pre class="highlight swift"><code><span class="c1">// Create a file `Attachment`</span>
@@ -187,17 +187,17 @@
                                 <span class="nv">inline</span><span class="p">:</span> <span class="kc">false</span><span class="p">)</span> <span class="c1">// send as a standalone attachment</span>
 
 <span class="c1">// Create a `Mail` and include the `Attachment`s</span>
-<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span> 
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span> 
-                <span class="nv">subject</span><span class="p">:</span> <span class="s">"Check out this image and JSON file!"</span><span class="p">,</span> 
-                <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="n">htmlAttachment</span><span class="p">,</span> <span class="n">dataAttachment</span><span class="p">])</span> <span class="c1">// attachments we created earlier</span>
+<span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="n">smtp</span><span class="o">.</span><span class="nf">makeMail</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">from</span><span class="p">,</span>
+                         <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="n">to</span><span class="p">],</span>
+                         <span class="nv">subject</span><span class="p">:</span> <span class="s">"Check out this image and JSON file!"</span><span class="p">,</span>
+                         <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="n">htmlAttachment</span><span class="p">,</span> <span class="n">dataAttachment</span><span class="p">])</span> <span class="c1">// attachments we created earlier</span>
 
 <span class="c1">// Send the mail</span>
 <span class="n">smtp</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="n">mail</span><span class="p">)</span>
 
 <span class="cm">/* Each type of attachment has additional parameters for further customization */</span>
 </code></pre>
-<a href='#send-multiple-mails' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h3 id='send-multiple-mails'>Send multiple mails</h3>
+<h3 id='send-multiple-mails' class='heading'>Send multiple mails</h3>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">mail1</span><span class="p">:</span> <span class="kt">Mail</span> <span class="o">=</span> <span class="c1">//...</span>
 <span class="k">let</span> <span class="nv">mail2</span><span class="p">:</span> <span class="kt">Mail</span> <span class="o">=</span> <span class="c1">//...</span>
 
@@ -214,10 +214,10 @@
     <span class="p">}</span>
 <span class="p">)</span>
 </code></pre>
-<a href='#acknowledgements' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='acknowledgements'>Acknowledgements</h2>
+<h2 id='acknowledgements' class='heading'>Acknowledgements</h2>
 
 <p><code>Swift-SMTP</code> was inspired by <a href="https://github.com/onevcat/Hedwig">Hedwig</a> and <a href="https://github.com/PerfectlySoft/Perfect-SMTP">Perfect-SMTP</a>, two Swift packages that can also be used to send emails to an SMTP server.</p>
-<a href='#license' class='anchor' aria-hidden=true><span class="header-anchor"></span></a><h2 id='license'>License</h2>
+<h2 id='license' class='heading'>License</h2>
 
 <p>Apache 2.0</p>
 
@@ -228,8 +228,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

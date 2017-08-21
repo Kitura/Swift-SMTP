@@ -39,6 +39,8 @@ public struct Mail {
     /// Initializes a `Mail` object.
     ///
     /// - Parameters:
+    ///     - hostname: Hostname of the SMTP server to connect to. Should not
+    ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - from: The `User` that the `Mail` will be sent from.
     ///     - to: Array of `User`s to send the `Mail` to.
     ///     - cc: Array of `User`s to cc. Defaults to none.
