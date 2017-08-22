@@ -144,6 +144,92 @@ Different SMTP servers have different attachment size limits.</p>
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>data</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Raw data to be sent as attachment.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>mime</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>MIME type of the data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>File name which will be presented in the mail.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>inline</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Indicates if attachment is inline. To embed the attachment
+      in mail content, set to <code>true</code>. To send as standalone
+      attachment, set to <code>false</code>. Defaults to <code>false</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>additionalHeaders</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional headers for the <code>Mail</code>. Header keys
+                 are capitalized and duplicate keys will
+                 overwrite each other. Defaults to none. The
+                 following will be ignored: CONTENT-TYPE,
+                 CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>related</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Related <code>Attachment</code>s of this attachment. Defaults to
+       none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -176,6 +262,92 @@ Different SMTP servers have different attachment size limits.</p>
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the local file.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>mime</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>MIME type of the file. Defaults to
+    <code>application/octet-stream</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Name of the file. Defaults to the name component in its
+    file path.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>inline</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Indicates if attachment is inline. To embed the attachment
+      in mail content, set to <code>true</code>. To send as standalone
+      attachment, set to <code>false</code>. Defaults to <code>false</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>additionalHeaders</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional headers for the attachment. Header
+                 keys are capitalized and duplicate keys will
+                 replace each other. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>related</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Related <code>Attachment</code>s of this attachment. Defaults to
+       none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -207,6 +379,78 @@ Different SMTP servers have different attachment size limits.</p>
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>htmlContent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Content string of HTML.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>characterSet</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Character encoding of <code>htmlContent</code>. Defaults to
+            <code>utf-8</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>alternative</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Whether the HTML is an alternative for plain text or
+           not. Defaults to <code>true</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>additionalHeaders</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Additional headers for the attachment. Header
+                 keys are capitalized and duplicate keys will
+                 replace each other. Defaults to none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>related</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Related <code>Attachment</code>s of this attachment. Defaults to
+       none.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -218,8 +462,8 @@ Different SMTP servers have different attachment size limits.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

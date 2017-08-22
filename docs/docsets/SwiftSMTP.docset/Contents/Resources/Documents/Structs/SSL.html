@@ -141,6 +141,37 @@ struct as an initialization parameter.
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cipherSuite</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional String containing the cipher suite to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>clientAllowsSelfSignedCertificates</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>true</code> to accept self-signed certificates from a server. <code>false</code> otherwise.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -167,6 +198,73 @@ struct as an initialization parameter.
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCACertificateFilePath</span> <span class="nv">caCertificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">usingCertificateFile</span> <span class="nv">certificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">withKeyFile</span> <span class="nv">keyFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>caCertificateFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the PEM formatted CA certificate file.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>certificateFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the PEM formatted certificate file.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>keyFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the PEM formatted key file. If nil, <code>certificateFilePath</code> will be used.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>selfSigned</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>True if certs are <code>self-signed</code>, false otherwise. Defaults to true.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cipherSuite</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional String containing the cipher suite to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -197,6 +295,73 @@ struct as an initialization parameter.
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>caCertificateDirPath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to a directory containing CA certificates. <em>(see note above)</em></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>certificateFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the PEM formatted certificate file. If nil, <code>certificateFilePath</code> will be used.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>keyFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the PEM formatted key file (optional). If nil, <code>certificateFilePath</code> is used.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>selfSigned</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>True if certs are <code>self-signed</code>, false otherwise. Defaults to true.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cipherSuite</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional String containing the cipher suite to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -226,6 +391,61 @@ struct as an initialization parameter.
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>chainFilePath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Path to the certificate chain file (optional). <em>(see note above)</em></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>password</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Password for the chain file (optional). If using self-signed certs, a password is required.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>selfSigned</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>True if certs are <code>self-signed</code>, false otherwise. Defaults to true.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>cipherSuite</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Optional String containing the cipher suite to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -242,7 +462,7 @@ struct as an initialization parameter.
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Initialize a configuration using a <code>PEM formatted certificate in String form</code>.</p>
 
                       </div>
                       <div class="declaration">
@@ -264,8 +484,8 @@ struct as an initialization parameter.
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-07-13)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.7.5</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
