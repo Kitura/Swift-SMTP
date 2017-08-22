@@ -20,7 +20,12 @@ import Foundation
     import Dispatch
 #endif
 
-typealias LoginCallback = ((SMTPSocket?, Error?) -> Void)
+enum LoginResult {
+    case success(SMTPSocket)
+    case failure(Error)
+}
+
+typealias LoginCallback = ((LoginResult) -> Void)
 
 class Login {
     fileprivate let hostname: String
@@ -31,7 +36,7 @@ class Login {
     fileprivate let authMethods: [AuthMethod]
     fileprivate let domainName: String
     fileprivate let accessToken: String?
-    fileprivate let timeout: Int
+    fileprivate let timeout: UInt
     fileprivate var callback: LoginCallback
     fileprivate var socket: SMTPSocket
 
@@ -43,7 +48,7 @@ class Login {
          authMethods: [AuthMethod],
          domainName: String,
          accessToken: String?,
-         timeout: Int,
+         timeout: UInt,
          callback: @escaping LoginCallback) throws {
         self.hostname = hostname
         self.email = email
@@ -53,48 +58,26 @@ class Login {
         self.authMethods = authMethods
         self.domainName = domainName
         self.accessToken = accessToken
-        self.timeout = timeout
+        self.timeout = timeout * 1000
         self.callback = callback
         socket = try SMTPSocket()
     }
 
     func login() {
-        DispatchQueue.global().async {
-            let group = DispatchGroup()
-            group.enter()
-
-            // We call `async` again here because trying to connect to an SMTP
-            // server on a port it doesn't accept hangs the entire process.
-            // By calling `async` again, we can call `wait` on a separate thread
-            // and report an error in these cases.
-            DispatchQueue.global().async {
-                do {
-                    try self.connect(self.port)
-                    try self.loginToServer()
-                    group.leave()
-                    self.callback(self.socket, nil)
-                } catch {
-                    group.leave()
-                    self.socket.close()
-                    self.callback(nil, error)
-                }
-            }
-
-            if group.wait(timeout: DispatchTime.now() + .seconds(self.timeout)) == .timedOut {
-                self.socket.close()
-                self.callback(nil,
-                              SMTPError(.couldNotConnectToServer(server: self.hostname,
-                                                                 timeout: self.timeout)))
-            }
+        do {
+            try connect(port)
+            try loginToServer()
+            callback(.success(socket))
+        } catch {
+            callback(.failure(error))
         }
     }
 }
 
 private extension Login {
     func connect(_ port: Port) throws {
-        try socket.connect(to: hostname, port: port)
-        _ = try SMTPSocket.parseResponses(try socket.readFromSocket(),
-                                          command: .connect)
+        try socket.connect(to: hostname, port: port, timeout: timeout)
+        try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
     }
 
     func loginToServer() throws {
@@ -143,9 +126,7 @@ private extension Login {
             if resArr.first == "AUTH" {
                 let args = resArr.dropFirst()
                 for arg in args {
-                    if  let authMethod = AuthMethod(rawValue: arg),
-                        authMethods.contains(authMethod)
-                    {
+                    if let authMethod = AuthMethod(rawValue: arg), authMethods.contains(authMethod) {
                         return authMethod
                     }
                 }
@@ -157,11 +138,8 @@ private extension Login {
 
 private extension Login {
     func loginCramMD5() throws {
-        let challenge = try auth(authMethod: .cramMD5,
-                                 credentials: nil).message
-        try authPassword(try AuthEncoder.cramMD5(challenge: challenge,
-                                                 user: email,
-                                                 password: password))
+        let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
+        try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: email, password: password))
     }
 
     func loginLogin() throws {
@@ -173,17 +151,14 @@ private extension Login {
 
     func loginPlain() throws {
         try auth(authMethod: .plain,
-                 credentials: AuthEncoder.plain(user: email,
-                                                password: password))
+                 credentials: AuthEncoder.plain(user: email, password: password))
     }
 
     func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
             throw SMTPError(.noAccessToken)
         }
-        try auth(authMethod: .xoauth2,
-                 credentials: AuthEncoder.xoauth2(user: email,
-                                                  accessToken: accessToken))
+        try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
     }
 }
 

@@ -28,27 +28,34 @@ class TestLogin: XCTestCase {
     ]
 
     func testBadCredentials() throws {
-        let x = expectation(description: "Fail login with bad credentials.")
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         try Login(hostname: hostname,
                   email: email,
-                  password: "",
+                  password: "bad password",
                   port: port,
                   ssl: nil,
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, err) in
-            if let err = err as? SMTPError, case .badResponse = err {
-                x.fulfill()
-            } else {
-                XCTFail("Received different error other than SMTPError(.badResponse) or no error at all.")
-            }
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(let error):
+                        if let error = error as? SMTPError, case .badResponse = error {
+                            x.fulfill()
+                        } else {
+                            XCTFail()
+                        }
+                    case .success(_): XCTFail()
+                    }
             }.login()
-        waitForExpectations(timeout: testDuration)
     }
 
     func testBadPort() throws {
-        let x = expectation(description: "Login timeout because bad port.")
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         try Login(hostname: hostname,
                   email: email,
                   password: password,
@@ -57,18 +64,18 @@ class TestLogin: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, err) in
-            if let err = err as? SMTPError, case .couldNotConnectToServer(_, _) = err {
-                x.fulfill()
-            } else {
-                XCTFail("Received different error other than SMTPError(.couldNotConnectToServer) or no error at all.")
-            }
+                  timeout: 5) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): x.fulfill()
+                    case .success(_): XCTFail()
+                    }
             }.login()
-        waitForExpectations(timeout: testDuration)
     }
 
     func testLogin() throws {
-        let x = expectation(description: "Login with Login auth.")
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         try Login(hostname: hostname,
                   email: email,
                   password: password,
@@ -77,15 +84,18 @@ class TestLogin: XCTestCase {
                   authMethods: [.login],
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(_): x.fulfill()
+                    }
             }.login()
-        waitForExpectations(timeout: testDuration)
     }
 
     func testPlain() throws {
-        let x = expectation(description: "Login with Plain auth.")
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         try Login(hostname: hostname,
                   email: email,
                   password: password,
@@ -94,15 +104,18 @@ class TestLogin: XCTestCase {
                   authMethods: [.plain],
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(_): x.fulfill()
+                    }
             }.login()
-        waitForExpectations(timeout: testDuration)
     }
 
     func testPort0() throws {
-        let x = expectation(description: "Fail login because port can't be 0.")
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         try Login(hostname: hostname,
                   email: email,
                   password: password,
@@ -111,15 +124,16 @@ class TestLogin: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, err) in
-            XCTAssertNotNil(err, "Should get error here, but error was nil.")
-            x.fulfill()
+                  timeout: 5) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): x.fulfill()
+                    case .success(_): XCTFail()
+                    }
             }.login()
-        waitForExpectations(timeout: testDuration)
     }
 
     func testSSL() throws {
-        let expectation = self.expectation(description: #function)
+        let x = self.expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
 
         try Login(hostname: hostname,
@@ -130,9 +144,11 @@ class TestLogin: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (_, error) in
-                    XCTAssertNil(error, String(describing: error))
-                    expectation.fulfill()
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(_): x.fulfill()
+                    }
             }.login()
     }
 }

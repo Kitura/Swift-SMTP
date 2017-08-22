@@ -21,7 +21,7 @@ import Foundation
     import Glibc
 #endif
 
-let testDuration: Double = 20
+let testDuration: Double = 15
 
 // Fill in your own SMTP login info for local testing
 let localHostname: String? = nil
@@ -92,7 +92,7 @@ let authMethods: [AuthMethod] = {
 }()
 
 let domainName = "localhost"
-let timeout = 10
+let timeout: UInt = 10
 
 #if os(Linux)
 let cert = testsDir + "/cert.pem"
