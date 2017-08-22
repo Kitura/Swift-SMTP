@@ -29,13 +29,7 @@ public enum SMTPError: Error, CustomStringConvertible {
     // DataSender
     /// File not found at path while trying to send file `Attachment`.
     case fileNotFound(path: String)
-    
-    // Login
-    /// Could not connect to server within specified timeout. Ensure your
-    /// server can connect through `Port` 587 or specify which `Port` to connect
-    /// on. Some SMTP servers may require a longer timeout.
-    case couldNotConnectToServer(server: String, timeout: Int)
-    
+
     /// The preferred `AuthMethod`s could not be found. Connecting with `SSL`
     /// may be required.
     case noSupportedAuthMethods(hostname: String)
@@ -68,7 +62,6 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .base64DecodeFail(let s): return "Error decoding string: \(s)."
         case .md5HashChallengeFail: return "Hashing server challenge with MD5 algorithm failed."
         case .fileNotFound(let p): return "File not found at path while trying to send file `Attachment`: \(p)."
-        case .couldNotConnectToServer(let s, let t): return "Could not connect to server (\(s)) within specified timeout (\(t) seconds). Ensure your server can connect through port 587 or specify which port to connect on. Some SMTP servers may require a longer timeout."
         case .noSupportedAuthMethods(let hostname): return "The preferred authorization methods could not be found on \(hostname). Connecting with SSL may be required."
         case .noAccessToken: return "Attempted to login using XOAUTH2 but SMTP instance was initialized without an access token."
         case .noRecipients: return "An email requires at least one recipient."

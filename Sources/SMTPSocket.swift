@@ -29,8 +29,8 @@ struct SMTPSocket {
     }
 
     // Connect to the SMTP server at `port`
-    func connect(to: String, port: Port) throws {
-        try socket.connect(to: to, port: port)
+    func connect(to: String, port: Port, timeout: UInt) throws {
+        try socket.connect(to: to, port: port, timeout: timeout)
     }
 
     // Set the socket's `SSLServiceDelegate` for SSL connections
@@ -90,6 +90,7 @@ extension SMTPSocket {
     // Parses through each response and creates a `Response` from it
     // Returns an array of these `Response`s
     // Throws an error if no/invalid response found
+    @discardableResult
     static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
         let resArr = responses.components(separatedBy: CRLF)
         guard !resArr.isEmpty else {

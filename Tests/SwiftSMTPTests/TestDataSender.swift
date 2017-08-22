@@ -36,14 +36,8 @@ class TestDataSender: XCTestCase {
     ]
 
     func testDataCache() throws {
-        let expectation = self.expectation(description: "\(#function)")
-        defer {
-            waitForExpectations(timeout: testDuration) { (error) in
-                if let error = error {
-                    XCTFail("\(error)")
-                }
-            }
-        }
+        let x = self.expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
 
         let group = DispatchGroup()
         group.enter()
@@ -58,13 +52,13 @@ class TestDataSender: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (socket, error) in
-                    XCTAssertNil(error)
-
-                    if let socket = socket {
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(let socket):
                         let attachment = Attachment(data: data, mime: "application/json", name: "file.json")
                         let mail = smtp.makeMail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
-
+                        
                         sender = Sender(socket: socket, pending: [mail], progress: nil) { (sent, failed) in
                             XCTAssertEqual(sent.count, 1)
                             XCTAssertEqual(failed.count, 0)
@@ -73,7 +67,7 @@ class TestDataSender: XCTestCase {
                         sender?.send()
                     }
             }.login()
-
+        
         group.wait()
 
         #if os(macOS)
@@ -84,18 +78,12 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? NSData, NSData(data: data.base64EncodedData()))
         #endif
         
-        expectation.fulfill()
+        x.fulfill()
     }
 
     func testFileCache() throws {
-        let expectation = self.expectation(description: "\(#function)")
-        defer {
-            waitForExpectations(timeout: testDuration) { (error) in
-                if let error = error {
-                    XCTFail("\(error)")
-                }
-            }
-        }
+        let x = self.expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
 
         let group = DispatchGroup()
         group.enter()
@@ -110,10 +98,10 @@ class TestDataSender: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (socket, error) in
-                    XCTAssertNil(error)
-
-                    if let socket = socket {
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(let socket):
                         let attachment = Attachment(filePath: imgFilePath)
                         let mail = smtp.makeMail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
 
@@ -143,18 +131,12 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? NSData, NSData(data: data))
         #endif
 
-        expectation.fulfill()
+        x.fulfill()
     }
 
     func testHTMLCache() throws {
-        let expectation = self.expectation(description: "\(#function)")
-        defer {
-            waitForExpectations(timeout: testDuration) { (error) in
-                if let error = error {
-                    XCTFail("\(error)")
-                }
-            }
-        }
+        let x = self.expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
 
         let group = DispatchGroup()
         group.enter()
@@ -169,10 +151,10 @@ class TestDataSender: XCTestCase {
                   authMethods: authMethods,
                   domainName: domainName,
                   accessToken: nil,
-                  timeout: timeout) { (socket, error) in
-                    XCTAssertNil(error)
-
-                    if let socket = socket {
+                  timeout: timeout) { (loginResult) in
+                    switch loginResult {
+                    case .failure(_): XCTFail()
+                    case .success(let socket):
                         let attachment = Attachment(htmlContent: html)
                         let mail = smtp.makeMail(from: from, to: [to], subject: #function, text: text, attachments: [attachment])
 
@@ -195,7 +177,7 @@ class TestDataSender: XCTestCase {
             XCTAssertEqual(cached as? NSString, NSString(string: html.base64Encoded))
         #endif
 
-        expectation.fulfill()
+        x.fulfill()
     }
 
     func testSendData() {
