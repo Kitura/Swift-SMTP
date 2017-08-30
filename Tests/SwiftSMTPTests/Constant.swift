@@ -104,11 +104,10 @@ let authMethods: [AuthMethod] = {
 
 let senderEmailDomain: String = {
 	let senderEmail = email
-	let atIndex = senderEmail.characters.index(of: "@")
-	if let atIndex = atIndex {
+	if let atIndex = senderEmail.characters.index(of: "@") {
 		let domainStart = senderEmail.index(after: atIndex)
 		let domainVal = senderEmail.substring(from: domainStart)
-		
+
 		return domainVal
 	}
 	return "gmail.com"
