@@ -65,7 +65,7 @@ extension TestMiscellaneous {
 
     func testMailHeaders() {
         let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["header": "val"]).headersString
-        
+
         let to_ = "TO: =?UTF-8?Q?Megaman?= <\(email)>"
         XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")
 
@@ -77,7 +77,7 @@ extension TestMiscellaneous {
 
         let mimeVersion = "MIME-VERSION: 1.0 (Swift-SMTP)"
         XCTAssert(headers.contains(mimeVersion), "Mail header did not contain \(mimeVersion)")
-        
+
         let messageIdSearchResponse = findMessageId(inString: headers)
         XCTAssert(validMessageIdMsg == messageIdSearchResponse, messageIdSearchResponse)
 
@@ -109,22 +109,18 @@ extension TestMiscellaneous {
         let uuidRegEx = "[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}"
         let messageIdHeaderSuffix = ".Swift-SMTP@\(senderEmailDomain)>"
         let regexPattern = "\(messageIdHeaderPrefix)\(uuidRegEx)\(messageIdHeaderSuffix)"
-        
-        let regexOptions = NSRegularExpression.Options.anchorsMatchLines
-        
-        guard let regex = try? NSRegularExpression(pattern: regexPattern, options: regexOptions) else {
+
+        guard let regex = try? NSRegularExpression(pattern: regexPattern, options: .anchorsMatchLines) else {
             return "Unable to create Regular Expression object"
         }
-        
-        let matchingOptions = NSRegularExpression.MatchingOptions.withoutAnchoringBounds
-        
+
         let rangeLocation = 0
-        let rangeLength = (compareString as NSString).length
+        let rangeLength = NSString(string: compareString).length
         let searchRange = NSMakeRange(rangeLocation, rangeLength)
-        
+
         // run the regex
-        let matches = regex.matches(in: compareString, options: matchingOptions, range: searchRange)
-        
+        let matches = regex.matches(in: compareString, options: .withoutAnchoringBounds, range: searchRange)
+
         switch matches.count {
         case 0:
             return invalidMessageIdMsg
