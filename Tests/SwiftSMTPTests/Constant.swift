@@ -31,12 +31,23 @@ let localPort: SwiftSMTP.Port? = nil
 let localSecure: Bool? = nil
 let localAuthMethods: [AuthMethod]? = nil
 
+let validMessageIdMsg = "Valid Message-Id header found"
+let invalidMessageIdMsg = "Message-Id header missing or invalid"
+let multipleMessageIdsMsg = "More than one Message-Id header found"
+
+
 let hostname: String = {
     if let localHostname = localHostname {
         return localHostname
-    } else {
-        return "smtp.gmail.com"
     }
+	let url = credentialsDir.appendingPathComponent("/hostname.txt")
+	guard
+		let data = try? Data(contentsOf: url),
+		let hostname = String(data: data, encoding: .utf8)
+		else {
+			return "smtp.gmail.com"
+	}
+	return hostname.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
 }()
 
 let email: String = {
@@ -89,6 +100,17 @@ let authMethods: [AuthMethod] = {
     } else {
         return [.cramMD5, .login, .plain]
     }
+}()
+
+let senderEmailDomain: String = {
+	let senderEmail = email
+	if let atIndex = senderEmail.characters.index(of: "@") {
+		let domainStart = senderEmail.index(after: atIndex)
+		let domainVal = senderEmail.substring(from: domainStart)
+
+		return domainVal
+	}
+	return "gmail.com"
 }()
 
 let domainName = "localhost"
