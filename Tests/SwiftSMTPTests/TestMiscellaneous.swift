@@ -65,7 +65,7 @@ extension TestMiscellaneous {
 
     func testMailHeaders() {
         let headers = Mail(from: from, to: [to], cc: [to2], subject: "Test", text: text, additionalHeaders: ["header": "val"]).headersString
-
+        
         let to_ = "TO: =?UTF-8?Q?Megaman?= <\(email)>"
         XCTAssert(headers.contains(to_), "Mail header did not contain \(to_)")
 
@@ -77,6 +77,9 @@ extension TestMiscellaneous {
 
         let mimeVersion = "MIME-VERSION: 1.0 (Swift-SMTP)"
         XCTAssert(headers.contains(mimeVersion), "Mail header did not contain \(mimeVersion)")
+        
+        let messageIdSearchResponse = findMessageId(inString: headers)
+        XCTAssert(validMessageIdMsg == messageIdSearchResponse, messageIdSearchResponse)
 
         XCTAssert(headers.contains("HEADER"), "Mail header did not contain \"header\".")
         XCTAssert(headers.contains("val"), "Mail header did not contain \"val\".")
@@ -95,5 +98,40 @@ extension TestMiscellaneous {
         let user = User(name: "Bob", email: "bob@gmail.com")
         let expected = "=?UTF-8?Q?Bob?= <bob@gmail.com>"
         XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
+    }
+}
+
+// Utilities
+extension TestMiscellaneous {
+    fileprivate func findMessageId(inString compareString: String) -> String {
+        let messageIdHeaderPrefix = "MESSAGE-ID: <"
+        // example uuid: E621E1F8-C36C-495A-93FC-0C247A3E6E5F
+        let uuidRegEx = "[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}"
+        let messageIdHeaderSuffix = ".Swift-SMTP@\(senderEmailDomain)>"
+        let regexPattern = "\(messageIdHeaderPrefix)\(uuidRegEx)\(messageIdHeaderSuffix)"
+        
+        let regexOptions = NSRegularExpression.Options.anchorsMatchLines
+        
+        guard let regex = try? NSRegularExpression(pattern: regexPattern, options: regexOptions) else {
+            return "Unable to create Regular Expression object"
+        }
+        
+        let matchingOptions = NSRegularExpression.MatchingOptions.withoutAnchoringBounds
+        
+        let rangeLocation = 0
+        let rangeLength = (compareString as NSString).length
+        let searchRange = NSMakeRange(rangeLocation, rangeLength)
+        
+        // run the regex
+        let matches = regex.matches(in: compareString, options: matchingOptions, range: searchRange)
+        
+        switch matches.count {
+        case 0:
+            return invalidMessageIdMsg
+        case 1:
+            return validMessageIdMsg
+        default:
+            return multipleMessageIdsMsg
+        }
     }
 }
