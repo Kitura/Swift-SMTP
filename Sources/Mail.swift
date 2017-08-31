@@ -25,7 +25,15 @@ public struct Mail {
         return "<\(uuid).Swift-SMTP@\(hostname)>"
     }
 
-    let hostname: String
+    private var hostname: String {
+        let fullEmail = from.email
+        let atIndex = fullEmail.characters.index(of: "@")
+        let hostStart = fullEmail.index(after: atIndex!)
+        let hostnameVal = fullEmail.substring(from: hostStart)
+
+        return hostnameVal
+    }
+
     let from: User
     let to: [User]
     let cc: [User]
@@ -57,8 +65,7 @@ public struct Mail {
     ///                          overwrite each other. Defaults to none. The
     ///                          following will be ignored: CONTENT-TYPE,
     ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
-    public init(hostname: String,
-                from: User,
+    public init(from: User,
                 to: [User],
                 cc: [User] = [],
                 bcc: [User] = [],
@@ -66,7 +73,6 @@ public struct Mail {
                 text: String = "",
                 attachments: [Attachment] = [],
                 additionalHeaders: [String: String] = [:]) {
-        self.hostname = hostname
         self.from = from
         self.to = to
         self.cc = cc

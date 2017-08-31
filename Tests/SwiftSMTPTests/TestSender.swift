@@ -40,7 +40,7 @@ class TestSender: XCTestCase {
     func testBadEmail() {
         let x = expectation(description: "Send a mail that will fail because of an invalid receiving address.")
         let user = User(email: "")
-        let mail = smtp.makeMail(from: user, to: [user])
+        let mail = Mail(from: user, to: [user])
         smtp.send(mail) { (err) in
             XCTAssertNotNil(err, "Sending mail to an invalid email address should return an error, but return nil.")
             x.fulfill()
@@ -63,7 +63,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
 
-        let mail = smtp.makeMail(from: from, to: [to], subject: #function, text: text)
+        let mail = Mail(from: from, to: [to], subject: #function, text: text)
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
@@ -74,7 +74,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
 
-        let mail = smtp.makeMail(from: from, to: [to], subject: #function, text: text)
+        let mail = Mail(from: from, to: [to], subject: #function, text: text)
         smtp.send([mail]) { (sent, failed) in
             XCTAssert(failed.isEmpty)
             x.fulfill()
@@ -85,7 +85,7 @@ class TestSender: XCTestCase {
         let x = expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
 
-        let mail = smtp.makeMail(from: from, to: [], subject: #function, text: text)
+        let mail = Mail(from: from, to: [], subject: #function, text: text)
         smtp.send([mail]) { (err) in
             if let err = err.1[0].1 as? SMTPError, case .noRecipients = err {
                 x.fulfill()
@@ -95,22 +95,11 @@ class TestSender: XCTestCase {
         }
     }
 
-    func testSendNoMail() {
-        let x = expectation(description: #function)
-        defer { waitForExpectations(timeout: testDuration) }
-
-        smtp.send([]) { (sent, failed) in
-            XCTAssert(sent.isEmpty)
-            XCTAssert(failed.isEmpty)
-            x.fulfill()
-        }
-    }
-
     func testSendMailsConcurrently() {
         let x = expectation(description: "Send multiple mails concurrently with seperate calls to `send`.")
 
-        let mail1 = smtp.makeMail(from: from, to: [to], subject: "Send mails concurrently 1")
-        let mail2 = smtp.makeMail(from: from, to: [to], subject: "Send mails concurrently 2")
+        let mail1 = Mail(from: from, to: [to], subject: "Send mails concurrently 1")
+        let mail2 = Mail(from: from, to: [to], subject: "Send mails concurrently 2")
         let mails = [mail1, mail2]
         let group = DispatchGroup()
 
@@ -130,7 +119,7 @@ class TestSender: XCTestCase {
 
     func testSendMailWithCc() {
         let x = expectation(description: "Send mail with Cc.")
-        let mail = smtp.makeMail(from: from, to: [to], cc: [to2], subject: #function)
+        let mail = Mail(from: from, to: [to], cc: [to2], subject: #function)
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
@@ -140,7 +129,7 @@ class TestSender: XCTestCase {
 
     func testSendMailWithBcc() {
         let x = expectation(description: "Send mail with Bcc.")
-        let mail = smtp.makeMail(from: from, to: [to], bcc: [to2], subject: #function)
+        let mail = Mail(from: from, to: [to], bcc: [to2], subject: #function)
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
@@ -150,8 +139,8 @@ class TestSender: XCTestCase {
 
     func testSendMultipleMails() {
         let x = expectation(description: "Send multiple mails with one call to `send`.")
-        let mail1 = smtp.makeMail(from: from, to: [to], subject: "Send multiple mails 1")
-        let mail2 = smtp.makeMail(from: from, to: [to], subject: "Send multiple mails 2")
+        let mail1 = Mail(from: from, to: [to], subject: "Send multiple mails 1")
+        let mail2 = Mail(from: from, to: [to], subject: "Send multiple mails 2")
         smtp.send([mail1, mail2], progress: { (_, err) in
             XCTAssertNil(err, String(describing: err))
         }) { (sent, failed) in
@@ -165,8 +154,8 @@ class TestSender: XCTestCase {
     func testSendMultipleMailsWithFail() {
         let x = expectation(description: "Send two mails, one of which will fail.")
         let badUser = User(email: "")
-        let badMail = smtp.makeMail(from: from, to: [badUser])
-        let goodMail = smtp.makeMail(from: from, to: [to], subject: "Send multiple mails with fail")
+        let badMail = Mail(from: from, to: [badUser])
+        let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
 
         smtp.send([badMail, goodMail]) { (sent, failed) in
             guard sent.count == 1 && failed.count == 1 else {
@@ -184,11 +173,22 @@ class TestSender: XCTestCase {
 
     func testSendMultipleRecipients() {
         let x = expectation(description: "Send a single mail to multiple recipients.")
-        let mail = smtp.makeMail(from: from, to: [to, to2], subject: #function)
+        let mail = Mail(from: from, to: [to, to2], subject: #function)
         smtp.send(mail) { (err) in
             XCTAssertNil(err, String(describing: err))
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
+    }
+
+    func testSendNoMail() {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        smtp.send([]) { (sent, failed) in
+            XCTAssert(sent.isEmpty)
+            XCTAssert(failed.isEmpty)
+            x.fulfill()
+        }
     }
 }
