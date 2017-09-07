@@ -86,12 +86,12 @@ class TestSender: XCTestCase {
         defer { waitForExpectations(timeout: testDuration) }
 
         let mail = Mail(from: from, to: [], subject: #function, text: text)
-        smtp.send([mail]) { (err) in
-            if let err = err.1[0].1 as? SMTPError, case .noRecipients = err {
-                x.fulfill()
-            } else {
+        smtp.send(mail) { (error) in
+            guard let error = error as? SMTPError, case .noRecipients = error else {
                 XCTFail("Received different error other than SMTPError(.noRecipients) or no error at all.")
+                return
             }
+            x.fulfill()
         }
     }
 

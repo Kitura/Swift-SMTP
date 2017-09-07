@@ -29,7 +29,12 @@ public struct Mail {
         let fullEmail = from.email
         let atIndex = fullEmail.characters.index(of: "@")
         let hostStart = fullEmail.index(after: atIndex!)
-        let hostnameVal = fullEmail.substring(from: hostStart)
+
+        #if swift(>=3.2)
+            let hostnameVal = String(fullEmail[hostStart...])
+        #else
+            let hostnameVal = fullEmail.substring(from: hostStart)
+        #endif
 
         return hostnameVal
     }

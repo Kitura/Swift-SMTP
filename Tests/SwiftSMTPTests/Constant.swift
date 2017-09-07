@@ -106,7 +106,12 @@ let senderEmailDomain: String = {
 	let senderEmail = email
 	if let atIndex = senderEmail.characters.index(of: "@") {
 		let domainStart = senderEmail.index(after: atIndex)
-		let domainVal = senderEmail.substring(from: domainStart)
+
+        #if swift(>=3.2)
+            let domainVal = String(senderEmail[domainStart...])
+        #else
+            let domainVal = senderEmail.substring(from: domainStart)
+        #endif
 
 		return domainVal
 	}

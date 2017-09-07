@@ -22,21 +22,7 @@ srand(UInt32(time(nil)))
 
 // http://stackoverflow.com/questions/24026510/how-do-i-shuffle-an-array-in-swift
 
-#if !swift(>=3.2)
-    extension MutableCollection where Indices.Iterator.Element == Index {
-        mutating func shuffle() {
-            let c = count
-            guard c > 1 else { return }
-
-            for (firstUnshuffled , unshuffledCount) in zip(indices, stride(from: c, to: 1, by: -1)) {
-                let d: IndexDistance = numericCast(random() % numericCast(unshuffledCount))
-                guard d != 0 else { continue }
-                let i = index(firstUnshuffled, offsetBy: d)
-                swap(&self[firstUnshuffled], &self[i])
-            }
-        }
-    }
-#else
+#if swift(>=3.2)
     extension MutableCollection {
         mutating func shuffle() {
             let c = count
@@ -47,6 +33,20 @@ srand(UInt32(time(nil)))
                 guard d != 0 else { continue }
                 let i = index(firstUnshuffled, offsetBy: d)
                 self.swapAt(firstUnshuffled, i)
+            }
+        }
+    }
+#else
+    extension MutableCollection where Indices.Iterator.Element == Index {
+        mutating func shuffle() {
+            let c = count
+            guard c > 1 else { return }
+
+            for (firstUnshuffled , unshuffledCount) in zip(indices, stride(from: c, to: 1, by: -1)) {
+                let d: IndexDistance = numericCast(random() % numericCast(unshuffledCount))
+                guard d != 0 else { continue }
+                let i = index(firstUnshuffled, offsetBy: d)
+                swap(&self[firstUnshuffled], &self[i])
             }
         }
     }
