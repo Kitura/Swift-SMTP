@@ -109,21 +109,38 @@ extension SMTPSocket {
     // Returns a `ResponseCode` extracted from the `response`
     // Throws an error if no/invalid response code found
     static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
+        guard response.characters.count > 3 else {
+            throw SMTPError(.badResponse(command: command.text, response: response))
+        }
+
+        #if swift(>=3.2)
+            guard let code = Int(response[..<response.index(response.startIndex, offsetBy: 3)]) else {
+                throw SMTPError(.badResponse(command: command.text, response: response))
+            }
+        #else
+            guard let code = Int(response.substring(to: response.index(response.startIndex, offsetBy: 3))) else {
+                throw SMTPError(.badResponse(command: command.text, response: response))
+            }
+        #endif
+
         guard
             response.characters.count > 2,
-            let code = Int(response.substring(to: response.index(response.startIndex,
-                                                                 offsetBy: 3))),
             command.expectedResponseCodes.map({ $0.rawValue }).contains(code) else {
-                throw SMTPError(.badResponse(command: command.text,
-                                             response: response))
+                throw SMTPError(.badResponse(command: command.text, response: response))
         }
         return ResponseCode(code)
     }
 
     // Returns the reponse message from the response
     static func getResponseMessage(_ response: String) -> String {
-        if response.characters.count < 4 { return "" }
-        return response.substring(from: response.index(response.startIndex,
-                                                       offsetBy: 4))
+        guard response.characters.count > 3 else {
+            return ""
+        }
+
+        #if swift(>=3.2)
+            return String(response[response.index(response.startIndex, offsetBy: 4)...])
+        #else
+            return response.substring(from: response.index(response.startIndex, offsetBy: 4))
+        #endif
     }
 }
