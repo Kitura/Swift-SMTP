@@ -2,7 +2,7 @@
 
 ![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png)
 
-Swift package for sending emails to an SMTP server.
+Swift SMTP client.
 
 [![Build Status](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
@@ -11,16 +11,16 @@ Swift package for sending emails to an SMTP server.
 
 ## Features
 
-- Connect securely through SSL/TLS when available
+- Connect securely through SSL/TLS when needed
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
-- [Documentation](https://ibm-swift.github.io/Swift-SMTP/)
+- [Fully documented](https://ibm-swift.github.io/Swift-SMTP/)
 - [Demo & blog post](https://developer.ibm.com/swift/2017/05/31/4675/)
 
 ## Swift Version
 
-macOS & Linux: `Swift 3.1.1`
+macOS & Linux: `Swift 4.0` & `Swift 3.1.1`
 
 ## Usage
 
@@ -39,11 +39,11 @@ let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
 
 ### SSL
 
-If required, `Swift-SMTP` automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the [SSL](https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html) struct to see how to customize this.
+If required, `Swift-SMTP` automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the [SSL](https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html) struct for customization options.
 
 ### Send email
 
-Create a `Mail` object and use your `smtp` handle to send it. To set the sender and receiver of an email, use the `User` struct:
+Create a `Mail` object and use your `SMTP` handle to send it. To set the sender and receiver of an email, use the `User` struct:
 
 ```swift
 let drLight = User(name: "Dr. Light", email: "drlight@gmail.com")
@@ -54,9 +54,9 @@ let mail = Mail(from: drLight,
                 subject: "Humans and robots living together in harmony and equality.",
                 text: "That was my ultimate wish.")
 
-smtp.send(mail) { (err) in
-    if let err = err {
-        print(err)
+smtp.send(mail) { (error) in
+    if let error = error {
+        print(error)
     }
 }
 ```
@@ -79,7 +79,7 @@ smtp.send(mail)
 
 ### Send attachments
 
-Create an `Attachment`, attach it to your `Mail`, and send it through the `smtp` handle. Here's an example of how you can send the three supported types of attachments--a local file, HTML, and raw data:
+Create an `Attachment`, attach it to your `Mail`, and send it through the `SMTP` handle. Here's an example of how you can send the three supported types of attachments--a local file, HTML, and raw data:
 
 ```swift
 // Create a file `Attachment`
@@ -132,7 +132,7 @@ smtp.send([mail1, mail2],
 
 ## Acknowledgements
 
-`Swift-SMTP` was inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP), two Swift packages that can also be used to send emails to an SMTP server.
+`Swift-SMTP` was inspired by two other Swift SMTP clients, [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP).
 
 ## License
 
