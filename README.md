@@ -31,7 +31,7 @@ import SwiftSMTP
 
 // Create your `SMTP` handle
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
-                user: "user@gmail.com",         // username to login 
+                email: "user@gmail.com",         // username to login 
                 password: "password")           // password to login
                 
 /* Additional parameters available to further customize your `SMTP` handle */
