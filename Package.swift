@@ -1,15 +1,32 @@
+// swift-tools-version:4.0
+// The swift-tools-version declares the minimum version of Swift required to build this package.
+
 import PackageDescription
 
-#if os(Linux) && !swift(>=3.1.1)
-fatalError("Please use Swift >=3.1.1.")
-#else
 let package = Package(
     name: "SwiftSMTP",
+    products: [
+        // Products define the executables and libraries produced by a package, and make them visible to other packages.
+        .library(
+            name: "SwiftSMTP",
+            targets: ["SwiftSMTP"]),
+        ],
     dependencies: [
-        .Package(url: "https://github.com/IBM-Swift/BlueSocket.git", majorVersion: 0, minor: 12),
-        .Package(url: "https://github.com/IBM-Swift/BlueSSLService.git", majorVersion: 0, minor: 12),
-        .Package(url: "https://github.com/IBM-Swift/BlueCryptor.git", majorVersion: 0, minor: 8),
-        .Package(url: "https://github.com/IBM-Swift/LoggerAPI.git", majorVersion: 1, minor: 7)
-    ]
+        // Dependencies declare other packages that this package depends on.
+        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/IBM-Swift/BlueSocket.git", .upToNextMinor(from: "0.12.0")),
+        .package(url: "https://github.com/IBM-Swift/BlueSSLService.git", .upToNextMinor(from: "0.12.0")),
+        .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", .upToNextMinor(from: "0.8.0")),
+        .package(url: "https://github.com/IBM-Swift/LoggerAPI.git", .upToNextMinor(from: "1.7.0")),
+    ],
+    targets: [
+        // Targets are the basic building blocks of a package. A target defines a module or a test suite.
+        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+        .target(
+            name: "SwiftSMTP",
+            dependencies: ["Socket", "SSLService", "Cryptor", "LoggerAPI"]),
+        .testTarget(
+            name: "SwiftSMTPTests",
+            dependencies: ["SwiftSMTP"]),
+        ]
 )
-#endif

@@ -104,7 +104,7 @@ let authMethods: [AuthMethod] = {
 
 let senderEmailDomain: String = {
 	let senderEmail = email
-	if let atIndex = senderEmail.characters.index(of: "@") {
+	if let atIndex = senderEmail.index(of: "@") {
 		let domainStart = senderEmail.index(after: atIndex)
 
         #if swift(>=3.2)
