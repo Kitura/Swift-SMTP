@@ -136,4 +136,4 @@ smtp.send([mail1, mail2],
 
 ## License
 
-Apache 2.0
+Apache v2.0
