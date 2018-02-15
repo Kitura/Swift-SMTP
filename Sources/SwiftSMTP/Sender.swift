@@ -149,7 +149,7 @@ extension String {
             throw SMTPError(.createEmailRegexFailed)
         }
 
-        let range = NSRange(location: 0, length: self.characters.count)
+        let range = NSRange(location: 0, length: count)
         return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }
 }

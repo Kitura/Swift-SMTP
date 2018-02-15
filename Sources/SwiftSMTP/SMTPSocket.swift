@@ -109,7 +109,7 @@ extension SMTPSocket {
     // Returns a `ResponseCode` extracted from the `response`
     // Throws an error if no/invalid response code found
     static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
-        guard response.characters.count > 3 else {
+        guard response.count > 3 else {
             throw SMTPError(.badResponse(command: command.text, response: response))
         }
 
@@ -124,7 +124,7 @@ extension SMTPSocket {
         #endif
 
         guard
-            response.characters.count > 2,
+            response.count > 2,
             command.expectedResponseCodes.map({ $0.rawValue }).contains(code) else {
                 throw SMTPError(.badResponse(command: command.text, response: response))
         }
@@ -133,7 +133,7 @@ extension SMTPSocket {
 
     // Returns the reponse message from the response
     static func getResponseMessage(_ response: String) -> String {
-        guard response.characters.count > 3 else {
+        guard response.count > 3 else {
             return ""
         }
 

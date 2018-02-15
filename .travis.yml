@@ -8,21 +8,12 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-    - os: linux
-      dist: trusty
-      sudo: required
-      env: SWIFT_SNAPSHOT=$SWIFT_4_DEV_SNAPSHOT
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode9.1
       sudo: required
-    - os: osx
-      osx_image: xcode9
-      sudo: required
-      env: SWIFT_SNAPSHOT=$SWIFT_4_DEV_SNAPSHOT
 
 before_install:
     - git clone https://github.com/IBM-Swift/Package-Builder.git
-    - git clone https://$GITHUB_USER:$GITHUB_PWD@github.com/IBM-Swift/Kitura-TestingCredentials.git
 
 script:
-  - ./Package-Builder/build-package.sh -projectDir $TRAVIS_BUILD_DIR -credentialsDir $TRAVIS_BUILD_DIR/Kitura-TestingCredentials/Swift-SMTP
+  - ./Package-Builder/build-package.sh -projectDir $TRAVIS_BUILD_DIR
