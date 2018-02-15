@@ -47,6 +47,7 @@ let email: String = {
     if let localEmail = localEmail {
         return localEmail
     }
+    print(ProcessInfo.processInfo.environment)
     guard let email = ProcessInfo.processInfo.environment["EMAIL"] else {
         fatalError("Please provide email credentials for local testing.")
     }
