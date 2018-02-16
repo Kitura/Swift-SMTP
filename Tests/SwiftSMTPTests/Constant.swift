@@ -24,6 +24,7 @@ import Foundation
 let testDuration: Double = 15
 
 // Fill in your own SMTP login info for local testing
+// DO NOT CHECK IN YOUR OWN EMAIL CREDENTALS!!!
 let localHostname: String? = nil
 let localEmail: String? = nil
 let localPassword: String? = nil
@@ -35,47 +36,31 @@ let validMessageIdMsg = "Valid Message-Id header found"
 let invalidMessageIdMsg = "Message-Id header missing or invalid"
 let multipleMessageIdsMsg = "More than one Message-Id header found"
 
-
 let hostname: String = {
     if let localHostname = localHostname {
         return localHostname
     }
-	let url = credentialsDir.appendingPathComponent("/hostname.txt")
-	guard
-		let data = try? Data(contentsOf: url),
-		let hostname = String(data: data, encoding: .utf8)
-		else {
-			return "smtp.gmail.com"
-	}
-	return hostname.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+    return "smtp.gmail.com"
 }()
 
 let email: String = {
     if let localEmail = localEmail {
         return localEmail
     }
-    let url = credentialsDir.appendingPathComponent("/email.txt")
-    guard
-        let data = try? Data(contentsOf: url),
-        let email = String(data: data, encoding: .utf8)
-        else {
-            fatalError("Could not get email to login for tests.")
+    guard let email = ProcessInfo.processInfo.environment["EMAIL"] else {
+        fatalError("Please provide email credentials for local testing.")
     }
-    return email.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+    return email
 }()
 
 let password: String = {
     if let localPassword = localPassword {
         return localPassword
     }
-    let url = credentialsDir.appendingPathComponent("/password.txt")
-    guard
-        let data = try? Data(contentsOf: url),
-        let password = String(data: data, encoding: .utf8)
-        else {
-            fatalError("Could not get password to login for tests.")
+    guard let password = ProcessInfo.processInfo.environment["PASSWORD"] else {
+        fatalError("Please provide email credentials for local testing.")
     }
-    return password.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+    return password
 }()
 
 let port: SwiftSMTP.Port = {
@@ -104,7 +89,7 @@ let authMethods: [AuthMethod] = {
 
 let senderEmailDomain: String = {
 	let senderEmail = email
-	if let atIndex = senderEmail.characters.index(of: "@") {
+	if let atIndex = senderEmail.index(of: "@") {
 		let domainStart = senderEmail.index(after: atIndex)
 
         #if swift(>=3.2)
@@ -114,8 +99,9 @@ let senderEmailDomain: String = {
         #endif
 
 		return domainVal
-	}
-	return "gmail.com"
+    } else {
+        return "gmail.com"
+    }
 }()
 
 let domainName = "localhost"
@@ -139,10 +125,6 @@ let text = "Humans and robots living together in harmony and equality:<br><br>Th
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
 let imgFilePath = testsDir + "/x.png"
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-
-let credentialsDir: URL = {
-    return URL(fileURLWithPath: #file).appendingPathComponent("../../../Kitura-TestingCredentials/Swift-SMTP").standardized
-}()
 
 let testsDir: String = {
     return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path

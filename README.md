@@ -20,7 +20,7 @@ Swift SMTP client.
 
 ## Swift Version
 
-macOS & Linux: `Swift 4.0` & `Swift 3.1.1`
+macOS & Linux: `Swift 4.0.3`
 
 ## Usage
 
@@ -136,4 +136,4 @@ smtp.send([mail1, mail2],
 
 ## License
 
-Apache 2.0
+Apache v2.0
