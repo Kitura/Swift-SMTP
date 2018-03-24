@@ -222,7 +222,7 @@ private extension String {
     // rendered correctly.
     var embedded: String {
         var embeddedText = ""
-        embeddedText += "CONTENT-TYPE: text/html; charset=utf-8\(CRLF)"
+        embeddedText += "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)"
         embeddedText += "CONTENT-TRANSFER-ENCODING: 7bit\(CRLF)"
         embeddedText += "CONTENT-DISPOSITION: inline\(CRLF)"
         embeddedText += "\(CRLF)\(self)\(CRLF)"
