@@ -74,6 +74,6 @@ public enum SMTPError: Error, CustomStringConvertible {
     
     init(_ error: SMTPError) {
         self = error
-        Log.error(self.description)
+        Log.error(description)
     }
 }

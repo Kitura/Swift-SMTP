@@ -18,57 +18,56 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
-    private let uuid = UUID().uuidString
+    /// A UUID for the mail.
+    public let uuid = UUID().uuidString
+    /// The `User` that the `Mail` will be sent from.
+    public let from: User
+    /// Array of `User`s to send the `Mail` to.
+    public let to: [User]
+    /// Array of `User`s to cc. Defaults to none.
+    public let cc: [User]
+    /// Array of `User`s to bcc. Defaults to none.
+    public let bcc: [User]
+    /// Subject of the `Mail`. Defaults to none.
+    public let subject: String
+    /// Text of the `Mail`. Defaults to none.
+    public let text: String
+    /// Array of `Attachment`s for the `Mail`. If the `Mail` has multiple `Attachment`s that are alternatives to plain
+    /// text, the last one will be used as the alternative (all the `Attachments` will still be sent). Defaults to none.
+    public let attachments: [Attachment]
+    /// Attachment that is an alternative to plain text.
+    public let alternative: Attachment?
+    /// Additional headers for the `Mail`. Header keys are capitalized and duplicate keys will overwrite each other.
+    /// Defaults to none. The following will be ignored: CONTENT-TYPE, CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
+    public let additionalHeaders: [String: String]
 
     /// message-id https://tools.ietf.org/html/rfc5322#section-3.6.4
     public var id: String {
         return "<\(uuid).Swift-SMTP@\(hostname)>"
     }
 
-    private var hostname: String {
+    /// Hostname from the email address.
+    public var hostname: String {
         let fullEmail = from.email
         let atIndex = fullEmail.index(of: "@")
         let hostStart = fullEmail.index(after: atIndex!)
-
-        #if swift(>=3.2)
-            let hostnameVal = String(fullEmail[hostStart...])
-        #else
-            let hostnameVal = fullEmail.substring(from: hostStart)
-        #endif
-
-        return hostnameVal
+        return String(fullEmail[hostStart...])
     }
-
-    let from: User
-    let to: [User]
-    let cc: [User]
-    let bcc: [User]
-    let subject: String
-    let text: String
-    let attachments: [Attachment]
-    let alternative: Attachment?
-    let additionalHeaders: [String: String]
 
     /// Initializes a `Mail` object.
     ///
     /// - Parameters:
-    ///     - hostname: Hostname of the SMTP server to connect to. Should not
-    ///                 include any scheme--ie `smtp.example.com` is valid.
     ///     - from: The `User` that the `Mail` will be sent from.
     ///     - to: Array of `User`s to send the `Mail` to.
     ///     - cc: Array of `User`s to cc. Defaults to none.
     ///     - bcc: Array of `User`s to bcc. Defaults to none.
     ///     - subject: Subject of the `Mail`. Defaults to none.
     ///     - text: Text of the `Mail`. Defaults to none.
-    ///     - attachments: Array of `Attachment`s for the `Mail`. If the `Mail`
-    ///                    has multiple `Attachment`s that are alternatives to
-    ///                    to plain text, the last one will be used as the
-    ///                    alternative (all the `Attachments` will still be
-    ///                    sent). Defaults to none.
-    ///     - additionalHeaders: Additional headers for the `Mail`. Header keys
-    ///                          are capitalized and duplicate keys will 
-    ///                          overwrite each other. Defaults to none. The
-    ///                          following will be ignored: CONTENT-TYPE,
+    ///     - attachments: Array of `Attachment`s for the `Mail`. If the `Mail` has multiple `Attachment`s that are
+    ///                    alternatives to plain text, the last one will be used as the alternative (all the
+    ///                    `Attachments` will still be sent). Defaults to none.
+    ///     - additionalHeaders: Additional headers for the `Mail`. Header keys are capitalized and duplicate keys will
+    ///                          overwrite each other. Defaults to none. The following will be ignored: CONTENT-TYPE,
     ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
     public init(from: User,
                 to: [User],

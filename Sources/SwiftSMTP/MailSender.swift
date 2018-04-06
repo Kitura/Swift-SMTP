@@ -23,21 +23,21 @@ import Foundation
 public typealias Progress = ((Mail, Error?) -> Void)?
 public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
-class Sender {
-    fileprivate var socket: SMTPSocket
-    fileprivate var pending: [Mail]
-    fileprivate var progress: Progress
-    fileprivate var completion: Completion
-    fileprivate var sent = [Mail]()
-    fileprivate var failed = [(Mail, Error)]()
-    var dataSender: DataSender
+class MailSender {
+    private var socket: SMTPSocket
+    private var mailsToSend: [Mail]
+    private var progress: Progress
+    private var completion: Completion
+    private var sent = [Mail]()
+    private var failed = [(Mail, Error)]()
+    private var dataSender: DataSender
 
     init(socket: SMTPSocket,
-         pending: [Mail],
+         mailsToSend: [Mail],
          progress: Progress,
          completion: Completion) {
         self.socket = socket
-        self.pending = pending
+        self.mailsToSend = mailsToSend
         self.progress = progress
         self.completion = completion
         dataSender = DataSender(socket: socket)
@@ -50,32 +50,28 @@ class Sender {
     }
 }
 
-private extension Sender {
+private extension MailSender {
     func sendNext() {
-        if pending.isEmpty {
+        if mailsToSend.isEmpty {
             completion?(sent, failed)
             progress = nil
             completion = nil
             try? quit()
             return
         }
-
-        let mail = pending.removeFirst()
-
+        let mail = mailsToSend.removeFirst()
         do {
             try send(mail)
             if completion != nil {
                 sent.append(mail)
             }
             progress?(mail, nil)
-
         } catch {
             if completion != nil {
                 failed.append((mail, error))
             }
             progress?(mail, error)
         }
-
         DispatchQueue.global().async {
             self.sendNext()
         }
@@ -87,7 +83,7 @@ private extension Sender {
     }
 }
 
-private extension Sender {
+private extension MailSender {
     func send(_ mail: Mail) throws {
         let recipientEmails = try getRecipientEmails(from: mail)
         try validateEmails(recipientEmails)
@@ -104,7 +100,7 @@ private extension Sender {
         recipientEmails += mail.bcc.map { $0.email }
 
         guard !recipientEmails.isEmpty else {
-            throw SMTPError(.noRecipients)
+            throw SMTPError.noRecipients
         }
 
         return recipientEmails
@@ -112,7 +108,7 @@ private extension Sender {
 
     private func validateEmails(_ emails: [String]) throws {
         for email in emails where try !email.isValidEmail() {
-            throw SMTPError(.invalidEmail(email: email))
+            throw SMTPError.invalidEmail(email: email)
         }
     }
 
@@ -140,15 +136,17 @@ private extension Sender {
 #endif
 
 private extension NSRegularExpression {
-    static let emailRegex = try? NSRegularExpression(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}", options: [])
+    static let emailRegex = try? NSRegularExpression(
+        pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}",
+        options: []
+    )
 }
 
 extension String {
     func isValidEmail() throws -> Bool {
         guard let emailRegex = NSRegularExpression.emailRegex else {
-            throw SMTPError(.createEmailRegexFailed)
+            throw SMTPError.createEmailRegexFailed
         }
-
         let range = NSRange(location: 0, length: count)
         return !emailRegex.matches(in: self, options: [], range: range).isEmpty
     }

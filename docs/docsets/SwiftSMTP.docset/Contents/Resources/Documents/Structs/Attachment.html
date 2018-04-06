@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Attachment Struct Reference</title>
+    <title>Attachment Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -16,7 +16,7 @@
 
     <a name="//apple_ref/swift/Struct/Attachment" class="dashAnchor"></a>
 
-    <a title="Attachment Struct Reference"></a>
+    <a title="Attachment Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -44,20 +44,17 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">SwiftSMTP Reference</a>
       <img class="carat" src="../img/carat.png" />
-      Attachment Struct Reference
+      Attachment Structure Reference
     </p>
 
     <div class="content-wrapper">
       <nav class="navigation">
         <ul class="nav-groups">
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enums</a>
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthMethod.html">AuthMethod</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Ports.html">Ports</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/SMTPError.html">SMTPError</a>
@@ -65,7 +62,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Attachment.html">Attachment</a>
@@ -77,18 +74,10 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SSL.html">SSL</a>
+                <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/User.html">User</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a>
               </li>
             </ul>
           </li>
@@ -118,9 +107,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP10AttachmentcFT4dataV10Foundation4Data4mimeSS4nameSS6inlineSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentVAC10Foundation4DataV4data_SS4mimeSS4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
                     <a name="//apple_ref/swift/Method/init(data:mime:name:inline:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP10AttachmentcFT4dataV10Foundation4Data4mimeSS4nameSS6inlineSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_">init(data:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVAC10Foundation4DataV4data_SS4mimeSS4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(data:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -136,11 +125,11 @@ Different SMTP servers have different attachment size limits.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
-                <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
-                <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
-                <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+            <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
+            <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
                       </div>
@@ -206,7 +195,7 @@ Different SMTP servers have different attachment size limits.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>Additional headers for the <code>Mail</code>. Header keys
+                                  <p>Additional headers for the <code><a href="../Structs/Mail.html">Mail</a></code>. Header keys
                  are capitalized and duplicate keys will
                  overwrite each other. Defaults to none. The
                  following will be ignored: CONTENT-TYPE,
@@ -236,9 +225,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP10AttachmentcFT8filePathSS4mimeSS4nameGSqSS_6inlineSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentVACSS8filePath_SS4mimeSSSg4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
                     <a name="//apple_ref/swift/Method/init(filePath:mime:name:inline:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP10AttachmentcFT8filePathSS4mimeSS4nameGSqSS_6inlineSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_">init(filePath:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVACSS8filePath_SS4mimeSSSg4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(filePath:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -254,11 +243,11 @@ Different SMTP servers have different attachment size limits.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"application/octet-stream"</span><span class="p">,</span>
-                <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
-                <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
-                <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+            <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"application/octet-stream"</span><span class="p">,</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
+            <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
                       </div>
@@ -354,9 +343,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP10AttachmentcFT11htmlContentSS12characterSetSS11alternativeSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentVACSS11htmlContent_SS12characterSetSb11alternatives10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
                     <a name="//apple_ref/swift/Method/init(htmlContent:characterSet:alternative:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP10AttachmentcFT11htmlContentSS12characterSetSS11alternativeSb17additionalHeadersGVs10DictionarySSSS_18relatedAttachmentsGSaS0___S0_">init(htmlContent:characterSet:alternative:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVACSS11htmlContent_SS12characterSetSb11alternatives10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(htmlContent:characterSet:alternative:additionalHeaders:relatedAttachments:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -372,10 +361,10 @@ Different SMTP servers have different attachment size limits.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">htmlContent</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">characterSet</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"utf-8"</span><span class="p">,</span>
-                <span class="nv">alternative</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-                <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
-                <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+            <span class="nv">characterSet</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"utf-8"</span><span class="p">,</span>
+            <span class="nv">alternative</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
+            <span class="nv">relatedAttachments</span><span class="p">:</span> <span class="p">[</span><span class="kt">Attachment</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
                       </div>
@@ -462,8 +451,8 @@ Different SMTP servers have different attachment size limits.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

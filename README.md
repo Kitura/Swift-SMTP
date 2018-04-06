@@ -1,10 +1,10 @@
 # Swift-SMTP
 
-![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png)
+![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png?raw=true)
 
 Swift SMTP client.
 
-[![Build Status](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)](https://travis-ci.com/IBM-Swift/Swift-SMTP.svg?token=prrUzhsjZyXD9LxyWxge&branch=master)
+![Build Status](https://travis-ci.org/IBM-Swift/Swift-SMTP.svg?branch=master)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 ![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
@@ -31,15 +31,28 @@ import SwiftSMTP
 
 // Create your `SMTP` handle
 let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
-                email: "user@gmail.com",         // username to login 
+                email: "user@gmail.com",        // username to login
                 password: "password")           // password to login
-                
-/* Additional parameters available to further customize your `SMTP` handle */
 ```
 
-### SSL
+### TLS
 
-If required, `Swift-SMTP` automatically upgrades your connection to an SSL connection. By default, this uses no backing certificates. View docs on the [SSL](https://ibm-swift.github.io/Swift-SMTP/Structs/SSL.html) struct for customization options.
+All parameters of `SMTP` struct:
+
+```swift
+let smtp = SMTP(hostname: String,
+                email: String,
+                password: String,
+                port: Int32 = 465,
+                useTLS: Bool = true,
+                tlsConfiguration: TLSConfiguration? = nil,
+                authMethods: [AuthMethod] = [],
+                accessToken: String? = nil,
+                domainName: String = "localhost",
+                timeout: UInt = 10)
+```
+
+By default, the `SMTP` struct connects on port `465` and tries to connect using TLS. It also uses a `TLSConfiguration` that uses no backing certificates. Configure these to your needs. For more info on `TLSConfiguration`, view the [docs](https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html).
 
 ### Send email
 
@@ -88,13 +101,13 @@ let fileAttachment = Attachment(filePath: "~/img.png",
                                 additionalHeaders: ["CONTENT-ID": "img001"])
 
 // Create an HTML `Attachment`
-let htmlAttachment = Attachment(htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>", 
+let htmlAttachment = Attachment(htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>",
                                 related: [fileAttachment]) // to reference `fileAttachment`
 
 // Create a data `Attachment`
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-let dataAttachment = Attachment(data: data, 
-                                mime: "application/json", 
+let dataAttachment = Attachment(data: data,
+                                mime: "application/json",
                                 name: "file.json",
                                 inline: false) // send as a standalone attachment
 
@@ -116,12 +129,12 @@ smtp.send(mail)
 let mail1: Mail = //...
 let mail2: Mail = //...
 
-smtp.send([mail1, mail2], 
+smtp.send([mail1, mail2],
     // This optional callback gets called after each `Mail` is sent.
     // `mail` is the attempted `Mail`, `error` is the error if one occured.
     progress: { (mail, error) in
     },
-    
+
     // This optional callback gets called after all the mails have been sent.
     // `sent` is an array of the successfully sent `Mail`s.
     // `failed` is an array of (Mail, Error)--the failed `Mail`s and their corresponding errors.

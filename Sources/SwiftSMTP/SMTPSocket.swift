@@ -21,7 +21,7 @@ import LoggerAPI
 // Wrapper around BlueSocket
 struct SMTPSocket {
     // The socket we use to read and write to
-    fileprivate let socket: Socket
+    private let socket: Socket
 
     // Init a new instance of SMTPSocket
     init() throws {
@@ -29,7 +29,7 @@ struct SMTPSocket {
     }
 
     // Connect to the SMTP server at `port`
-    func connect(to: String, port: Port, timeout: UInt) throws {
+    func connect(to: String, port: Int32, timeout: UInt) throws {
         try socket.connect(to: to, port: port, timeout: timeout)
     }
 
@@ -81,7 +81,7 @@ extension SMTPSocket {
         var buf = Data()
         _ = try socket.read(into: &buf)
         guard let responses = String(data: buf, encoding: .utf8) else {
-            throw SMTPError(.convertDataUTF8Fail(data: buf))
+            throw SMTPError.convertDataUTF8Fail(data: buf)
         }
         Log.debug(responses)
         return responses
@@ -94,7 +94,7 @@ extension SMTPSocket {
     static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
         let resArr = responses.components(separatedBy: CRLF)
         guard !resArr.isEmpty else {
-            throw SMTPError(.badResponse(command: command.text, response: responses))
+            throw SMTPError.badResponse(command: command.text, response: responses)
         }
         var validResponses = [Response]()
         for res in resArr {
@@ -110,23 +110,23 @@ extension SMTPSocket {
     // Throws an error if no/invalid response code found
     static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
         guard response.count > 3 else {
-            throw SMTPError(.badResponse(command: command.text, response: response))
+            throw SMTPError.badResponse(command: command.text, response: response)
         }
 
         #if swift(>=3.2)
             guard let code = Int(response[..<response.index(response.startIndex, offsetBy: 3)]) else {
-                throw SMTPError(.badResponse(command: command.text, response: response))
+                throw SMTPError.badResponse(command: command.text, response: response)
             }
         #else
             guard let code = Int(response.substring(to: response.index(response.startIndex, offsetBy: 3))) else {
-                throw SMTPError(.badResponse(command: command.text, response: response))
+                throw SMTPError.badResponse(command: command.text, response: response)
             }
         #endif
 
         guard
             response.count > 2,
             command.expectedResponseCodes.map({ $0.rawValue }).contains(code) else {
-                throw SMTPError(.badResponse(command: command.text, response: response))
+                throw SMTPError.badResponse(command: command.text, response: response)
         }
         return ResponseCode(code)
     }

@@ -16,6 +16,11 @@
 
 import Foundation
 
+enum Result<T, Error> {
+    case success(T)
+    case failure(Error)
+}
+
 let CRLF = "\r\n"
 
 extension String {
@@ -23,7 +28,6 @@ extension String {
         guard let encoded = addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
             return nil
         }
-
         let quoted = encoded
             .replacingOccurrences(of: "%20", with: "_")
             .replacingOccurrences(of: ",", with: "%2C")

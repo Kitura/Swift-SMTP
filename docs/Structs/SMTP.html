@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SMTP Struct Reference</title>
+    <title>SMTP Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -16,7 +16,7 @@
 
     <a name="//apple_ref/swift/Struct/SMTP" class="dashAnchor"></a>
 
-    <a title="SMTP Struct Reference"></a>
+    <a title="SMTP Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -44,20 +44,17 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">SwiftSMTP Reference</a>
       <img class="carat" src="../img/carat.png" />
-      SMTP Struct Reference
+      SMTP Structure Reference
     </p>
 
     <div class="content-wrapper">
       <nav class="navigation">
         <ul class="nav-groups">
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enums</a>
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthMethod.html">AuthMethod</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Ports.html">Ports</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/SMTPError.html">SMTPError</a>
@@ -65,7 +62,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Attachment.html">Attachment</a>
@@ -77,18 +74,10 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SSL.html">SSL</a>
+                <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/User.html">User</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a>
               </li>
             </ul>
           </li>
@@ -105,7 +94,7 @@
 
                 </div>
               </div>
-            <p>Represents a handle to connect to and send emails to an SMTP server.</p>
+            <p>Represents a handle to connect, authenticate, and send emails to an SMTP server.</p>
 
           </div>
         </section>
@@ -117,9 +106,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTPcFT8hostnameSS5emailSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSu_S0_"></a>
-                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:ssl:authMethods:domainName:accessToken:timeout:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTPcFT8hostnameSS5emailSS8passwordSS4portVs5Int323sslGSqVS_3SSL_11authMethodsGSaOS_10AuthMethod_10domainNameSS11accessTokenGSqSS_7timeoutSu_S0_">init(hostname:email:password:port:ssl:authMethods:domainName:accessToken:timeout:)</a>
+                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSSSg11accessTokenSS10domainNameSu7timeouttcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:accessToken:domainName:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSSSg11accessTokenSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:accessToken:domainName:timeout:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -133,12 +122,9 @@
     <p>Note:</p>
 
 <ul>
-<li>Some servers like Gmail support IPv6, and if your network does 
-not, you will first attempt to connect via IPv6, then timeout, and 
-fall back to IPv4. You can avoid this by disabling IPv6 on your 
-machine.</li>
-<li>You may need to enable access for less secure apps in your account
-on the SMTP server.</li>
+<li>Some servers like Gmail support IPv6, and if your network does  not, you will first attempt to connect via
+IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 on your machine.</li>
+<li>You may need to enable access for less secure apps in your account on the SMTP server.</li>
 </ul>
 
 </div>
@@ -149,14 +135,15 @@ on the SMTP server.</li>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                <span class="nv">port</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a></span> <span class="o">=</span> <span class="kt"><a href="../Enums/Ports.html">Ports</a></span><span class="o">.</span><span class="n">tls</span><span class="o">.</span><span class="n">rawValue</span><span class="p">,</span>
-                <span class="nv">ssl</span><span class="p">:</span> <span class="kt"><a href="../Structs/SSL.html">SSL</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-                <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
-                <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code></pre>
+            <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">465</span><span class="p">,</span>
+            <span class="nv">useTLS</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">tlsConfiguration</span><span class="p">:</span> <span class="kt"><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+            <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -172,15 +159,15 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p>Hostname of the SMTP server to connect to. Should not
-        include any scheme&ndash;ie <code>smtp.example.com</code> is valid.</p>
+                                  <p>Hostname of the SMTP server to connect to.
+        Should not include any scheme&ndash;ie <code>smtp.example.com</code> is valid.</p>
                                 </div>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <code>
-                                <em>user</em>
+                                <em>email</em>
                                 </code>
                               </td>
                               <td>
@@ -209,24 +196,33 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>Port</code> to connect to the server on. Defaults to <code>587</code>.</p>
+                                  <p>Port to connect to the server on. Defaults to <code>465</code>.</p>
                                 </div>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <code>
-                                <em>ssl</em>
+                                <em>useTLS</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>SSL</code> containing configuration info for connecting securely
-   through SSL/TLS. If your server has the option to use SSL,
-   Swift-SMTP will automatically attempt to upgrade the 
-   connection. If you don&rsquo;t provide an SSL configuration, 
-   Swift-SMTP defaults to an SSL configuration with no backing 
-   certificates. See <code>SSL</code> for other configuration options.</p>
+                                  <p><code>Bool</code> indicating whether to connect with TLS. Your server must support the <code>STARTTLS</code> command.
+      Defaults to <code>true</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tlsConfiguration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></code> used to connect with TLS. If nil, a configuration with no backing
+                certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></code> for other configuration options.</p>
                                 </div>
                               </td>
                             </tr>
@@ -238,21 +234,7 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>AuthMethod</code>s to use to log in to the
-           server. Defaults to <code>CRAM-MD5</code>, <code>LOGIN</code>, and <code>PLAIN</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>domainName</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Client domain name used when communicating with the
-          server. Defaults to <code>localhost</code>.</p>
+                                  <p><code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s to use to log in to the server. Defaults to <code>CRAM-MD5</code>, <code>LOGIN</code>, and <code>PLAIN</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -264,8 +246,19 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p>Access token used if logging in through <code>XOAUTH2</code>.
-           (optional)</p>
+                                  <p>Access token used IFF logging in through <code>XOAUTH2</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>domainName</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Client domain name used when communicating with the server. Defaults to <code>localhost</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -277,8 +270,7 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p>How long to try connecting to the server to before
-       returning an error. Defaults to <code>10</code> seconds.</p>
+                                  <p>How long to try connecting to the server to before returning an error. Defaults to <code>10</code> seconds.</p>
                                 </div>
                               </td>
                             </tr>
@@ -291,9 +283,9 @@ on the SMTP server.</li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_"></a>
+                    <a name="/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF"></a>
                     <a name="//apple_ref/swift/Method/send(_:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTP4sendFTVS_4Mail10completionGSqFGSqPs5Error__T___T_">send(_:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF">send(_:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -324,7 +316,7 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>Mail</code> object to send.</p>
+                                  <p><code><a href="../Structs/Mail.html">Mail</a></code> object to send.</p>
                                 </div>
                               </td>
                             </tr>
@@ -336,8 +328,7 @@ on the SMTP server.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p>Callback when sending finishes. <code>Error</code> is nil on
-          success. (optional)</p>
+                                  <p>Callback when sending finishes. <code>Error</code> is nil on success. (optional)</p>
                                 </div>
                               </td>
                             </tr>
@@ -350,9 +341,9 @@ on the SMTP server.</li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_"></a>
+                    <a name="/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF"></a>
                     <a name="//apple_ref/swift/Method/send(_:progress:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4SMTP4sendFTGSaVS_4Mail_8progressGSqFTS1_GSqPs5Error___T__10completionGSqFTGSaS1__GSaTS1_PS2_____T___T_">send(_:progress:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF">send(_:progress:completion:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -366,15 +357,14 @@ on the SMTP server.</li>
     <p>Note:</p>
 
 <ul>
-<li>If any of the emails addresses in a <code><a href="../Structs/Mail.html">Mail</a></code>&lsquo;s <code>to</code>, <code>cc</code>, or <code>bcc</code>
-are invalid, the entire mail will not send and return an
-<code><a href="../Enums/SMTPError.html">SMTPError</a></code>.</li>
-<li>If an individual <code><a href="../Structs/Mail.html">Mail</a></code> fails while sending an array of <code><a href="../Structs/Mail.html">Mail</a></code>s,
-the whole sending process will not stop until all pending <code><a href="../Structs/Mail.html">Mail</a></code>s
-are attempted.</li>
-<li>Each call to <code>send</code> queues it&rsquo;s <code><a href="../Structs/Mail.html">Mail</a></code>s and sends them one by one.
-To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send them in separate calls to
-<code>send</code>.</li>
+<li>Each call to <code>send</code> will first log in to your server, attempt to send the mails, then closes the
+connection. Pass in an array of <code><a href="../Structs/Mail.html">Mail</a></code>s to send them all in one session.</li>
+<li>If any of the email addresses in a <code><a href="../Structs/Mail.html">Mail</a></code>&lsquo;s <code>to</code>, <code>cc</code>, or <code>bcc</code> are invalid, the entire mail will not
+send and return an <code><a href="../Enums/SMTPError.html">SMTPError</a></code>.</li>
+<li>If an individual <code><a href="../Structs/Mail.html">Mail</a></code> fails while sending an array of <code><a href="../Structs/Mail.html">Mail</a></code>s, the whole sending process will continue
+until all pending <code><a href="../Structs/Mail.html">Mail</a></code>s are attempted.</li>
+<li>Each call to <code>send</code> queues it&rsquo;s <code><a href="../Structs/Mail.html">Mail</a></code>s and sends them one by one. To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send them
+in separate calls to <code>send</code>.</li>
 </ul>
 
 </div>
@@ -385,8 +375,8 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mails</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">],</span>
-                     <span class="nv">progress</span><span class="p">:</span> <span class="kt">Progress</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                     <span class="nv">completion</span><span class="p">:</span> <span class="kt">Completion</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                 <span class="nv">progress</span><span class="p">:</span> <span class="kt">Progress</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="nv">completion</span><span class="p">:</span> <span class="kt">Completion</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -402,7 +392,7 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of <code>Mail</code>s to send.</p>
+                                  <p>Array of <code><a href="../Structs/Mail.html">Mail</a></code>s to send.</p>
                                 </div>
                               </td>
                             </tr>
@@ -414,9 +404,8 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
                               </td>
                               <td>
                                 <div>
-                                  <p>(<code>Mail</code>, <code>Error</code>) callback after each <code>Mail</code> is sent.
-        <code>Mail</code> is the <code>Mail</code> sent and <code>Error</code> is the error if it
-        failed. (optional)</p>
+                                  <p>(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>) callback after each <code><a href="../Structs/Mail.html">Mail</a></code> is sent. <code><a href="../Structs/Mail.html">Mail</a></code> is the <code><a href="../Structs/Mail.html">Mail</a></code> sent and <code>Error</code> is
+        the error if it failed. (optional)</p>
                                 </div>
                               </td>
                             </tr>
@@ -428,11 +417,9 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
                               </td>
                               <td>
                                 <div>
-                                  <p>([<code>Mail</code>], [(<code>Mail</code>, <code>Error</code>)]) callback after all
-          <code>Mail</code>s have been attempted. [<code>Mail</code>] is an array of
-          successfully sent <code>Mail</code>s. [(<code>Mail</code>, <code>Error</code>)] is an
-          array of failed <code>Mail</code>s and their corresponding
-          <code>Error</code>s. (optional)</p>
+                                  <p>([<code><a href="../Structs/Mail.html">Mail</a></code>], [(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>)]) callback after all <code><a href="../Structs/Mail.html">Mail</a></code>s have been attempted. [<code><a href="../Structs/Mail.html">Mail</a></code>] is an
+          array of successfully sent <code><a href="../Structs/Mail.html">Mail</a></code>s. [(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>)] is an array of failed <code><a href="../Structs/Mail.html">Mail</a></code>s and
+          their corresponding <code>Error</code>s. (optional)</p>
                                 </div>
                               </td>
                             </tr>
@@ -450,8 +437,8 @@ To send <code><a href="../Structs/Mail.html">Mail</a></code>s concurrently, send
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

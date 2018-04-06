@@ -23,29 +23,21 @@ import Foundation
 
 let testDuration: Double = 15
 
-// Fill in your own SMTP login info for local testing
-// DO NOT CHECK IN YOUR OWN EMAIL CREDENTALS!!!
-let localHostname: String? = nil
-let localEmail: String? = nil
-let localPassword: String? = nil
-let localPort: SwiftSMTP.Port? = nil
-let localSecure: Bool? = nil
-let localAuthMethods: [AuthMethod]? = nil
-
-let validMessageIdMsg = "Valid Message-Id header found"
-let invalidMessageIdMsg = "Message-Id header missing or invalid"
-let multipleMessageIdsMsg = "More than one Message-Id header found"
-
-let hostname: String = {
-    if let localHostname = localHostname {
-        return localHostname
-    }
-    return "smtp.gmail.com"
-}()
+// 📧📧📧 Fill in your own SMTP login info for local testing
+// ⚠️⚠️⚠️ DO NOT CHECK IN YOUR EMAIL CREDENTALS!!!
+let hostname = "smtp.gmail.com"
+let myEmail: String? = nil
+let myPassword: String? = nil
+let port: Int32 = 465
+let useTLS = true
+let authMethods: [AuthMethod] = [.cramMD5, .login, .plain]
+let accessToken: String? = nil
+let domainName = "localhost"
+let timeout: UInt = 10
 
 let email: String = {
-    if let localEmail = localEmail {
-        return localEmail
+    if let email = myEmail {
+        return email
     }
     guard let email = ProcessInfo.processInfo.environment["EMAIL"] else {
         fatalError("Please provide email credentials for local testing.")
@@ -54,8 +46,8 @@ let email: String = {
 }()
 
 let password: String = {
-    if let localPassword = localPassword {
-        return localPassword
+    if let password = myPassword {
+        return password
     }
     guard let password = ProcessInfo.processInfo.environment["PASSWORD"] else {
         fatalError("Please provide email credentials for local testing.")
@@ -63,58 +55,27 @@ let password: String = {
     return password
 }()
 
-let port: SwiftSMTP.Port = {
-    if let localPort = localPort {
-        return localPort
-    } else {
-        return Ports.tls.rawValue
-    }
-}()
-
-let secure: Bool = {
-    if let localSecure = localSecure {
-        return localSecure
-    } else {
-        return true
-    }
-}()
-
-let authMethods: [AuthMethod] = {
-    if let localAuthMethods = localAuthMethods {
-        return localAuthMethods
-    } else {
-        return [.cramMD5, .login, .plain]
-    }
-}()
-
 let senderEmailDomain: String = {
-	let senderEmail = email
-	if let atIndex = senderEmail.index(of: "@") {
-		let domainStart = senderEmail.index(after: atIndex)
-
-        #if swift(>=3.2)
-            let domainVal = String(senderEmail[domainStart...])
-        #else
-            let domainVal = senderEmail.substring(from: domainStart)
-        #endif
-
-		return domainVal
+	if let atIndex = email.index(of: "@") {
+		let domainStart = email.index(after: atIndex)
+        return String(email[domainStart...])
     } else {
         return "gmail.com"
     }
 }()
 
-let domainName = "localhost"
-let timeout: UInt = 10
+let testsDir: String = {
+    return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path
+}()
 
 #if os(Linux)
 let cert = testsDir + "/cert.pem"
 let key = testsDir + "/key.pem"
-let ssl = SSL(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
+let tlsConfiguration = TLSConfiguration(withCACertificateDirectory: nil, usingCertificateFile: cert, withKeyFile: key)
 #else
 let cert = testsDir + "/cert.pfx"
 let certPassword = "kitura"
-let ssl = SSL(withChainFilePath: cert, withPassword: certPassword)
+let tlsConfiguration = TLSConfiguration(withChainFilePath: cert, withPassword: certPassword)
 #endif
 
 let smtp = SMTP(hostname: hostname, email: email, password: password)
@@ -126,9 +87,9 @@ let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/
 let imgFilePath = testsDir + "/x.png"
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
 
-let testsDir: String = {
-    return URL(fileURLWithPath: #file).appendingPathComponent("..").standardized.path
-}()
+let validMessageIdMsg = "Valid Message-Id header found"
+let invalidMessageIdMsg = "Message-Id header missing or invalid"
+let multipleMessageIdsMsg = "More than one Message-Id header found"
 
 // https://www.base64decode.org/
 let randomText1 = "Picture removal detract earnest is by. Esteems met joy attempt way clothes yet demesne tedious. Replying an marianne do it an entrance advanced. Two dare say play when hold. Required bringing me material stanhill jointure is as he. Mutual indeed yet her living result matter him bed whence."
