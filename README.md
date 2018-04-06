@@ -15,8 +15,7 @@ Swift SMTP client.
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
-- [Fully documented](https://ibm-swift.github.io/Swift-SMTP/)
-- [Demo & blog post](https://developer.ibm.com/swift/2017/05/31/4675/)
+- [Documentation](https://ibm-swift.github.io/Swift-SMTP/)
 
 ## Swift Version
 
