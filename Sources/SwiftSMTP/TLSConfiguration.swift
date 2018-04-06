@@ -121,7 +121,7 @@ public struct TLSConfiguration {
     public init(withPEMCertificateString certificateString: String,
                 usingSelfSignedCerts selfSigned: Bool = true,
                 cipherSuite: String? = nil) {
-        config = SSLService.Configuration(
+        configuration = SSLService.Configuration(
             withPEMCertificateString: certificateString,
             usingSelfSignedCerts: selfSigned,
             cipherSuite: cipherSuite
