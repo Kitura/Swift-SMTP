@@ -22,6 +22,10 @@ Swift SMTP client.
 
 macOS & Linux: `Swift 4.0.3`
 
+## Migration Guide
+
+Version 3.0.0 brings breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
+
 ## Usage
 
 Use the `SMTP` struct as a handle to your SMTP server:
