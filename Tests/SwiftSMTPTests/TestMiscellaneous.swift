@@ -23,12 +23,12 @@ import XCTest
 
 class TestMiscellaneous: XCTestCase {
     static var allTests = [
+        ("testBase64Encoded", testBase64Encoded),
+        ("testMimeEncoded", testMimeEncoded),
         ("testDateFormatter", testDateFormatter),
         ("testMailHeaders", testMailHeaders),
         ("testMimeNoName", testMimeNoName),
-        ("testMimeWithName", testMimeWithName),
-        ("testBase64Encoded", testBase64Encoded),
-        ("testMimeEncoded", testMimeEncoded)
+        ("testMimeWithName", testMimeWithName)
     ]
 }
 
@@ -84,26 +84,8 @@ extension TestMiscellaneous {
         XCTAssert(headers.contains("HEADER"), "Mail header did not contain \"header\".")
         XCTAssert(headers.contains("val"), "Mail header did not contain \"val\".")
     }
-}
 
-// User
-extension TestMiscellaneous {
-    func testMimeNoName() {
-        let user = User(email: "bob@gmail.com")
-        let expected = "bob@gmail.com"
-        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
-    }
-
-    func testMimeWithName() {
-        let user = User(name: "Bob", email: "bob@gmail.com")
-        let expected = "=?UTF-8?Q?Bob?= <bob@gmail.com>"
-        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
-    }
-}
-
-// Utilities
-extension TestMiscellaneous {
-    fileprivate func findMessageId(inString compareString: String) -> String {
+    private func findMessageId(inString compareString: String) -> String {
         let messageIdHeaderPrefix = "MESSAGE-ID: <"
         // example uuid: E621E1F8-C36C-495A-93FC-0C247A3E6E5F
         let uuidRegEx = "[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}"
@@ -129,5 +111,20 @@ extension TestMiscellaneous {
         default:
             return multipleMessageIdsMsg
         }
+    }
+}
+
+// User
+extension TestMiscellaneous {
+    func testMimeNoName() {
+        let user = User(email: "bob@gmail.com")
+        let expected = "bob@gmail.com"
+        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
+    }
+
+    func testMimeWithName() {
+        let user = User(name: "Bob", email: "bob@gmail.com")
+        let expected = "=?UTF-8?Q?Bob?= <bob@gmail.com>"
+        XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
     }
 }

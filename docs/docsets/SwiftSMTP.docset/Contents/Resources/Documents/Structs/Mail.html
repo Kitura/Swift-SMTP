@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Mail Struct Reference</title>
+    <title>Mail Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -16,7 +16,7 @@
 
     <a name="//apple_ref/swift/Struct/Mail" class="dashAnchor"></a>
 
-    <a title="Mail Struct Reference"></a>
+    <a title="Mail Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -44,20 +44,17 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">SwiftSMTP Reference</a>
       <img class="carat" src="../img/carat.png" />
-      Mail Struct Reference
+      Mail Structure Reference
     </p>
 
     <div class="content-wrapper">
       <nav class="navigation">
         <ul class="nav-groups">
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enums</a>
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthMethod.html">AuthMethod</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Ports.html">Ports</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/SMTPError.html">SMTPError</a>
@@ -65,7 +62,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Attachment.html">Attachment</a>
@@ -77,18 +74,10 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SSL.html">SSL</a>
+                <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/User.html">User</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a>
               </li>
             </ul>
           </li>
@@ -117,9 +106,281 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:vV9SwiftSMTP4Mail2idSS"></a>
+                    <a name="/s:9SwiftSMTP4MailV4uuidSSv"></a>
+                    <a name="//apple_ref/swift/Property/uuid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV4uuidSSv">uuid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A UUID for the mail.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">uuid</span> <span class="o">=</span> <span class="kt">UUID</span><span class="p">()</span><span class="o">.</span><span class="n">uuidString</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV4fromAA4UserVv"></a>
+                    <a name="//apple_ref/swift/Property/from" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV4fromAA4UserVv">from</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The <code><a href="../Structs/User.html">User</a></code> that the <code>Mail</code> will be sent from.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">from</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV2toSayAA4UserVGv"></a>
+                    <a name="//apple_ref/swift/Property/to" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV2toSayAA4UserVGv">to</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array of <code><a href="../Structs/User.html">User</a></code>s to send the <code>Mail</code> to.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV2ccSayAA4UserVGv"></a>
+                    <a name="//apple_ref/swift/Property/cc" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV2ccSayAA4UserVGv">cc</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array of <code><a href="../Structs/User.html">User</a></code>s to cc. Defaults to none.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV3bccSayAA4UserVGv"></a>
+                    <a name="//apple_ref/swift/Property/bcc" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV3bccSayAA4UserVGv">bcc</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array of <code><a href="../Structs/User.html">User</a></code>s to bcc. Defaults to none.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV7subjectSSv"></a>
+                    <a name="//apple_ref/swift/Property/subject" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV7subjectSSv">subject</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Subject of the <code>Mail</code>. Defaults to none.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">subject</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV4textSSv"></a>
+                    <a name="//apple_ref/swift/Property/text" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV4textSSv">text</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Text of the <code>Mail</code>. Defaults to none.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV11attachmentsSayAA10AttachmentVGv"></a>
+                    <a name="//apple_ref/swift/Property/attachments" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV11attachmentsSayAA10AttachmentVGv">attachments</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array of <code><a href="../Structs/Attachment.html">Attachment</a></code>s for the <code>Mail</code>. If the <code>Mail</code> has multiple <code><a href="../Structs/Attachment.html">Attachment</a></code>s that are alternatives to plain
+text, the last one will be used as the alternative (all the <code>Attachments</code> will still be sent). Defaults to none.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV11alternativeAA10AttachmentVSgv"></a>
+                    <a name="//apple_ref/swift/Property/alternative" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV11alternativeAA10AttachmentVSgv">alternative</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attachment that is an alternative to plain text.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">alternative</span><span class="p">:</span> <span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV17additionalHeaderss10DictionaryVyS2SGv"></a>
+                    <a name="//apple_ref/swift/Property/additionalHeaders" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV17additionalHeaderss10DictionaryVyS2SGv">additionalHeaders</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Additional headers for the <code>Mail</code>. Header keys are capitalized and duplicate keys will overwrite each other.
+Defaults to none. The following will be ignored: CONTENT-TYPE, CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailV2idSSv"></a>
                     <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
-                    <a class="token" href="#/s:vV9SwiftSMTP4Mail2idSS">id</a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV2idSSv">id</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -144,9 +405,36 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP4MailcFT4fromVS_4User2toGSaS1__2ccGSaS1__3bccGSaS1__7subjectSS4textSS11attachmentsGSaVS_10Attachment_17additionalHeadersGVs10DictionarySSSS__S0_"></a>
+                    <a name="/s:9SwiftSMTP4MailV8hostnameSSv"></a>
+                    <a name="//apple_ref/swift/Property/hostname" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailV8hostnameSSv">hostname</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hostname from the email address.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:9SwiftSMTP4MailVAcA4UserV4from_SayAEG2toAG2ccAG3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc"></a>
                     <a name="//apple_ref/swift/Method/init(from:to:cc:bcc:subject:text:attachments:additionalHeaders:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP4MailcFT4fromVS_4User2toGSaS1__2ccGSaS1__3bccGSaS1__7subjectSS4textSS11attachmentsGSaVS_10Attachment_17additionalHeadersGVs10DictionarySSSS__S0_">init(from:to:cc:bcc:subject:text:attachments:additionalHeaders:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP4MailVAcA4UserV4from_SayAEG2toAG2ccAG3bccSS7subjectSS4textSayAA10AttachmentVG11attachmentss10DictionaryVyS2SG17additionalHeaderstcfc">init(from:to:cc:bcc:subject:text:attachments:additionalHeaders:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -162,13 +450,13 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span>
-                <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">],</span>
-                <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-                <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-                <span class="nv">subject</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-                <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-                <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-                <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:])</span></code></pre>
+            <span class="nv">to</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">],</span>
+            <span class="nv">cc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">bcc</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">subject</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+            <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+            <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:])</span></code></pre>
 
                         </div>
                       </div>
@@ -179,25 +467,12 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>hostname</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Hostname of the SMTP server to connect to. Should not
-        include any scheme&ndash;ie <code>smtp.example.com</code> is valid.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
                                 <em>from</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>The <code>User</code> that the <code>Mail</code> will be sent from.</p>
+                                  <p>The <code><a href="../Structs/User.html">User</a></code> that the <code>Mail</code> will be sent from.</p>
                                 </div>
                               </td>
                             </tr>
@@ -209,7 +484,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of <code>User</code>s to send the <code>Mail</code> to.</p>
+                                  <p>Array of <code><a href="../Structs/User.html">User</a></code>s to send the <code>Mail</code> to.</p>
                                 </div>
                               </td>
                             </tr>
@@ -221,7 +496,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of <code>User</code>s to cc. Defaults to none.</p>
+                                  <p>Array of <code><a href="../Structs/User.html">User</a></code>s to cc. Defaults to none.</p>
                                 </div>
                               </td>
                             </tr>
@@ -233,7 +508,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of <code>User</code>s to bcc. Defaults to none.</p>
+                                  <p>Array of <code><a href="../Structs/User.html">User</a></code>s to bcc. Defaults to none.</p>
                                 </div>
                               </td>
                             </tr>
@@ -269,11 +544,9 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of <code>Attachment</code>s for the <code>Mail</code>. If the <code>Mail</code>
-           has multiple <code>Attachment</code>s that are alternatives to
-           to plain text, the last one will be used as the
-           alternative (all the <code>Attachments</code> will still be
-           sent). Defaults to none.</p>
+                                  <p>Array of <code><a href="../Structs/Attachment.html">Attachment</a></code>s for the <code>Mail</code>. If the <code>Mail</code> has multiple <code><a href="../Structs/Attachment.html">Attachment</a></code>s that are
+           alternatives to plain text, the last one will be used as the alternative (all the
+           <code>Attachments</code> will still be sent). Defaults to none.</p>
                                 </div>
                               </td>
                             </tr>
@@ -285,10 +558,8 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>Additional headers for the <code>Mail</code>. Header keys
-                 are capitalized and duplicate keys will 
-                 overwrite each other. Defaults to none. The
-                 following will be ignored: CONTENT-TYPE,
+                                  <p>Additional headers for the <code>Mail</code>. Header keys are capitalized and duplicate keys will
+                 overwrite each other. Defaults to none. The following will be ignored: CONTENT-TYPE,
                  CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.</p>
                                 </div>
                               </td>
@@ -307,8 +578,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

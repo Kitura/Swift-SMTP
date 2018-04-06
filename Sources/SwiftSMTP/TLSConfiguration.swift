@@ -17,12 +17,9 @@
 import Foundation
 import SSLService
 
-/// Configuration to connect securely through SSL/TLS.
-/// Create an `SSL` based on your requirements and pass it along to your `SMTP`
-/// struct as an initialization parameter.
-/// https://github.com/IBM-Swift/BlueSSLService
-public struct SSL {
-    let config: SSLService.Configuration
+/// Configuration for connecting with TLS. For more info, see https://github.com/IBM-Swift/BlueSSLService.
+public struct TLSConfiguration {
+    private let configuration: SSLService.Configuration
 
     ///
     /// Initialize a configuration with no backing certificates.
@@ -31,8 +28,12 @@ public struct SSL {
     ///		- cipherSuite:					Optional String containing the cipher suite to use.
     ///		- clientAllowsSelfSignedCertificates:
     ///										`true` to accept self-signed certificates from a server. `false` otherwise.
-    public init(withCipherSuite cipherSuite: String? = nil, clientAllowsSelfSignedCertificates: Bool = false) {
-        config = SSLService.Configuration(withCipherSuite: cipherSuite, clientAllowsSelfSignedCertificates: clientAllowsSelfSignedCertificates)
+    public init(withCipherSuite cipherSuite: String? = nil,
+                clientAllowsSelfSignedCertificates: Bool = false) {
+        configuration = SSLService.Configuration(
+            withCipherSuite: cipherSuite,
+            clientAllowsSelfSignedCertificates: clientAllowsSelfSignedCertificates
+        )
     }
 
     ///
@@ -44,8 +45,18 @@ public struct SSL {
     ///		- keyFilePath:				Path to the PEM formatted key file. If nil, `certificateFilePath` will be used.
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
-    public init(withCACertificateFilePath caCertificateFilePath: String?, usingCertificateFile certificateFilePath: String?, withKeyFile keyFilePath: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = SSLService.Configuration(withCACertificateFilePath: caCertificateFilePath, usingCertificateFile: certificateFilePath, withKeyFile: keyFilePath, usingSelfSignedCerts: selfSigned, cipherSuite: cipherSuite)
+    public init(withCACertificateFilePath caCertificateFilePath: String?,
+                usingCertificateFile certificateFilePath: String?,
+                withKeyFile keyFilePath: String? = nil,
+                usingSelfSignedCerts selfSigned: Bool = true,
+                cipherSuite: String? = nil) {
+        configuration = SSLService.Configuration(
+            withCACertificateFilePath: caCertificateFilePath,
+            usingCertificateFile: certificateFilePath,
+            withKeyFile: keyFilePath,
+            usingSelfSignedCerts: selfSigned,
+            cipherSuite: cipherSuite
+        )
     }
 
     ///
@@ -59,8 +70,18 @@ public struct SSL {
     ///		- keyFilePath:				Path to the PEM formatted key file (optional). If nil, `certificateFilePath` is used.
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
-    public init(withCACertificateDirectory caCertificateDirPath: String?, usingCertificateFile certificateFilePath: String?, withKeyFile keyFilePath: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = SSLService.Configuration(withCACertificateDirectory: caCertificateDirPath, usingCertificateFile: certificateFilePath, withKeyFile: keyFilePath, usingSelfSignedCerts: selfSigned, cipherSuite: cipherSuite)
+    public init(withCACertificateDirectory caCertificateDirPath: String?,
+                usingCertificateFile certificateFilePath: String?,
+                withKeyFile keyFilePath: String? = nil,
+                usingSelfSignedCerts selfSigned: Bool = true,
+                cipherSuite: String? = nil) {
+        configuration = SSLService.Configuration(
+            withCACertificateDirectory: caCertificateDirPath,
+            usingCertificateFile: certificateFilePath,
+            withKeyFile: keyFilePath,
+            usingSelfSignedCerts: selfSigned,
+            cipherSuite: cipherSuite
+        )
     }
 
     ///
@@ -74,8 +95,19 @@ public struct SSL {
     ///		- selfSigned:                           True if certs are `self-signed`, false otherwise. Defaults to true.
     ///     - clientAllowsSelfSignedCertificates:   True if, as a client, connections to self-signed servers are allowed
     ///		- cipherSuite:                          Optional String containing the cipher suite to use.
-    public init(withChainFilePath chainFilePath: String?, withPassword password: String? = nil, usingSelfSignedCerts selfSigned: Bool = true, clientAllowsSelfSignedCertificates: Bool = false, cipherSuite: String? = nil) {
-        config = SSLService.Configuration(withChainFilePath: chainFilePath, withPassword: password, usingSelfSignedCerts: selfSigned, clientAllowsSelfSignedCertificates: clientAllowsSelfSignedCertificates, cipherSuite: cipherSuite)
+    public init(withChainFilePath chainFilePath: String?,
+                withPassword password: String? = nil,
+                usingSelfSignedCerts selfSigned: Bool = true,
+                clientAllowsSelfSignedCertificates: Bool = false,
+                cipherSuite: String? = nil) {
+        configuration = SSLService.Configuration(
+            withChainFilePath: chainFilePath,
+            withPassword: password,
+            usingSelfSignedCerts: selfSigned,
+            clientAllowsSelfSignedCertificates:
+            clientAllowsSelfSignedCertificates,
+            cipherSuite: cipherSuite
+        )
     }
 
     #if os(Linux)
@@ -86,12 +118,18 @@ public struct SSL {
     ///		- certificateString:		PEM formatted certificate in String form.
     ///		- selfSigned:				True if certs are `self-signed`, false otherwise. Defaults to true.
     ///		- cipherSuite:				Optional String containing the cipher suite to use.
-    public init(withPEMCertificateString certificateString: String, usingSelfSignedCerts selfSigned: Bool = true, cipherSuite: String? = nil) {
-        config = SSLService.Configuration(withPEMCertificateString: certificateString, usingSelfSignedCerts: selfSigned, cipherSuite: cipherSuite)
+    public init(withPEMCertificateString certificateString: String,
+                usingSelfSignedCerts selfSigned: Bool = true,
+                cipherSuite: String? = nil) {
+        configuration = SSLService.Configuration(
+            withPEMCertificateString: certificateString,
+            usingSelfSignedCerts: selfSigned,
+            cipherSuite: cipherSuite
+        )
     }
     #endif
 
     func makeSSLService() throws -> SSLService? {
-        return try SSLService(usingConfiguration: config)
+        return try SSLService(usingConfiguration: configuration)
     }
 }

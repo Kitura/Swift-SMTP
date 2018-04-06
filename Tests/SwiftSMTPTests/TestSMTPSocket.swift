@@ -43,7 +43,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.getResponseCode("250-SIZE 35882577", command: .starttls)
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Error should be SMTPError(.badResponse) but received no error or incorrect error.")
+                XCTFail("Error should be SMTPError.badResponse but received no error or incorrect error.")
                 return
             }
         }
@@ -54,7 +54,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.getResponseCode("", command: .auth(.cramMD5, "credentials"))
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Error should be SMTPError(.badResponse) but received no error or incorrect error.")
+                XCTFail("Error should be SMTPError.badResponse but received no error or incorrect error.")
                 return
             }
         }
@@ -91,7 +91,7 @@ extension TestSMTPSocket {
             _ = try SMTPSocket.parseResponses(ehloResponsesBad, command: .ehlo(domainName))
         } catch {
             guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Should return SMTPError(.badResponse), but returned different error or no error.")
+                XCTFail("Should return SMTPError.badResponse, but returned different error or no error.")
                 return
             }
         }

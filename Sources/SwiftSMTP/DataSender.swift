@@ -18,15 +18,13 @@ import Foundation
 
 // Used to send the content of an email--headers, text, and attachments.
 // Should only be invoked after sending the `DATA` command to the server.
-// The email is not actually sent until we have indicated that we are done
-// sending its contents with a `CRLF CRLF`.
+// The email is not actually sent until we have indicated that we are done sending its contents with a `CRLF CRLF`.
 // This is handled by `Sender`.
 struct DataSender {
     // Socket we use to read and write data to
     let socket: SMTPSocket
 
-    // Cache for attachments. This saves us from encoding data or creating
-    // files from local files more than we need to.
+    // Cache for attachments. This saves us from encoding data or creating files from local files more than we need to.
     lazy var cache = NSCache<AnyObject, AnyObject>()
 
     // Init a new instance of `DataSender`
@@ -70,8 +68,7 @@ extension DataSender {
         try sendAttachments(mail.attachments, boundary: boundary)
     }
 
-    // If `mail` has an attachment that is an alternative to plain text, sends
-    // that attachment and the plain text.
+    // If `mail` has an attachment that is an alternative to plain text, sends that attachment and the plain text.
     // Else just sends the plain text.
     mutating func sendAlternative(for mail: Mail) throws {
         if let alternative = mail.alternative {
@@ -152,8 +149,7 @@ extension DataSender {
         #endif
     }
 
-    // Sends a local file at the given path. File must be base 64 encoded
-    // before sending. Checks the cache first.
+    // Sends a local file at the given path. File must be base 64 encoded before sending. Checks the cache first.
     // Throws an error if file could not be found.
     mutating func sendFile(at path: String) throws {
         #if os(macOS)
@@ -167,7 +163,7 @@ extension DataSender {
         #endif
 
         guard let file = FileHandle(forReadingAtPath: path) else {
-            throw SMTPError(.fileNotFound(path: path))
+            throw SMTPError.fileNotFound(path: path)
         }
 
         let data = file.readDataToEndOfFile().base64EncodedData()
@@ -218,8 +214,7 @@ private extension DataSender {
 }
 
 private extension String {
-    // Embed plain text content of emails with the proper headers so that it is
-    // rendered correctly.
+    // Embed plain text content of emails with the proper headers so that it is endered correctly.
     var embedded: String {
         var embeddedText = ""
         embeddedText += "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)"
@@ -229,8 +224,7 @@ private extension String {
         return embeddedText
     }
 
-    // The SMTP protocol requires unique boundaries between sections of an 
-    // email.
+    // The SMTP protocol requires unique boundaries between sections of an email.
     static func makeBoundary() -> String {
         return UUID().uuidString.replacingOccurrences(of: "-", with: "")
     }
@@ -245,15 +239,13 @@ private extension String {
         return "CONTENT-TYPE: multipart/alternative; boundary=\"\(boundary)\"\(CRLF)"
     }
 
-    // Header for an attachment that is related to another attachment.
-    // (Such as an image attachment that can be referenced by a related HTML
-    // attachment)
+    // Header for an attachment that is related to another attachment. (Such as an image attachment that can be
+    // referenced by a related HTML attachment)
     static func makeRelatedHeader(boundary: String) -> String {
         return "CONTENT-TYPE: multipart/related; boundary=\"\(boundary)\"\(CRLF)"
     }
 
-    // Added to a boundary to indicate the beginning of the corresponding
-    // section.
+    // Added to a boundary to indicate the beginning of the corresponding section.
     var startLine: String {
         return "--\(self)"
     }

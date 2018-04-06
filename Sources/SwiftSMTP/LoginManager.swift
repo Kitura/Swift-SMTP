@@ -20,81 +20,68 @@ import Foundation
     import Dispatch
 #endif
 
-enum LoginResult {
-    case success(SMTPSocket)
-    case failure(Error)
+protocol LoginManaging {
+    func login(completion: (Result<SMTPSocket, Error>) -> Void)
 }
 
-typealias LoginCallback = ((LoginResult) -> Void)
-
-class Login {
-    fileprivate let hostname: String
-    fileprivate let email: String
-    fileprivate let password: String
-    fileprivate let port: Port
-    fileprivate let ssl: SSL?
-    fileprivate let authMethods: [AuthMethod]
-    fileprivate let domainName: String
-    fileprivate let accessToken: String?
-    fileprivate let timeout: UInt
-    fileprivate var callback: LoginCallback
-    fileprivate var socket: SMTPSocket
+class LoginManager: LoginManaging {
+    private let hostname: String
+    private let email: String
+    private let password: String
+    private let port: Int32
+    private let useTLS: Bool
+    private let tlsConfiguration: TLSConfiguration?
+    private let authMethods: [AuthMethod]
+    private let accessToken: String?
+    private let domainName: String
+    private let timeout: UInt
+    private var socket: SMTPSocket!
 
     init(hostname: String,
          email: String,
          password: String,
-         port: Port,
-         ssl: SSL?,
+         port: Int32,
+         useTLS: Bool,
+         tlsConfiguration: TLSConfiguration?,
          authMethods: [AuthMethod],
-         domainName: String,
          accessToken: String?,
-         timeout: UInt,
-         callback: @escaping LoginCallback) throws {
+         domainName: String,
+         timeout: UInt) {
         self.hostname = hostname
         self.email = email
         self.password = password
         self.port = port
-        self.ssl = ssl
+        self.useTLS = useTLS
+        self.tlsConfiguration = tlsConfiguration
         self.authMethods = authMethods
-        self.domainName = domainName
         self.accessToken = accessToken
+        self.domainName = domainName
         self.timeout = timeout * 1000
-        self.callback = callback
-        socket = try SMTPSocket()
     }
 
-    func login() {
+    func login(completion: (Result<SMTPSocket, Error>) -> Void) {
         do {
+            socket = try SMTPSocket()
+            if useTLS {
+                if let tlsConfiguration = tlsConfiguration {
+                    socket.setDelegate(try tlsConfiguration.makeSSLService())
+                } else {
+                    socket.setDelegate(try TLSConfiguration().makeSSLService())
+                }
+            }
             try connect(port)
-            try loginToServer()
-            callback(.success(socket))
+            try login(getServerInfo())
+            completion(.success(socket))
         } catch {
-            callback(.failure(error))
+            completion(.failure(error))
         }
     }
 }
 
-private extension Login {
-    func connect(_ port: Port) throws {
+private extension LoginManager {
+    func connect(_ port: Int32) throws {
         try socket.connect(to: hostname, port: port, timeout: timeout)
         try SMTPSocket.parseResponses(try socket.readFromSocket(), command: .connect)
-    }
-
-    func loginToServer() throws {
-        var serverInfo = try getServerInfo()
-
-        if doesStarttls(serverInfo) {
-            try starttls(ssl)
-            try connect(Ports.ssl.rawValue)
-            serverInfo = try getServerInfo()
-        }
-
-        switch try getAuthMethod(serverInfo) {
-        case .cramMD5: try loginCramMD5()
-        case .login: try loginLogin()
-        case .plain: try loginPlain()
-        case .xoauth2: try loginXOAuth2()
-        }
     }
 
     func getServerInfo() throws -> [Response] {
@@ -105,18 +92,16 @@ private extension Login {
         }
     }
 
-    func doesStarttls(_ serverInfo: [Response]) -> Bool {
-        return serverInfo.contains { $0.message.contains("STARTTLS") }
-    }
-
-    func starttls(_ ssl: SSL?) throws {
-        try starttls()
-        socket.close()
-        socket = try SMTPSocket()
-        if let ssl = ssl {
-            socket.setDelegate(try ssl.makeSSLService())
-        } else {
-            socket.setDelegate(try SSL().makeSSLService())
+    func login(_ serverInfo: [Response]) throws {
+        switch try getAuthMethod(serverInfo) {
+        case .cramMD5:
+            try loginCramMD5()
+        case .login:
+            try loginLogin()
+        case .plain:
+            try loginPlain()
+        case .xoauth2:
+            try loginXOAuth2()
         }
     }
 
@@ -132,11 +117,11 @@ private extension Login {
                 }
             }
         }
-        throw SMTPError(.noSupportedAuthMethods(hostname: hostname))
+        throw SMTPError.noSupportedAuthMethods(hostname: hostname)
     }
 }
 
-private extension Login {
+private extension LoginManager {
     func loginCramMD5() throws {
         let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
         try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: email, password: password))
@@ -150,19 +135,21 @@ private extension Login {
     }
 
     func loginPlain() throws {
-        try auth(authMethod: .plain,
-                 credentials: AuthEncoder.plain(user: email, password: password))
+        try auth(
+            authMethod: .plain,
+            credentials: AuthEncoder.plain(user: email, password: password)
+        )
     }
 
     func loginXOAuth2() throws {
         guard let accessToken = accessToken else {
-            throw SMTPError(.noAccessToken)
+            throw SMTPError.noAccessToken
         }
         try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
     }
 }
 
-private extension Login {
+private extension LoginManager {
     func ehlo() throws -> [Response] {
         return try socket.send(.ehlo(domainName))
     }
@@ -177,11 +164,11 @@ private extension Login {
 
     @discardableResult
     func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
-        let response = try socket.send(.auth(authMethod, credentials))
-        guard response.count == 1 else {
-            throw SMTPError(.badResponse(command: "AUTH", response: response.description))
+        let responses = try socket.send(.auth(authMethod, credentials))
+        guard let response = responses.first else {
+            throw SMTPError.badResponse(command: "AUTH", response: responses.description)
         }
-        return response[0]
+        return response
     }
 
     func authUser(_ user: String) throws {

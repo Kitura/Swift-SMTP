@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>SSL Struct Reference</title>
+    <title>TLSConfiguration Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/swift/Struct/SSL" class="dashAnchor"></a>
+    <a name="//apple_ref/swift/Struct/TLSConfiguration" class="dashAnchor"></a>
 
-    <a title="SSL Struct Reference"></a>
+    <a title="TLSConfiguration Structure Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -44,20 +44,17 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">SwiftSMTP Reference</a>
       <img class="carat" src="../img/carat.png" />
-      SSL Struct Reference
+      TLSConfiguration Structure Reference
     </p>
 
     <div class="content-wrapper">
       <nav class="navigation">
         <ul class="nav-groups">
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Enums.html">Enums</a>
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/AuthMethod.html">AuthMethod</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/Ports.html">Ports</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/SMTPError.html">SMTPError</a>
@@ -65,7 +62,7 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Structs.html">Structs</a>
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Attachment.html">Attachment</a>
@@ -77,18 +74,10 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SSL.html">SSL</a>
+                <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/User.html">User</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../Typealiases.html">Typealiases</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:9SwiftSMTP4Port">Port</a>
               </li>
             </ul>
           </li>
@@ -98,17 +87,14 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>SSL</h1>
+            <h1>TLSConfiguration</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SSL</span></code></pre>
+                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TLSConfiguration</span></code></pre>
 
                 </div>
               </div>
-            <p>Configuration to connect securely through SSL/TLS.
-Create an <code>SSL</code> based on your requirements and pass it along to your <code><a href="../Structs/SMTP.html">SMTP</a></code>
-struct as an initialization parameter.
-<a href="https://github.com/IBM-Swift/BlueSSLService">https://github.com/IBM-Swift/BlueSSLService</a></p>
+            <p>Configuration for connecting with TLS. For more info, see <a href="https://github.com/IBM-Swift/BlueSSLService">https://github.com/IBM-Swift/BlueSSLService</a>.</p>
 
           </div>
         </section>
@@ -120,9 +106,9 @@ struct as an initialization parameter.
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP3SSLcFT15withCipherSuiteGSqSS_34clientAllowsSelfSignedCertificatesSb_S0_"></a>
+                    <a name="/s:9SwiftSMTP16TLSConfigurationVACSSSg15withCipherSuite_Sb34clientAllowsSelfSignedCertificatestcfc"></a>
                     <a name="//apple_ref/swift/Method/init(withCipherSuite:clientAllowsSelfSignedCertificates:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP3SSLcFT15withCipherSuiteGSqSS_34clientAllowsSelfSignedCertificatesSb_S0_">init(withCipherSuite:clientAllowsSelfSignedCertificates:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP16TLSConfigurationVACSSSg15withCipherSuite_Sb34clientAllowsSelfSignedCertificatestcfc">init(withCipherSuite:clientAllowsSelfSignedCertificates:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -137,7 +123,8 @@ struct as an initialization parameter.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCipherSuite</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">clientAllowsSelfSignedCertificates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCipherSuite</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">clientAllowsSelfSignedCertificates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -178,9 +165,9 @@ struct as an initialization parameter.
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP3SSLcFT25withCACertificateFilePathGSqSS_20usingCertificateFileGSqSS_11withKeyFileGSqSS_20usingSelfSignedCertsSb11cipherSuiteGSqSS__S0_"></a>
+                    <a name="/s:9SwiftSMTP16TLSConfigurationVACSSSg25withCACertificateFilePath_AD016usingCertificateF0AD0d3KeyF0Sb0H15SelfSignedCertsAD11cipherSuitetcfc"></a>
                     <a name="//apple_ref/swift/Method/init(withCACertificateFilePath:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP3SSLcFT25withCACertificateFilePathGSqSS_20usingCertificateFileGSqSS_11withKeyFileGSqSS_20usingSelfSignedCertsSb11cipherSuiteGSqSS__S0_">init(withCACertificateFilePath:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP16TLSConfigurationVACSSSg25withCACertificateFilePath_AD016usingCertificateF0AD0d3KeyF0Sb0H15SelfSignedCertsAD11cipherSuitetcfc">init(withCACertificateFilePath:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -195,7 +182,11 @@ struct as an initialization parameter.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCACertificateFilePath</span> <span class="nv">caCertificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">usingCertificateFile</span> <span class="nv">certificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">withKeyFile</span> <span class="nv">keyFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCACertificateFilePath</span> <span class="nv">caCertificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
+            <span class="n">usingCertificateFile</span> <span class="nv">certificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
+            <span class="n">withKeyFile</span> <span class="nv">keyFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -272,9 +263,9 @@ struct as an initialization parameter.
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP3SSLcFT26withCACertificateDirectoryGSqSS_20usingCertificateFileGSqSS_11withKeyFileGSqSS_20usingSelfSignedCertsSb11cipherSuiteGSqSS__S0_"></a>
+                    <a name="/s:9SwiftSMTP16TLSConfigurationVACSSSg26withCACertificateDirectory_AD20usingCertificateFileAD0d3KeyI0Sb0G15SelfSignedCertsAD11cipherSuitetcfc"></a>
                     <a name="//apple_ref/swift/Method/init(withCACertificateDirectory:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP3SSLcFT26withCACertificateDirectoryGSqSS_20usingCertificateFileGSqSS_11withKeyFileGSqSS_20usingSelfSignedCertsSb11cipherSuiteGSqSS__S0_">init(withCACertificateDirectory:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP16TLSConfigurationVACSSSg26withCACertificateDirectory_AD20usingCertificateFileAD0d3KeyI0Sb0G15SelfSignedCertsAD11cipherSuitetcfc">init(withCACertificateDirectory:usingCertificateFile:withKeyFile:usingSelfSignedCerts:cipherSuite:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -291,7 +282,11 @@ struct as an initialization parameter.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCACertificateDirectory</span> <span class="nv">caCertificateDirPath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">usingCertificateFile</span> <span class="nv">certificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">withKeyFile</span> <span class="nv">keyFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withCACertificateDirectory</span> <span class="nv">caCertificateDirPath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
+            <span class="n">usingCertificateFile</span> <span class="nv">certificateFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
+            <span class="n">withKeyFile</span> <span class="nv">keyFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -368,9 +363,9 @@ struct as an initialization parameter.
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:FV9SwiftSMTP3SSLcFT17withChainFilePathGSqSS_12withPasswordGSqSS_20usingSelfSignedCertsSb34clientAllowsSelfSignedCertificatesSb11cipherSuiteGSqSS__S0_"></a>
+                    <a name="/s:9SwiftSMTP16TLSConfigurationVACSSSg17withChainFilePath_AD0D8PasswordSb20usingSelfSignedCertsSb012clientAllowsjK12CertificatesAD11cipherSuitetcfc"></a>
                     <a name="//apple_ref/swift/Method/init(withChainFilePath:withPassword:usingSelfSignedCerts:clientAllowsSelfSignedCertificates:cipherSuite:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:FV9SwiftSMTP3SSLcFT17withChainFilePathGSqSS_12withPasswordGSqSS_20usingSelfSignedCertsSb34clientAllowsSelfSignedCertificatesSb11cipherSuiteGSqSS__S0_">init(withChainFilePath:withPassword:usingSelfSignedCerts:clientAllowsSelfSignedCertificates:cipherSuite:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP16TLSConfigurationVACSSSg17withChainFilePath_AD0D8PasswordSb20usingSelfSignedCertsSb012clientAllowsjK12CertificatesAD11cipherSuitetcfc">init(withChainFilePath:withPassword:usingSelfSignedCerts:clientAllowsSelfSignedCertificates:cipherSuite:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -387,7 +382,11 @@ struct as an initialization parameter.
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withChainFilePath</span> <span class="nv">chainFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span> <span class="n">withPassword</span> <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span> <span class="nv">clientAllowsSelfSignedCertificates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">withChainFilePath</span> <span class="nv">chainFilePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
+            <span class="n">withPassword</span> <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="n">usingSelfSignedCerts</span> <span class="nv">selfSigned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">clientAllowsSelfSignedCertificates</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nv">cipherSuite</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -465,14 +464,6 @@ struct as an initialization parameter.
                         <p>Initialize a configuration using a <code>PEM formatted certificate in String form</code>.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SSL</span></code></pre>
-
-                        </div>
-                      </div>
                     </section>
                   </div>
                 </li>
@@ -484,8 +475,8 @@ struct as an initialization parameter.
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2017-08-29)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

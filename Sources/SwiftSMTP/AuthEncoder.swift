@@ -19,11 +19,10 @@ import Cryptor
 
 struct AuthEncoder {
     static func cramMD5(challenge: String, user: String, password: String) throws -> String {
-        guard
-            let hmac = HMAC(using: HMAC.Algorithm.md5,
-                            key: password).update(string: try challenge.base64Decoded())?.final()
-            else {
-                throw SMTPError(.md5HashChallengeFail)
+        guard let hmac = HMAC(
+            using: HMAC.Algorithm.md5,
+            key: password).update(string: try challenge.base64Decoded())?.final() else {
+                throw SMTPError.md5HashChallengeFail
         }
         let digest = CryptoUtils.hexString(from: hmac)
         return ("\(user) \(digest)").base64Encoded
@@ -46,11 +45,9 @@ struct AuthEncoder {
 
 extension String {
     func base64Decoded() throws -> String {
-        guard
-            let data = Data(base64Encoded: self),
-            let base64Decoded = String(data: data, encoding: .utf8)
-            else {
-                throw SMTPError(.base64DecodeFail(string: self))
+        guard let data = Data(base64Encoded: self),
+            let base64Decoded = String(data: data, encoding: .utf8) else {
+                throw SMTPError.base64DecodeFail(string: self)
         }
         return base64Decoded
     }

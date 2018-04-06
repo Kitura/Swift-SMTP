@@ -18,7 +18,7 @@ import Foundation
 
 /// Represents a sender or receiver of an email.
 public struct User {
-    fileprivate let name: String?
+    private let name: String?
     let email: String
     
     ///  Initializes a `User`.
