@@ -1,6 +1,15 @@
 # 4.0.0 Migration Guide
 
+The optional `accessToken` parameter of the `SMTP` struct has been removed. If you are using the authorization method `XOAUTH2`, pass in your access token in the `password` parameter instead. For example:
 
+```swift
+let smtp = SMTP(
+    hostname: "smtp.gmail.com",
+    email: "example@gmail.com",
+    password: "accessToken",
+    authMethods: [.xoauth2]
+)
+```
 
 # 3.0.0 Migration Guide
 
@@ -23,16 +32,16 @@ public init(hostname: String,
 After `3.0.0`:
 
 ```swift
-let smtp = SMTP(hostname: String,
-                email: String,
-                password: String,
-                port: Int32 = 465,
-                useTLS: Bool = true,
-                tlsConfiguration: TLSConfiguration? = nil,
-                authMethods: [AuthMethod] = [],
-                accessToken: String? = nil,
-                domainName: String = "localhost",
-                timeout: UInt = 10)
+public init(hostname: String,
+            email: String,
+            password: String,
+            port: Int32 = 465,
+            useTLS: Bool = true,
+            tlsConfiguration: TLSConfiguration? = nil,
+            authMethods: [AuthMethod] = [],
+            accessToken: String? = nil,
+            domainName: String = "localhost",
+            timeout: UInt = 10)
 ```
 
 ## Renamed

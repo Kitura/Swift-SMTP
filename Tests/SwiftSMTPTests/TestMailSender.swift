@@ -27,8 +27,8 @@ class TestMailSender: XCTestCase {
         ("testSendMail", testSendMail),
         ("testSendMailInArray", testSendMailInArray),
         ("testSendMailNoRecipient", testSendMailNoRecipient),
-        ("testSendMailToMultipleRecipients", testSendMailToMultipleRecipients),
         ("testSendMailsConcurrently", testSendMailsConcurrently),
+        ("testSendMailToMultipleRecipients", testSendMailToMultipleRecipients),
         ("testSendMailWithBcc", testSendMailWithBcc),
         ("testSendMailWithCc", testSendMailWithCc),
         ("testSendMultipleMails", testSendMultipleMails),
@@ -83,16 +83,6 @@ class TestMailSender: XCTestCase {
         }
     }
 
-    func testSendMailToMultipleRecipients() {
-        let x = expectation(description: "Send a single mail to multiple recipients.")
-        let mail = Mail(from: from, to: [to, to2], subject: #function)
-        smtp.send(mail) { (err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
-        }
-        waitForExpectations(timeout: testDuration)
-    }
-
     func testSendMailsConcurrently() {
         let x = expectation(description: "Send multiple mails concurrently with seperate calls to `send`.")
         let mail1 = Mail(from: from, to: [to], subject: "Send mails concurrently 1")
@@ -108,6 +98,16 @@ class TestMailSender: XCTestCase {
         }
         group.wait()
         x.fulfill()
+        waitForExpectations(timeout: testDuration)
+    }
+
+    func testSendMailToMultipleRecipients() {
+        let x = expectation(description: "Send a single mail to multiple recipients.")
+        let mail = Mail(from: from, to: [to, to2], subject: #function)
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err, String(describing: err))
+            x.fulfill()
+        }
         waitForExpectations(timeout: testDuration)
     }
 

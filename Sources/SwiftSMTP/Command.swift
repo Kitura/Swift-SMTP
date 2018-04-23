@@ -38,9 +38,9 @@ enum Command {
         case .starttls: return "STARTTLS"
         case .auth(let method, let credentials):
             if let credentials = credentials {
-                return "AUTH \(method.name) \(credentials)"
+                return "AUTH \(method.rawValue) \(credentials)"
             } else {
-                return "AUTH \(method.name)"
+                return "AUTH \(method.rawValue)"
             }
         case .authUser(let user): return user
         case .authPassword(let password): return password
@@ -59,9 +59,9 @@ enum Command {
         case .auth(let method, _):
             switch method {
             case .cramMD5: return [.containingChallenge]
-            case .login: return [.containingChallenge]
-            case .plain: return [.authSucceeded]
-            case .xoauth2: return [.authSucceeded]
+            case .LOGIN: return [.containingChallenge]
+            case .PLAIN: return [.authSucceeded]
+            case .XOAUTH2: return [.authSucceeded]
             }
         case .authUser(_): return [.containingChallenge]
         case .authPassword: return [.authSucceeded]

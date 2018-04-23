@@ -14,7 +14,7 @@
  * limitations under the License.
  **/
 
-/// Represents a handle to connect, authenticate, and send emails to an SMTP server.
+/// Used to connect to an SMTP server and send emails.
 public struct SMTP {
     private let hostname: String
     private let email: String
@@ -29,23 +29,22 @@ public struct SMTP {
     /// Initializes an `SMTP` instance.
     ///
     /// - Parameters:
-    ///     - hostname: Hostname of the SMTP server to connect to.
-    ///                 Should not include any scheme--ie `smtp.example.com` is valid.
+    ///     - hostname: Hostname of the SMTP server to connect to, i.e. `smtp.example.com`.
     ///     - email: Username to log in to server.
-    ///     - password: Password to log in to server.
+    ///     - password: Password to log in to server, or access token if using XOAUTH2 authorization method.
     ///     - port: Port to connect to the server on. Defaults to `465`.
     ///     - useTLS: `Bool` indicating whether to connect with TLS. Your server must support the `STARTTLS` command.
-    ///               Defaults to `true`.
+    ///       Defaults to `true`.
     ///     - tlsConfiguration: `TLSConfiguration` used to connect with TLS. If nil, a configuration with no backing
-    ///                         certificates is used. See `TLSConfiguration` for other configuration options.
-    ///     - authMethods: `AuthMethod`s to use to log in to the server. Defaults to `CRAM-MD5`, `LOGIN`, and `PLAIN`.
+    ///       certificates is used. See `TLSConfiguration` for other configuration options.
+    ///     - authMethods: `AuthMethod`s to use to log in to the server. If blank, tries all supported methods.
     ///     - domainName: Client domain name used when communicating with the server. Defaults to `localhost`.
     ///     - timeout: How long to try connecting to the server to before returning an error. Defaults to `10` seconds.
     ///
     /// - Note:
+    ///     - You may need to enable access for less secure apps for your account on the SMTP server.
     ///     - Some servers like Gmail support IPv6, and if your network does  not, you will first attempt to connect via
     ///       IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    ///     - You may need to enable access for less secure apps in your account on the SMTP server.
     public init(hostname: String,
                 email: String,
                 password: String,
@@ -64,12 +63,13 @@ public struct SMTP {
 
         let _authMethods = !authMethods.isEmpty ? authMethods : [
             AuthMethod.cramMD5,
-            AuthMethod.login,
-            AuthMethod.plain
+            AuthMethod.LOGIN,
+            AuthMethod.PLAIN,
+            AuthMethod.XOAUTH2
         ]
         var authMethodsDictionary = [String: AuthMethod]()
         _authMethods.forEach { authMethod in
-            authMethodsDictionary[authMethod.name] = authMethod
+            authMethodsDictionary[authMethod.rawValue] = authMethod
         }
         self.authMethods = authMethodsDictionary
 
@@ -96,11 +96,11 @@ public struct SMTP {
     ///
     /// - Parameters:
     ///     - mails: Array of `Mail`s to send.
-    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent. `Mail` is the `Mail` sent and `Error` is
-    ///                 the error if it failed. (optional)
+    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent. `Mail` is the mail sent and `Error` is
+    ///       the error if it failed. (optional)
     ///     - completion: ([`Mail`], [(`Mail`, `Error`)]) callback after all `Mail`s have been attempted. [`Mail`] is an
-    ///                   array of successfully sent `Mail`s. [(`Mail`, `Error`)] is an array of failed `Mail`s and
-    ///                   their corresponding `Error`s. (optional)
+    ///       array of successfully sent `Mail`s. [(`Mail`, `Error`)] is an array of failed `Mail`s and their
+    ///       corresponding `Error`s. (optional)
     ///
     /// - Note:
     ///     - Each call to `send` will first log in to your server, attempt to send the mails, then closes the

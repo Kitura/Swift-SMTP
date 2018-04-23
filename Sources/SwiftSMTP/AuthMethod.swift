@@ -15,22 +15,13 @@
  **/
 
 /// Supported authentication methods for logging into the SMTP server.
-public enum AuthMethod {
+public enum AuthMethod: String {
     /// CRAM-MD5 authentication.
-    case cramMD5
+    case cramMD5 = "CRAM-MD5"
     /// LOGIN authentication.
-    case login
+    case LOGIN
     /// PLAIN authentication.
-    case plain
+    case PLAIN
     /// XOAUTH2 authentication. Requires a valid access token.
-    case xoauth2(String)
-
-    var name: String {
-        switch self {
-        case .cramMD5: return "CRAM-MD5"
-        case .login: return "LOGIN"
-        case .plain: return "PLAIN"
-        case .xoauth2: return "XOAUTH2"
-        }
-    }
+    case XOAUTH2
 }

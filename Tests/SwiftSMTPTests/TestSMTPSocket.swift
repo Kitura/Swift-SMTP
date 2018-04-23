@@ -90,7 +90,7 @@ class TestSMTPSocket: XCTestCase {
                 port: port,
                 useTLS: useTLS,
                 tlsConfiguration: nil,
-                authMethods: ["LOGIN": .login],
+                authMethods: [AuthMethod.LOGIN.rawValue: .LOGIN],
                 domainName: domainName,
                 timeout: timeout
             )
@@ -113,7 +113,7 @@ class TestSMTPSocket: XCTestCase {
                 port: port,
                 useTLS: useTLS,
                 tlsConfiguration: nil,
-                authMethods: ["PLAIN": .plain],
+                authMethods: [AuthMethod.PLAIN.rawValue: .PLAIN],
                 domainName: domainName,
                 timeout: timeout
             )
