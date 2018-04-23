@@ -98,7 +98,7 @@ extension TestMiscellaneous {
 
         let rangeLocation = 0
         let rangeLength = NSString(string: compareString).length
-        let searchRange = NSMakeRange(rangeLocation, rangeLength)
+        let searchRange = NSRange(location: rangeLocation, length: rangeLength)
 
         // run the regex
         let matches = regex.matches(in: compareString, options: .withoutAnchoringBounds, range: searchRange)

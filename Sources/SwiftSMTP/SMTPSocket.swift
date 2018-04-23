@@ -146,11 +146,11 @@ private extension SMTPSocket {
         switch authMethod {
         case .cramMD5:
             try loginCramMD5(email: email, password: password)
-        case .LOGIN:
+        case .login:
             try loginLogin(email: email, password: password)
-        case .PLAIN:
+        case .plain:
             try loginPlain(email: email, password: password)
-        case .XOAUTH2:
+        case .xoauth2:
             try loginXOAuth2(email: email, accessToken: password)
         }
     }
@@ -161,7 +161,7 @@ private extension SMTPSocket {
     }
 
     func loginLogin(email: String, password: String) throws {
-        try auth(authMethod: .LOGIN, credentials: nil)
+        try auth(authMethod: .login, credentials: nil)
         let credentials = AuthEncoder.login(user: email, password: password)
         try authUser(credentials.encodedUser)
         try authPassword(credentials.encodedPassword)
@@ -169,13 +169,13 @@ private extension SMTPSocket {
 
     func loginPlain(email: String, password: String) throws {
         try auth(
-            authMethod: .PLAIN,
+            authMethod: .plain,
             credentials: AuthEncoder.plain(user: email, password: password)
         )
     }
 
     func loginXOAuth2(email: String, accessToken: String) throws {
-        try auth(authMethod: .XOAUTH2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
+        try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
     }
 
     @discardableResult

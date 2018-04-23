@@ -44,17 +44,15 @@ let smtp = SMTP(
 All parameters of `SMTP` struct:
 
 ```swift
-let smtp = SMTP(
-    hostname: String,
-    email: String,
-    password: String,
-    port: Int32 = 465,
-    useTLS: Bool = true,
-    tlsConfiguration: TLSConfiguration? = nil,
-    authMethods: [AuthMethod] = [],
-    domainName: String = "localhost",
-    timeout: UInt = 10
-)
+public init(hostname: String,
+            email: String,
+            password: String,
+            port: Int32 = 465,
+            useTLS: Bool = true,
+            tlsConfiguration: TLSConfiguration? = nil,
+            authMethods: [AuthMethod] = [],
+            domainName: String = "localhost",
+            timeout: UInt = 10)
 ```
 
 By default, the `SMTP` struct connects on port `465` and tries to connect using TLS. It also uses a `TLSConfiguration` that uses no backing certificates. Configure these to your needs. For more info on `TLSConfiguration`, view the [docs](https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html).

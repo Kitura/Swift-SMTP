@@ -32,8 +32,8 @@ let port: Int32 = 465
 let useTLS = true
 let authMethods: [String: AuthMethod] = [
     AuthMethod.cramMD5.rawValue: .cramMD5,
-    AuthMethod.LOGIN.rawValue: .LOGIN,
-    AuthMethod.PLAIN.rawValue: .PLAIN
+    AuthMethod.login.rawValue: .login,
+    AuthMethod.plain.rawValue: .plain
 ]
 let domainName = "localhost"
 let timeout: UInt = 10

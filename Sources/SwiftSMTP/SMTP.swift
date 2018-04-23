@@ -63,9 +63,9 @@ public struct SMTP {
 
         let _authMethods = !authMethods.isEmpty ? authMethods : [
             AuthMethod.cramMD5,
-            AuthMethod.LOGIN,
-            AuthMethod.PLAIN,
-            AuthMethod.XOAUTH2
+            AuthMethod.login,
+            AuthMethod.plain,
+            AuthMethod.xoauth2
         ]
         var authMethodsDictionary = [String: AuthMethod]()
         _authMethods.forEach { authMethod in

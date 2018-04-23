@@ -63,7 +63,7 @@ class TestMailSender: XCTestCase {
         defer { waitForExpectations(timeout: testDuration) }
 
         let mail = Mail(from: from, to: [to], subject: #function, text: text)
-        smtp.send([mail]) { (sent, failed) in
+        smtp.send([mail]) { _, failed in
             XCTAssert(failed.isEmpty)
             x.fulfill()
         }

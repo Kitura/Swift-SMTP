@@ -19,9 +19,9 @@ public enum AuthMethod: String {
     /// CRAM-MD5 authentication.
     case cramMD5 = "CRAM-MD5"
     /// LOGIN authentication.
-    case LOGIN
+    case login = "LOGIN"
     /// PLAIN authentication.
-    case PLAIN
+    case plain = "PLAIN"
     /// XOAUTH2 authentication. Requires a valid access token.
-    case XOAUTH2
+    case xoauth2 = "XOAUTH2"
 }

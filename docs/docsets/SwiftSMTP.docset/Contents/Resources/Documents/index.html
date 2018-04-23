@@ -126,17 +126,15 @@
 <h3 id='tls' class='heading'>TLS</h3>
 
 <p>All parameters of <code><a href="Structs/SMTP.html">SMTP</a></code> struct:</p>
-<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">smtp</span> <span class="o">=</span> <span class="kt">SMTP</span><span class="p">(</span>
-    <span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">465</span><span class="p">,</span>
-    <span class="nv">useTLS</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nv">tlsConfiguration</span><span class="p">:</span> <span class="kt">TLSConfiguration</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-    <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt">AuthMethod</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
-    <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="p">)</span>
+<pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">465</span><span class="p">,</span>
+            <span class="nv">useTLS</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">tlsConfiguration</span><span class="p">:</span> <span class="kt">TLSConfiguration</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt">AuthMethod</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+            <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
 </code></pre>
 
 <p>By default, the <code><a href="Structs/SMTP.html">SMTP</a></code> struct connects on port <code>465</code> and tries to connect using TLS. It also uses a <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code> that uses no backing certificates. Configure these to your needs. For more info on <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code>, view the <a href="https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html">docs</a>.</p>
