@@ -1,3 +1,7 @@
+# 4.0.0 Migration Guide
+
+
+
 # 3.0.0 Migration Guide
 
 ## Initialize `SMTP`
@@ -16,7 +20,7 @@ public init(hostname: String,
             timeout: UInt = 10)
 ```
 
-`3.0.0`+:
+After `3.0.0`:
 
 ```swift
 let smtp = SMTP(hostname: String,

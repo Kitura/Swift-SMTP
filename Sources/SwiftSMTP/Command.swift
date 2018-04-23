@@ -38,9 +38,9 @@ enum Command {
         case .starttls: return "STARTTLS"
         case .auth(let method, let credentials):
             if let credentials = credentials {
-                return "AUTH \(method.rawValue) \(credentials)"
+                return "AUTH \(method.name) \(credentials)"
             } else {
-                return "AUTH \(method.rawValue)"
+                return "AUTH \(method.name)"
             }
         case .authUser(let user): return user
         case .authPassword(let password): return password

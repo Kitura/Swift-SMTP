@@ -64,8 +64,7 @@ XCTMain([
     testCase(TestAttachment.allTests.shuffled()),
     testCase(TestAuthEncoder.allTests.shuffled()),
     testCase(TestDataSender.allTests.shuffled()),
-    testCase(TestLoginManager.allTests.shuffled()),
     testCase(TestMailSender.allTests.shuffled()),
     testCase(TestMiscellaneous.allTests.shuffled()),
-    testCase(TestSMTPSocket.allTests.shuffled())
+    testCase(TestSMTPSocket.allTests.shuffled()),
     ].shuffled())

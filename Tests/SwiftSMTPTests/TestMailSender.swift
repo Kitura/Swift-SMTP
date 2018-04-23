@@ -24,7 +24,6 @@ import XCTest
 class TestMailSender: XCTestCase {
     static var allTests = [
         ("testBadEmail", testBadEmail),
-        ("testIsValidEmail", testIsValidEmail),
         ("testSendMail", testSendMail),
         ("testSendMailInArray", testSendMailInArray),
         ("testSendMailNoRecipient", testSendMailNoRecipient),
@@ -46,17 +45,6 @@ class TestMailSender: XCTestCase {
             x.fulfill()
         }
         waitForExpectations(timeout: testDuration)
-    }
-
-    func testIsValidEmail() throws {
-        XCTAssert(try email.isValidEmail(), "\(email) should be a valid email.")
-        XCTAssertFalse(try "".isValidEmail(), "Blank email should be in invalid email.")
-        XCTAssertFalse(try "a".isValidEmail(), "`a` should be in invalid email.")
-        XCTAssertFalse(try "@gmail.com".isValidEmail(), "`@gmail.com` should be in invalid email.")
-        XCTAssertFalse(try "email@.com".isValidEmail(), "`email@.com` should be in invalid email.")
-        XCTAssertFalse(try "email@email".isValidEmail(), "`email@email` should be in invalid email.")
-        XCTAssertFalse(try "email@email.a".isValidEmail(), "`email@email.a` should be in invalid email.")
-        XCTAssertFalse(try "email@email.".isValidEmail(), "`email@email.` should be in invalid email.")
     }
 
     func testSendMail() {
