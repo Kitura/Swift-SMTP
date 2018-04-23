@@ -82,9 +82,9 @@ let tlsConfiguration = TLSConfiguration(withChainFilePath: cert, withPassword: c
 #endif
 
 let smtp = SMTP(hostname: hostname, email: email, password: password)
-let from = User(name: "Dr. Light", email: email)
-let to = User(name: "Megaman", email: email)
-let to2 = User(name: "Roll", email: email)
+let from = Mail.User(name: "Dr. Light", email: email)
+let to = Mail.User(name: "Megaman", email: email)
+let to2 = Mail.User(name: "Roll", email: email)
 let text = "Humans and robots living together in harmony and equality: That was my ultimate wish."
 let html = "<html><img src=\"http://vignette2.wikia.nocookie.net/megaman/images/4/40/StH250RobotMasters.jpg/revision/latest?cb=20130711161323\"/></html>"
 let imgFilePath = testsDir + "/x.png"
