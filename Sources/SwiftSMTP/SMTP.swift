@@ -14,45 +14,37 @@
  * limitations under the License.
  **/
 
-import Foundation
-
-/// Supported authentication methods for logging into the SMTP server.
-public enum AuthMethod: String {
-    /// CRAM-MD5 authentication.
-    case cramMD5 = "CRAM-MD5"
-    /// LOGIN authentication.
-    case login = "LOGIN"
-    /// PLAIN authentication.
-    case plain = "PLAIN"
-    /// XOAUTH2 authentication. Requires a valid access token.
-    case xoauth2 = "XOAUTH2"
-}
-
-/// Represents a handle to connect, authenticate, and send emails to an SMTP server.
+/// Used to connect to an SMTP server and send emails.
 public struct SMTP {
-    private let loginManager: LoginManaging
+    private let hostname: String
+    private let email: String
+    private let password: String
+    private let port: Int32
+    private let useTLS: Bool
+    private let tlsConfiguration: TLSConfiguration?
+    private let authMethods: [String: AuthMethod]
+    private let domainName: String
+    private let timeout: UInt
 
     /// Initializes an `SMTP` instance.
     ///
     /// - Parameters:
-    ///     - hostname: Hostname of the SMTP server to connect to.
-    ///                 Should not include any scheme--ie `smtp.example.com` is valid.
+    ///     - hostname: Hostname of the SMTP server to connect to, i.e. `smtp.example.com`.
     ///     - email: Username to log in to server.
-    ///     - password: Password to log in to server.
+    ///     - password: Password to log in to server, or access token if using XOAUTH2 authorization method.
     ///     - port: Port to connect to the server on. Defaults to `465`.
     ///     - useTLS: `Bool` indicating whether to connect with TLS. Your server must support the `STARTTLS` command.
-    ///               Defaults to `true`.
+    ///       Defaults to `true`.
     ///     - tlsConfiguration: `TLSConfiguration` used to connect with TLS. If nil, a configuration with no backing
-    ///                         certificates is used. See `TLSConfiguration` for other configuration options.
-    ///     - authMethods: `AuthMethod`s to use to log in to the server. Defaults to `CRAM-MD5`, `LOGIN`, and `PLAIN`.
-    ///     - accessToken: Access token used IFF logging in through `XOAUTH2`.
+    ///       certificates is used. See `TLSConfiguration` for other configuration options.
+    ///     - authMethods: `AuthMethod`s to use to log in to the server. If blank, tries all supported methods.
     ///     - domainName: Client domain name used when communicating with the server. Defaults to `localhost`.
     ///     - timeout: How long to try connecting to the server to before returning an error. Defaults to `10` seconds.
     ///
     /// - Note:
+    ///     - You may need to enable access for less secure apps for your account on the SMTP server.
     ///     - Some servers like Gmail support IPv6, and if your network does  not, you will first attempt to connect via
     ///       IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 on your machine.
-    ///     - You may need to enable access for less secure apps in your account on the SMTP server.
     public init(hostname: String,
                 email: String,
                 password: String,
@@ -60,28 +52,29 @@ public struct SMTP {
                 useTLS: Bool = true,
                 tlsConfiguration: TLSConfiguration? = nil,
                 authMethods: [AuthMethod] = [],
-                accessToken: String? = nil,
                 domainName: String = "localhost",
                 timeout: UInt = 10) {
-        loginManager = LoginManager(
-            hostname: hostname,
-            email: email,
-            password: password,
-            port: port,
-            useTLS: useTLS,
-            tlsConfiguration: tlsConfiguration,
-            authMethods: !authMethods.isEmpty ? authMethods : [
-                AuthMethod.cramMD5,
-                AuthMethod.login,
-                AuthMethod.plain
-            ],
-            accessToken: accessToken,
-            domainName: domainName,
-            timeout: timeout)
-    }
+        self.hostname = hostname
+        self.email = email
+        self.password = password
+        self.port = port
+        self.useTLS = useTLS
+        self.tlsConfiguration = tlsConfiguration
 
-    init(loginManager: LoginManaging) {
-        self.loginManager = loginManager
+        let _authMethods = !authMethods.isEmpty ? authMethods : [
+            AuthMethod.cramMD5,
+            AuthMethod.login,
+            AuthMethod.plain,
+            AuthMethod.xoauth2
+        ]
+        var authMethodsDictionary = [String: AuthMethod]()
+        _authMethods.forEach { authMethod in
+            authMethodsDictionary[authMethod.rawValue] = authMethod
+        }
+        self.authMethods = authMethodsDictionary
+
+        self.domainName = domainName
+        self.timeout = timeout
     }
 
     /// Send an email.
@@ -103,11 +96,11 @@ public struct SMTP {
     ///
     /// - Parameters:
     ///     - mails: Array of `Mail`s to send.
-    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent. `Mail` is the `Mail` sent and `Error` is
-    ///                 the error if it failed. (optional)
+    ///     - progress: (`Mail`, `Error`) callback after each `Mail` is sent. `Mail` is the mail sent and `Error` is
+    ///       the error if it failed. (optional)
     ///     - completion: ([`Mail`], [(`Mail`, `Error`)]) callback after all `Mail`s have been attempted. [`Mail`] is an
-    ///                   array of successfully sent `Mail`s. [(`Mail`, `Error`)] is an array of failed `Mail`s and
-    ///                   their corresponding `Error`s. (optional)
+    ///       array of successfully sent `Mail`s. [(`Mail`, `Error`)] is an array of failed `Mail`s and their
+    ///       corresponding `Error`s. (optional)
     ///
     /// - Note:
     ///     - Each call to `send` will first log in to your server, attempt to send the mails, then closes the
@@ -125,17 +118,25 @@ public struct SMTP {
             completion?([], [])
             return
         }
-        loginManager.login { result in
-            switch result {
-            case .failure(let error):
-                completion?([], mails.map { ($0, error) })
-            case .success(let socket):
-                MailSender(
-                    socket: socket,
-                    mailsToSend: mails,
-                    progress: progress,
-                    completion: completion).send()
-            }
+        do {
+            let socket = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: port,
+                useTLS: useTLS,
+                tlsConfiguration: tlsConfiguration,
+                authMethods: authMethods,
+                domainName: domainName,
+                timeout: timeout
+            )
+            MailSender(
+                socket: socket,
+                mailsToSend: mails,
+                progress: progress,
+                completion: completion).send()
+        } catch {
+            completion?([], mails.map { ($0, error) })
         }
     }
 }

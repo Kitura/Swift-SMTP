@@ -63,9 +63,9 @@ enum Command {
             case .plain: return [.authSucceeded]
             case .xoauth2: return [.authSucceeded]
             }
-        case .authUser(_): return [.containingChallenge]
+        case .authUser: return [.containingChallenge]
         case .authPassword: return [.authSucceeded]
-        case .rcpt(_): return [.commandOK, .willForward]
+        case .rcpt: return [.commandOK, .willForward]
         case .data: return [.startMailInput]
         case .quit: return [.connectionClosing, .commandOK]
         default: return [.commandOK]

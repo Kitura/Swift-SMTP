@@ -18,82 +18,155 @@ import XCTest
 @testable import SwiftSMTP
 
 class TestSMTPSocket: XCTestCase {
-    static var allTests: [(String, (TestSMTPSocket) -> () throws -> Void)] {
-        return [
-            ("testGetResponseCode", testGetResponseCode),
-            ("testGetResponseCodeBadResponse", testGetResponseCodeBadResponse),
-            ("testGetResponseCodeBlankReponse", testGetResponseCodeBlankReponse),
-            ("testGetResponseMessageGood", testGetResponseMessageGood),
-            ("testGetResponseMessageTooShort", testGetResponseMessageTooShort),
-            ("testParseResponsesGood", testParseResponsesGood),
-            ("testParseResponsesBad", testParseResponsesBad)
-        ]
-    }
-}
+    static var allTests = [
+        ("testBadCredentials", testBadCredentials),
+        ("testBadPort", testBadPort),
+        ("testLogin", testLogin),
+        ("testPlain", testPlain),
+        ("testPort0", testPort0),
+        ("testSSL", testSSL)
+    ]
 
-extension TestSMTPSocket {
-    func testGetResponseCode() throws {
-        let responseCode = try SMTPSocket.getResponseCode("250-smtp.gmail.com at your service, [66.68.56.204]", command: .ehlo(""))
-        let expected = ResponseCode(250)
-        XCTAssertEqual(responseCode, expected, "result: \(responseCode) != expected: \(expected)")
-    }
+    func testBadCredentials() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
 
-    func testGetResponseCodeBadResponse() {
         do {
-            _ = try SMTPSocket.getResponseCode("250-SIZE 35882577", command: .starttls)
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: "bad password",
+                port: port,
+                useTLS: useTLS,
+                tlsConfiguration: nil,
+                authMethods: authMethods,
+                domainName: domainName,
+                timeout: timeout
+            )
+            XCTFail()
+            x.fulfill()
         } catch {
-            guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Error should be SMTPError.badResponse but received no error or incorrect error.")
-                return
+            if case SMTPError.badResponse = error {
+                x.fulfill()
+            } else {
+                XCTFail(String(describing: error))
+                x.fulfill()
             }
         }
     }
 
-    func testGetResponseCodeBlankReponse() {
+    func testBadPort() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
         do {
-            _ = try SMTPSocket.getResponseCode("", command: .auth(.cramMD5, "credentials"))
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: 1,
+                useTLS: useTLS,
+                tlsConfiguration: nil,
+                authMethods: authMethods,
+                domainName: domainName,
+                timeout: 5
+            )
+            XCTFail()
+            x.fulfill()
         } catch {
-            guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Error should be SMTPError.badResponse but received no error or incorrect error.")
-                return
-            }
+            x.fulfill()
         }
     }
-}
 
-extension TestSMTPSocket {
-    func testGetResponseMessageGood() {
-        let responseMessage = SMTPSocket.getResponseMessage("250 OK")
-        XCTAssertEqual(responseMessage, "OK", "result: \(responseMessage) != expected: \"OK\"")
-    }
+    func testLogin() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
 
-    func testGetResponseMessageTooShort() {
-        let responseMessage = SMTPSocket.getResponseMessage("NO")
-        XCTAssertEqual(responseMessage, "", "result: \(responseMessage) != expected: \"\"")
-    }
-}
-
-extension TestSMTPSocket {
-    func testParseResponsesGood() throws {
-        let ehloResponsesGood = "250 OK\(CRLF)250 GREAT\(CRLF)"
-        let responses = try SMTPSocket.parseResponses(ehloResponsesGood, command: .ehlo(domainName))
-        guard responses.count == 2 else {
-            XCTFail("Should return 2 responses but returned \(responses.count)")
-            return
-        }
-        XCTAssertEqual(responses[0].response, "250 OK", "First response: \(responses[0].response) != expected \"250 OK\"")
-        XCTAssertEqual(responses[1].response, "250 GREAT", "Second response: \(responses[1].response) != expected \"250 GREAT\"")
-    }
-
-    func testParseResponsesBad() {
-        let ehloResponsesBad = "999 BAD"
         do {
-            _ = try SMTPSocket.parseResponses(ehloResponsesBad, command: .ehlo(domainName))
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: port,
+                useTLS: useTLS,
+                tlsConfiguration: nil,
+                authMethods: [AuthMethod.login.rawValue: .login],
+                domainName: domainName,
+                timeout: timeout
+            )
+            x.fulfill()
         } catch {
-            guard let err = error as? SMTPError, case .badResponse = err else {
-                XCTFail("Should return SMTPError.badResponse, but returned different error or no error.")
-                return
-            }
+            XCTFail(String(describing: error))
+            x.fulfill()
+        }
+    }
+
+    func testPlain() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        do {
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: port,
+                useTLS: useTLS,
+                tlsConfiguration: nil,
+                authMethods: [AuthMethod.plain.rawValue: .plain],
+                domainName: domainName,
+                timeout: timeout
+            )
+            x.fulfill()
+        } catch {
+            XCTFail(String(describing: error))
+            x.fulfill()
+        }
+    }
+
+    func testPort0() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        do {
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: 0,
+                useTLS: useTLS,
+                tlsConfiguration: nil,
+                authMethods: authMethods,
+                domainName: domainName,
+                timeout: timeout
+            )
+            XCTFail()
+            x.fulfill()
+        } catch {
+            x.fulfill()
+        }
+    }
+
+    func testSSL() throws {
+        let x = self.expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        do {
+            _ = try SMTPSocket(
+                hostname: hostname,
+                email: email,
+                password: password,
+                port: port,
+                useTLS: useTLS,
+                tlsConfiguration: tlsConfiguration,
+                authMethods: authMethods,
+                domainName: domainName,
+                timeout: timeout
+            )
+            x.fulfill()
+        } catch {
+            XCTFail(String(describing: error))
+            x.fulfill()
         }
     }
 }

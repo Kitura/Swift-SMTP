@@ -1,5 +1,5 @@
 /**
- * Copyright IBM Corporation 2017
+ * Copyright IBM Corporation 2018
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,65 +18,55 @@ import Foundation
 import Socket
 import LoggerAPI
 
-// Wrapper around BlueSocket
 struct SMTPSocket {
-    // The socket we use to read and write to
     private let socket: Socket
 
-    // Init a new instance of SMTPSocket
-    init() throws {
+    init(hostname: String,
+         email: String,
+         password: String,
+         port: Int32,
+         useTLS: Bool,
+         tlsConfiguration: TLSConfiguration?,
+         authMethods: [String: AuthMethod],
+         domainName: String,
+         timeout: UInt) throws {
         socket = try Socket.create()
+        if useTLS {
+            if let tlsConfiguration = tlsConfiguration {
+                socket.delegate = try tlsConfiguration.makeSSLService()
+            } else {
+                socket.delegate = try TLSConfiguration().makeSSLService()
+            }
+        }
+        try socket.connect(to: hostname, port: port, timeout: timeout * 1000)
+        try parseResponses(readFromSocket(), command: .connect)
+        let serverOptions = try getServerOptions(domainName: domainName)
+        let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
+        try login(authMethod: authMethod, email: email, password: password)
     }
 
-    // Connect to the SMTP server at `port`
-    func connect(to: String, port: Int32, timeout: UInt) throws {
-        try socket.connect(to: to, port: port, timeout: timeout)
-    }
-
-    // Set the socket's `SSLServiceDelegate` for SSL connections
-    func setDelegate(_ delegate: SSLServiceDelegate?) {
-        socket.delegate = delegate
-    }
-
-    // Close the socket
-    func close() {
-        socket.close()
-    }
-}
-
-extension SMTPSocket {
-    // Send the `command` to the server
-    // Read the response from the server out of the socket
-    // Parse the server's response for the appropriate responses
-    // Create `Response`s out of those parsed responses and return them
-    // Throws an error if no/invalid response found
-    // Valid responses are `command` specific
-    @discardableResult
-    func send(_ command: Command) throws -> [Response] {
-        try write(command.text)
-        return try SMTPSocket.parseResponses(try readFromSocket(), command: command)
-    }
-}
-
-extension SMTPSocket {
-    // Write `text` to the socket
     func write(_ text: String) throws {
         _ = try socket.write(from: text + CRLF)
         Log.debug(text)
     }
 
-    // Write `data` to the socket
     func write(_ data: Data) throws {
         _ = try socket.write(from: data)
         Log.debug("(sending data)")
     }
+
+    @discardableResult
+    func send(_ command: Command) throws -> [Response] {
+        try write(command.text)
+        return try parseResponses(readFromSocket(), command: command)
+    }
+
+    func close() {
+        socket.close()
+    }
 }
 
-extension SMTPSocket {
-    // Read all the data out of the socket
-    // Returns a string representation of the data
-    // The string could be one or more responses
-    // Throws an error if a string could not be created from the data
+private extension SMTPSocket {
     func readFromSocket() throws -> String {
         var buf = Data()
         _ = try socket.read(into: &buf)
@@ -87,42 +77,31 @@ extension SMTPSocket {
         return responses
     }
 
-    // Parses through each response and creates a `Response` from it
-    // Returns an array of these `Response`s
-    // Throws an error if no/invalid response found
     @discardableResult
-    static func parseResponses(_ responses: String, command: Command) throws -> [Response] {
-        let resArr = responses.components(separatedBy: CRLF)
-        guard !resArr.isEmpty else {
+    func parseResponses(_ responses: String, command: Command) throws -> [Response] {
+        let responsesArray = responses.components(separatedBy: CRLF)
+        guard !responsesArray.isEmpty else {
             throw SMTPError.badResponse(command: command.text, response: responses)
         }
-        var validResponses = [Response]()
-        for res in resArr {
-            if res == "" { break }
-            validResponses.append(Response(code: try getResponseCode(res, command: command),
-                                           message: getResponseMessage(res),
-                                           response: res))
+        return try responsesArray.flatMap { response in
+            guard response != "" else {
+                return nil
+            }
+            return Response(
+                code: try getResponseCode(response, command: command),
+                message: getResponseMessage(response),
+                response: response
+            )
         }
-        return validResponses
     }
 
-    // Returns a `ResponseCode` extracted from the `response`
-    // Throws an error if no/invalid response code found
-    static func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
+    func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
         guard response.count > 3 else {
             throw SMTPError.badResponse(command: command.text, response: response)
         }
-
-        #if swift(>=3.2)
-            guard let code = Int(response[..<response.index(response.startIndex, offsetBy: 3)]) else {
-                throw SMTPError.badResponse(command: command.text, response: response)
-            }
-        #else
-            guard let code = Int(response.substring(to: response.index(response.startIndex, offsetBy: 3))) else {
-                throw SMTPError.badResponse(command: command.text, response: response)
-            }
-        #endif
-
+        guard let code = Int(response[..<response.index(response.startIndex, offsetBy: 3)]) else {
+            throw SMTPError.badResponse(command: command.text, response: response)
+        }
         guard
             response.count > 2,
             command.expectedResponseCodes.map({ $0.rawValue }).contains(code) else {
@@ -131,16 +110,88 @@ extension SMTPSocket {
         return ResponseCode(code)
     }
 
-    // Returns the reponse message from the response
-    static func getResponseMessage(_ response: String) -> String {
+    func getResponseMessage(_ response: String) -> String {
         guard response.count > 3 else {
             return ""
         }
+        return String(response[response.index(response.startIndex, offsetBy: 4)...])
+    }
+}
 
-        #if swift(>=3.2)
-            return String(response[response.index(response.startIndex, offsetBy: 4)...])
-        #else
-            return response.substring(from: response.index(response.startIndex, offsetBy: 4))
-        #endif
+private extension SMTPSocket {
+    func getServerOptions(domainName: String) throws -> [Response] {
+        do {
+            return try send(.ehlo(domainName))
+        } catch {
+            return try send(.helo(domainName))
+        }
+    }
+
+    func getAuthMethod(authMethods: [String: AuthMethod], serverOptions: [Response], hostname: String) throws -> AuthMethod {
+        for option in serverOptions {
+            let components = option.message.components(separatedBy: " ")
+            if components.first == "AUTH" {
+                let _authMethods = components.dropFirst()
+                for authMethod in _authMethods {
+                    if let matchingAuthMethod = authMethods[authMethod] {
+                        return matchingAuthMethod
+                    }
+                }
+            }
+        }
+        throw SMTPError.noSupportedAuthMethods(hostname: hostname)
+    }
+
+    func login(authMethod: AuthMethod, email: String, password: String) throws {
+        switch authMethod {
+        case .cramMD5:
+            try loginCramMD5(email: email, password: password)
+        case .login:
+            try loginLogin(email: email, password: password)
+        case .plain:
+            try loginPlain(email: email, password: password)
+        case .xoauth2:
+            try loginXOAuth2(email: email, accessToken: password)
+        }
+    }
+
+    func loginCramMD5(email: String, password: String) throws {
+        let challenge = try auth(authMethod: .cramMD5, credentials: nil).message
+        try authPassword(try AuthEncoder.cramMD5(challenge: challenge, user: email, password: password))
+    }
+
+    func loginLogin(email: String, password: String) throws {
+        try auth(authMethod: .login, credentials: nil)
+        let credentials = AuthEncoder.login(user: email, password: password)
+        try authUser(credentials.encodedUser)
+        try authPassword(credentials.encodedPassword)
+    }
+
+    func loginPlain(email: String, password: String) throws {
+        try auth(
+            authMethod: .plain,
+            credentials: AuthEncoder.plain(user: email, password: password)
+        )
+    }
+
+    func loginXOAuth2(email: String, accessToken: String) throws {
+        try auth(authMethod: .xoauth2, credentials: AuthEncoder.xoauth2(user: email, accessToken: accessToken))
+    }
+
+    @discardableResult
+    func auth(authMethod: AuthMethod, credentials: String?) throws -> Response {
+        let responses = try send(.auth(authMethod, credentials))
+        guard let response = responses.first else {
+            throw SMTPError.badResponse(command: "AUTH", response: responses.description)
+        }
+        return response
+    }
+
+    func authUser(_ user: String) throws {
+        try send(.authUser(user))
+    }
+
+    func authPassword(_ password: String) throws {
+        try send(.authPassword(password))
     }
 }

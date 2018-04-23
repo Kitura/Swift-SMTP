@@ -22,10 +22,7 @@ import Foundation
 // This is handled by `Sender`.
 struct DataSender {
     // Socket we use to read and write data to
-    let socket: SMTPSocket
-
-    // Cache for attachments. This saves us from encoding data or creating files from local files more than we need to.
-    lazy var cache = NSCache<AnyObject, AnyObject>()
+    private let socket: SMTPSocket
 
     // Init a new instance of `DataSender`
     init(socket: SMTPSocket) {
@@ -33,7 +30,7 @@ struct DataSender {
     }
 
     // Send the text and attachments of the `mail`
-    mutating func send(_ mail: Mail) throws {
+    func send(_ mail: Mail) throws {
         try sendHeaders(mail.headersString)
 
         if mail.hasAttachment {
@@ -56,7 +53,7 @@ extension DataSender {
     }
 
     // Send `mail`'s content that is more than just plain text
-    mutating func sendMixed(_ mail: Mail) throws {
+    func sendMixed(_ mail: Mail) throws {
         let boundary = String.makeBoundary()
         let mixedHeader = String.makeMixedHeader(boundary: boundary)
 
@@ -70,7 +67,7 @@ extension DataSender {
 
     // If `mail` has an attachment that is an alternative to plain text, sends that attachment and the plain text.
     // Else just sends the plain text.
-    mutating func sendAlternative(for mail: Mail) throws {
+    func sendAlternative(for mail: Mail) throws {
         if let alternative = mail.alternative {
             let boundary = String.makeBoundary()
             let alternativeHeader = String.makeAlternativeHeader(boundary: boundary)
@@ -90,7 +87,7 @@ extension DataSender {
     }
 
     // Sends the attachments of a `Mail`.
-    mutating func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
+    func sendAttachments(_ attachments: [Attachment], boundary: String) throws {
         for attachment in attachments {
             try send(boundary.startLine)
             try sendAttachment(attachment)
@@ -99,7 +96,7 @@ extension DataSender {
     }
 
     // Send the `attachment`.
-    mutating func sendAttachment(_ attachment: Attachment) throws {
+    func sendAttachment(_ attachment: Attachment) throws {
         var relatedBoundary = ""
 
         if attachment.hasRelated {
@@ -121,14 +118,13 @@ extension DataSender {
         try send("")
 
         if attachment.hasRelated {
-            try sendAttachments(attachment.relatedAttachments,
-                                boundary: relatedBoundary)
+            try sendAttachments(attachment.relatedAttachments, boundary: relatedBoundary)
         }
     }
 
     // Send a data attachment. Data must be base 64 encoded before sending.
     // Checks if the base 64 encoded version has been cached first.
-    mutating func sendData(_ data: Data) throws {
+    func sendData(_ data: Data) throws {
         #if os(macOS)
             if let encodedData = cache.object(forKey: data as AnyObject) as? Data {
                 return try send(encodedData)
@@ -151,7 +147,7 @@ extension DataSender {
 
     // Sends a local file at the given path. File must be base 64 encoded before sending. Checks the cache first.
     // Throws an error if file could not be found.
-    mutating func sendFile(at path: String) throws {
+    func sendFile(at path: String) throws {
         #if os(macOS)
             if let data = cache.object(forKey: path as AnyObject) as? Data {
                 return try send(data)
@@ -179,7 +175,7 @@ extension DataSender {
 
     // Send an HTML attachment. HTML must be base 64 encoded before sending.
     // Checks if the base 64 encoded version is in cache first.
-    mutating func sendHTML(_ html: String) throws {
+    func sendHTML(_ html: String) throws {
         #if os(macOS)
             if let encodedHTML = cache.object(forKey: html as AnyObject) as? String {
                 return try send(encodedHTML)
@@ -214,7 +210,7 @@ private extension DataSender {
 }
 
 private extension String {
-    // Embed plain text content of emails with the proper headers so that it is endered correctly.
+    // Embed plain text content of emails with the proper headers so that it is entered correctly.
     var embedded: String {
         var embeddedText = ""
         embeddedText += "CONTENT-TYPE: text/plain; charset=utf-8\(CRLF)"

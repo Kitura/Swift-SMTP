@@ -81,9 +81,7 @@ private extension MailSender {
         try socket.send(.quit)
         socket.close()
     }
-}
 
-private extension MailSender {
     func send(_ mail: Mail) throws {
         let recipientEmails = try getRecipientEmails(from: mail)
         try validateEmails(recipientEmails)
@@ -94,7 +92,7 @@ private extension MailSender {
         try dataEnd()
     }
 
-    private func getRecipientEmails(from mail: Mail) throws -> [String] {
+    func getRecipientEmails(from mail: Mail) throws -> [String] {
         var recipientEmails = mail.to.map { $0.email }
         recipientEmails += mail.cc.map { $0.email }
         recipientEmails += mail.bcc.map { $0.email }
@@ -106,43 +104,36 @@ private extension MailSender {
         return recipientEmails
     }
 
-    private func validateEmails(_ emails: [String]) throws {
+    func validateEmails(_ emails: [String]) throws {
         for email in emails where try !email.isValidEmail() {
             throw SMTPError.invalidEmail(email: email)
         }
     }
 
-    private func sendMail(_ from: String) throws {
+    func sendMail(_ from: String) throws {
         try socket.send(.mail(from))
     }
 
-    private func sendTo(_ emails: [String]) throws {
+    func sendTo(_ emails: [String]) throws {
         for email in emails {
             try socket.send(.rcpt(email))
         }
     }
 
-    private func data() throws {
+    func data() throws {
         try socket.send(.data)
     }
 
-    private func dataEnd() throws {
+    func dataEnd() throws {
         try socket.send(.dataEnd)
     }
 }
 
-#if os(Linux) && !swift(>=3.1)
-    private typealias NSRegularExpression = RegularExpression
-#endif
-
 private extension NSRegularExpression {
-    static let emailRegex = try? NSRegularExpression(
-        pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}",
-        options: []
-    )
+    static let emailRegex = try? NSRegularExpression(pattern: "^[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}")
 }
 
-extension String {
+private extension String {
     func isValidEmail() throws -> Bool {
         guard let emailRegex = NSRegularExpression.emailRegex else {
             throw SMTPError.createEmailRegexFailed

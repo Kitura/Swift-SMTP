@@ -23,19 +23,20 @@ macOS & Linux: `Swift 4.0.3`
 
 ## Migration Guide
 
-Version 3.0.0 brings breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
+Version `4.0.0` & `3.0.0` bring breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
 
 ## Usage
 
-Use the `SMTP` struct as a handle to your SMTP server:
+Initialize an `SMTP` instance:
 
 ```swift
 import SwiftSMTP
 
-// Create your `SMTP` handle
-let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
-                email: "user@gmail.com",        // username to login
-                password: "password")           // password to login
+let smtp = SMTP(
+    hostname: "smtp.gmail.com",     // SMTP server address
+    email: "user@gmail.com",        // username to login
+    password: "password"            // password to login
+)
 ```
 
 ### TLS
@@ -43,16 +44,15 @@ let smtp = SMTP(hostname: "smtp.gmail.com",     // SMTP server address
 All parameters of `SMTP` struct:
 
 ```swift
-let smtp = SMTP(hostname: String,
-                email: String,
-                password: String,
-                port: Int32 = 465,
-                useTLS: Bool = true,
-                tlsConfiguration: TLSConfiguration? = nil,
-                authMethods: [AuthMethod] = [],
-                accessToken: String? = nil,
-                domainName: String = "localhost",
-                timeout: UInt = 10)
+public init(hostname: String,
+            email: String,
+            password: String,
+            port: Int32 = 465,
+            useTLS: Bool = true,
+            tlsConfiguration: TLSConfiguration? = nil,
+            authMethods: [AuthMethod] = [],
+            domainName: String = "localhost",
+            timeout: UInt = 10)
 ```
 
 By default, the `SMTP` struct connects on port `465` and tries to connect using TLS. It also uses a `TLSConfiguration` that uses no backing certificates. Configure these to your needs. For more info on `TLSConfiguration`, view the [docs](https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html).
@@ -65,10 +65,12 @@ Create a `Mail` object and use your `SMTP` handle to send it. To set the sender 
 let drLight = User(name: "Dr. Light", email: "drlight@gmail.com")
 let megaman = User(name: "Megaman", email: "megaman@gmail.com")
 
-let mail = Mail(from: drLight,
-                to: [megaman],
-                subject: "Humans and robots living together in harmony and equality.",
-                text: "That was my ultimate wish.")
+let mail = Mail(
+    from: drLight,
+    to: [megaman],
+    subject: "Humans and robots living together in harmony and equality.",
+    text: "That was my ultimate wish."
+)
 
 smtp.send(mail) { (error) in
     if let error = error {
@@ -83,12 +85,14 @@ Add Cc and Bcc:
 let roll = User(name: "Roll", email: "roll@gmail.com")
 let zero = User(name: "Zero", email: "zero@gmail.com")
 
-let mail = Mail(from: drLight,
-                to: [megaman],
-                cc: [roll],
-                bcc: [zero],
-                subject: "Robots should be used for the betterment of mankind.",
-                text: "Any other use would be...unethical.")
+let mail = Mail(
+    from: drLight,
+    to: [megaman],
+    cc: [roll],
+    bcc: [zero],
+    subject: "Robots should be used for the betterment of mankind.",
+    text: "Any other use would be...unethical."
+)
 
 smtp.send(mail)
 ```
@@ -99,26 +103,37 @@ Create an `Attachment`, attach it to your `Mail`, and send it through the `SMTP`
 
 ```swift
 // Create a file `Attachment`
-let fileAttachment = Attachment(filePath: "~/img.png",
-                                // You can add "CONTENT-ID" to reference this in another attachment
-                                additionalHeaders: ["CONTENT-ID": "img001"])
+let fileAttachment = Attachment(
+    filePath: "~/img.png",          
+    // "CONTENT-ID" let's you reference this in another attachment
+    additionalHeaders: ["CONTENT-ID": "img001"]
+)
 
 // Create an HTML `Attachment`
-let htmlAttachment = Attachment(htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>",
-                                related: [fileAttachment]) // to reference `fileAttachment`
+let htmlAttachment = Attachment(
+    htmlContent: "<html>Here's an image: <img src=\"cid:img001\"/></html>",
+    // To reference `fileAttachment`
+    related: [fileAttachment]
+)
 
 // Create a data `Attachment`
 let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
-let dataAttachment = Attachment(data: data,
-                                mime: "application/json",
-                                name: "file.json",
-                                inline: false) // send as a standalone attachment
+let dataAttachment = Attachment(
+    data: data,
+    mime: "application/json",
+    name: "file.json",
+    // send as a standalone attachment
+    inline: false   
+)
 
 // Create a `Mail` and include the `Attachment`s
-let mail = Mail(from: from,
-                to: [to],
-                subject: "Check out this image and JSON file!",
-                attachments: [htmlAttachment, dataAttachment]) // attachments we created earlier
+let mail = Mail(
+    from: from,
+    to: [to],
+    subject: "Check out this image and JSON file!",
+    // The attachments we created earlier
+    attachments: [htmlAttachment, dataAttachment]
+)
 
 // Send the mail
 smtp.send(mail)

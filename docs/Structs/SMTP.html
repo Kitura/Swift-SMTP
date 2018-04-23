@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           SwiftSMTP Docs
         </a>
-         (100% documented)
+         (95% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -94,7 +94,7 @@
 
                 </div>
               </div>
-            <p>Represents a handle to connect, authenticate, and send emails to an SMTP server.</p>
+            <p>Undocumented</p>
 
           </div>
         </section>
@@ -106,9 +106,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSSSg11accessTokenSS10domainNameSu7timeouttcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:accessToken:domainName:timeout:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSSSg11accessTokenSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:accessToken:domainName:timeout:)</a>
+                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:domainName:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:domainName:timeout:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -122,9 +122,9 @@
     <p>Note:</p>
 
 <ul>
+<li>You may need to enable access for less secure apps for your account on the SMTP server.</li>
 <li>Some servers like Gmail support IPv6, and if your network does  not, you will first attempt to connect via
 IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 on your machine.</li>
-<li>You may need to enable access for less secure apps in your account on the SMTP server.</li>
 </ul>
 
 </div>
@@ -141,7 +141,6 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
             <span class="nv">useTLS</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">tlsConfiguration</span><span class="p">:</span> <span class="kt"><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
-            <span class="nv">accessToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
             <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span></code></pre>
 
@@ -159,8 +158,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                               </td>
                               <td>
                                 <div>
-                                  <p>Hostname of the SMTP server to connect to.
-        Should not include any scheme&ndash;ie <code>smtp.example.com</code> is valid.</p>
+                                  <p>Hostname of the SMTP server to connect to, i.e. <code>smtp.example.com</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -184,7 +182,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                               </td>
                               <td>
                                 <div>
-                                  <p>Password to log in to server.</p>
+                                  <p>Password to log in to server, or access token if using XOAUTH2 authorization method.</p>
                                 </div>
                               </td>
                             </tr>
@@ -209,7 +207,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                               <td>
                                 <div>
                                   <p><code>Bool</code> indicating whether to connect with TLS. Your server must support the <code>STARTTLS</code> command.
-      Defaults to <code>true</code>.</p>
+Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -222,7 +220,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                               <td>
                                 <div>
                                   <p><code><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></code> used to connect with TLS. If nil, a configuration with no backing
-                certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></code> for other configuration options.</p>
+certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></code> for other configuration options.</p>
                                 </div>
                               </td>
                             </tr>
@@ -234,19 +232,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                               </td>
                               <td>
                                 <div>
-                                  <p><code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s to use to log in to the server. Defaults to <code>CRAM-MD5</code>, <code>LOGIN</code>, and <code>PLAIN</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessToken</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Access token used IFF logging in through <code>XOAUTH2</code>.</p>
+                                  <p><code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s to use to log in to the server. If blank, tries all supported methods.</p>
                                 </div>
                               </td>
                             </tr>
@@ -404,8 +390,8 @@ in separate calls to <code>send</code>.</li>
                               </td>
                               <td>
                                 <div>
-                                  <p>(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>) callback after each <code><a href="../Structs/Mail.html">Mail</a></code> is sent. <code><a href="../Structs/Mail.html">Mail</a></code> is the <code><a href="../Structs/Mail.html">Mail</a></code> sent and <code>Error</code> is
-        the error if it failed. (optional)</p>
+                                  <p>(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>) callback after each <code><a href="../Structs/Mail.html">Mail</a></code> is sent. <code><a href="../Structs/Mail.html">Mail</a></code> is the mail sent and <code>Error</code> is
+the error if it failed. (optional)</p>
                                 </div>
                               </td>
                             </tr>
@@ -418,8 +404,8 @@ in separate calls to <code>send</code>.</li>
                               <td>
                                 <div>
                                   <p>([<code><a href="../Structs/Mail.html">Mail</a></code>], [(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>)]) callback after all <code><a href="../Structs/Mail.html">Mail</a></code>s have been attempted. [<code><a href="../Structs/Mail.html">Mail</a></code>] is an
-          array of successfully sent <code><a href="../Structs/Mail.html">Mail</a></code>s. [(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>)] is an array of failed <code><a href="../Structs/Mail.html">Mail</a></code>s and
-          their corresponding <code>Error</code>s. (optional)</p>
+array of successfully sent <code><a href="../Structs/Mail.html">Mail</a></code>s. [(<code><a href="../Structs/Mail.html">Mail</a></code>, <code>Error</code>)] is an array of failed <code><a href="../Structs/Mail.html">Mail</a></code>s and their
+corresponding <code>Error</code>s. (optional)</p>
                                 </div>
                               </td>
                             </tr>
@@ -437,7 +423,7 @@ in separate calls to <code>send</code>.</li>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-05)</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-23)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

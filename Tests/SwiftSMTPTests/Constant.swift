@@ -30,8 +30,11 @@ let myEmail: String? = nil
 let myPassword: String? = nil
 let port: Int32 = 465
 let useTLS = true
-let authMethods: [AuthMethod] = [.cramMD5, .login, .plain]
-let accessToken: String? = nil
+let authMethods: [String: AuthMethod] = [
+    AuthMethod.cramMD5.rawValue: .cramMD5,
+    AuthMethod.login.rawValue: .login,
+    AuthMethod.plain.rawValue: .plain
+]
 let domainName = "localhost"
 let timeout: UInt = 10
 

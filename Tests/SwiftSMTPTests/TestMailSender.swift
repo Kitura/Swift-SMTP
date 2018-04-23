@@ -24,12 +24,11 @@ import XCTest
 class TestMailSender: XCTestCase {
     static var allTests = [
         ("testBadEmail", testBadEmail),
-        ("testIsValidEmail", testIsValidEmail),
         ("testSendMail", testSendMail),
         ("testSendMailInArray", testSendMailInArray),
         ("testSendMailNoRecipient", testSendMailNoRecipient),
-        ("testSendMailToMultipleRecipients", testSendMailToMultipleRecipients),
         ("testSendMailsConcurrently", testSendMailsConcurrently),
+        ("testSendMailToMultipleRecipients", testSendMailToMultipleRecipients),
         ("testSendMailWithBcc", testSendMailWithBcc),
         ("testSendMailWithCc", testSendMailWithCc),
         ("testSendMultipleMails", testSendMultipleMails),
@@ -48,17 +47,6 @@ class TestMailSender: XCTestCase {
         waitForExpectations(timeout: testDuration)
     }
 
-    func testIsValidEmail() throws {
-        XCTAssert(try email.isValidEmail(), "\(email) should be a valid email.")
-        XCTAssertFalse(try "".isValidEmail(), "Blank email should be in invalid email.")
-        XCTAssertFalse(try "a".isValidEmail(), "`a` should be in invalid email.")
-        XCTAssertFalse(try "@gmail.com".isValidEmail(), "`@gmail.com` should be in invalid email.")
-        XCTAssertFalse(try "email@.com".isValidEmail(), "`email@.com` should be in invalid email.")
-        XCTAssertFalse(try "email@email".isValidEmail(), "`email@email` should be in invalid email.")
-        XCTAssertFalse(try "email@email.a".isValidEmail(), "`email@email.a` should be in invalid email.")
-        XCTAssertFalse(try "email@email.".isValidEmail(), "`email@email.` should be in invalid email.")
-    }
-
     func testSendMail() {
         let x = expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
@@ -75,7 +63,7 @@ class TestMailSender: XCTestCase {
         defer { waitForExpectations(timeout: testDuration) }
 
         let mail = Mail(from: from, to: [to], subject: #function, text: text)
-        smtp.send([mail]) { (sent, failed) in
+        smtp.send([mail]) { _, failed in
             XCTAssert(failed.isEmpty)
             x.fulfill()
         }
@@ -95,16 +83,6 @@ class TestMailSender: XCTestCase {
         }
     }
 
-    func testSendMailToMultipleRecipients() {
-        let x = expectation(description: "Send a single mail to multiple recipients.")
-        let mail = Mail(from: from, to: [to, to2], subject: #function)
-        smtp.send(mail) { (err) in
-            XCTAssertNil(err, String(describing: err))
-            x.fulfill()
-        }
-        waitForExpectations(timeout: testDuration)
-    }
-
     func testSendMailsConcurrently() {
         let x = expectation(description: "Send multiple mails concurrently with seperate calls to `send`.")
         let mail1 = Mail(from: from, to: [to], subject: "Send mails concurrently 1")
@@ -120,6 +98,16 @@ class TestMailSender: XCTestCase {
         }
         group.wait()
         x.fulfill()
+        waitForExpectations(timeout: testDuration)
+    }
+
+    func testSendMailToMultipleRecipients() {
+        let x = expectation(description: "Send a single mail to multiple recipients.")
+        let mail = Mail(from: from, to: [to, to2], subject: #function)
+        smtp.send(mail) { (err) in
+            XCTAssertNil(err, String(describing: err))
+            x.fulfill()
+        }
         waitForExpectations(timeout: testDuration)
     }
 
