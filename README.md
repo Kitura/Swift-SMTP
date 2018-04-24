@@ -41,7 +41,7 @@ let smtp = SMTP(
 
 ### TLS
 
-All parameters of `SMTP` struct:
+Additional parameters of `SMTP` struct:
 
 ```swift
 public init(hostname: String,
@@ -105,7 +105,7 @@ Create an `Attachment`, attach it to your `Mail`, and send it through the `SMTP`
 // Create a file `Attachment`
 let fileAttachment = Attachment(
     filePath: "~/img.png",          
-    // "CONTENT-ID" let's you reference this in another attachment
+    // "CONTENT-ID" lets you reference this in another attachment
     additionalHeaders: ["CONTENT-ID": "img001"]
 )
 
@@ -163,7 +163,7 @@ smtp.send([mail1, mail2],
 
 ## Acknowledgements
 
-`Swift-SMTP` was inspired by two other Swift SMTP clients, [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP).
+Inspired by [Hedwig](https://github.com/onevcat/Hedwig) and [Perfect-SMTP](https://github.com/PerfectlySoft/Perfect-SMTP).
 
 ## License
 
