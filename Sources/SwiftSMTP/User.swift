@@ -16,28 +16,5 @@
 
 import Foundation
 
-/// Represents a sender or receiver of an email.
-public struct User {
-    private let name: String?
-    let email: String
-    
-    ///  Initializes a `User`.
-    ///
-    /// - Parameters:
-    ///     - name: Display name for the user. (optional)
-    ///     - email: Email address for the user.
-    public init(name: String? = nil, email: String) {
-        self.name = name
-        self.email = email
-    }
-}
 
-extension User {
-    var mime: String {
-        if let name = name, let nameEncoded = name.mimeEncoded {
-            return "\(nameEncoded) <\(email)>"
-        } else {
-            return email
-        }
-    }
-}
+

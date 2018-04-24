@@ -38,7 +38,7 @@ class TestMailSender: XCTestCase {
 
     func testBadEmail() {
         let x = expectation(description: "Send a mail that will fail because of an invalid receiving address.")
-        let user = User(email: "")
+        let user = Mail.User(email: "")
         let mail = Mail(from: user, to: [user])
         smtp.send(mail) { (err) in
             XCTAssertNotNil(err, "Sending mail to an invalid email address should return an error, but return nil.")
@@ -147,7 +147,7 @@ class TestMailSender: XCTestCase {
 
     func testSendMultipleMailsWithFail() {
         let x = expectation(description: "Send two mails, one of which will fail.")
-        let badUser = User(email: "")
+        let badUser = Mail.User(email: "")
         let badMail = Mail(from: from, to: [badUser])
         let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
         smtp.send([badMail, goodMail]) { (sent, failed) in
