@@ -18,6 +18,22 @@ import Foundation
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
+    /// Represents a sender or receiver of an email.
+    public struct User {
+        private let name: String?
+        let email: String
+        
+        ///  Initializes a `User`.
+        ///
+        /// - Parameters:
+        ///     - name: Display name for the user. (optional)
+        ///     - email: Email address for the user.
+        public init(name: String? = nil, email: String) {
+            self.name = name
+            self.email = email
+        }
+    }
+
     /// A UUID for the mail.
     public let uuid = UUID().uuidString
     /// The `User` that the `Mail` will be sent from.
@@ -138,6 +154,16 @@ extension Mail {
 extension Mail {
     var hasAttachment: Bool {
         return !attachments.isEmpty || alternative != nil
+    }
+}
+
+extension Mail.User {
+    var mime: String {
+        if let name = name, let nameEncoded = name.mimeEncoded {
+            return "\(nameEncoded) <\(email)>"
+        } else {
+            return email
+        }
     }
 }
 
