@@ -20,23 +20,32 @@ import Foundation
 public struct Mail {
     /// A UUID for the mail.
     public let uuid = UUID().uuidString
+
     /// The `User` that the `Mail` will be sent from.
     public let from: User
+
     /// Array of `User`s to send the `Mail` to.
     public let to: [User]
+
     /// Array of `User`s to cc. Defaults to none.
     public let cc: [User]
+
     /// Array of `User`s to bcc. Defaults to none.
     public let bcc: [User]
+
     /// Subject of the `Mail`. Defaults to none.
     public let subject: String
+
     /// Text of the `Mail`. Defaults to none.
     public let text: String
+
     /// Array of `Attachment`s for the `Mail`. If the `Mail` has multiple `Attachment`s that are alternatives to plain
     /// text, the last one will be used as the alternative (all the `Attachments` will still be sent). Defaults to none.
     public let attachments: [Attachment]
+
     /// Attachment that is an alternative to plain text.
     public let alternative: Attachment?
+
     /// Additional headers for the `Mail`. Header keys are capitalized and duplicate keys will overwrite each other.
     /// Defaults to none. The following will be ignored: CONTENT-TYPE, CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
     public let additionalHeaders: [String: String]
@@ -64,11 +73,11 @@ public struct Mail {
     ///     - subject: Subject of the `Mail`. Defaults to none.
     ///     - text: Text of the `Mail`. Defaults to none.
     ///     - attachments: Array of `Attachment`s for the `Mail`. If the `Mail` has multiple `Attachment`s that are
-    ///                    alternatives to plain text, the last one will be used as the alternative (all the
-    ///                    `Attachments` will still be sent). Defaults to none.
+    ///       alternatives to plain text, the last one will be used as the alternative (all the `Attachments` will still
+    ///       be sent). Defaults to none.
     ///     - additionalHeaders: Additional headers for the `Mail`. Header keys are capitalized and duplicate keys will
-    ///                          overwrite each other. Defaults to none. The following will be ignored: CONTENT-TYPE,
-    ///                          CONTENT-DISPOSITION, CONTENT-TRANSFER-ENCODING.
+    ///       overwrite each other. Defaults to none. The following will be ignored: CONTENT-TYPE, CONTENT-DISPOSITION,
+    ///       CONTENT-TRANSFER-ENCODING.
     public init(from: User,
                 to: [User],
                 cc: [User] = [],
@@ -99,9 +108,7 @@ public struct Mail {
         }
         return (nil, attachments)
     }
-}
 
-extension Mail {
     var headersDictionary: [String: String] {
         var dictionary = [String: String]()
         dictionary["MESSAGE-ID"] = id
@@ -133,11 +140,38 @@ extension Mail {
             return "\(key): \(value)"
             }.joined(separator: CRLF)
     }
+
+    var hasAttachment: Bool {
+        return !attachments.isEmpty || alternative != nil
+    }
 }
 
 extension Mail {
-    var hasAttachment: Bool {
-        return !attachments.isEmpty || alternative != nil
+    /// Represents a sender or receiver of an email.
+    public struct User {
+        // The user's name that is displayed in an email. Optional.
+        public let name: String?
+
+        // The user's email address.
+        public let email: String
+
+        ///  Initializes a `User`.
+        ///
+        /// - Parameters:
+        ///     - name: The user's name that is displayed in an email. Optional.
+        ///     - email: The user's email address.
+        public init(name: String? = nil, email: String) {
+            self.name = name
+            self.email = email
+        }
+
+        var mime: String {
+            if let name = name, let nameEncoded = name.mimeEncoded {
+                return "\(nameEncoded) <\(email)>"
+            } else {
+                return email
+            }
+        }
     }
 }
 

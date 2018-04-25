@@ -1,6 +1,14 @@
 # 4.0.0 Migration Guide
 
-The optional `accessToken` parameter of the `SMTP` struct has been removed. If you are using the authorization method `XOAUTH2`, pass in your access token in the `password` parameter instead. For example:
+- `User` struct now nested in `Mail` struct to avoid namespace issues. Create a user like so:
+
+```swift
+let sender = Mail.User(name: "Sloth", email: "sloth@gmail.com")
+```
+
+- `User` properties are now public
+
+- The optional `accessToken` parameter of the `SMTP` struct has been removed. If you are using the authorization method `XOAUTH2`, pass in your access token in the `password` parameter instead. For example:
 
 ```swift
 let smtp = SMTP(

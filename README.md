@@ -62,8 +62,8 @@ By default, the `SMTP` struct connects on port `465` and tries to connect using 
 Create a `Mail` object and use your `SMTP` handle to send it. To set the sender and receiver of an email, use the `User` struct:
 
 ```swift
-let drLight = User(name: "Dr. Light", email: "drlight@gmail.com")
-let megaman = User(name: "Megaman", email: "megaman@gmail.com")
+let drLight = Mail.User(name: "Dr. Light", email: "drlight@gmail.com")
+let megaman = Mail.User(name: "Megaman", email: "megaman@gmail.com")
 
 let mail = Mail(
     from: drLight,
@@ -82,8 +82,8 @@ smtp.send(mail) { (error) in
 Add Cc and Bcc:
 
 ```swift
-let roll = User(name: "Roll", email: "roll@gmail.com")
-let zero = User(name: "Zero", email: "zero@gmail.com")
+let roll = Mail.User(name: "Roll", email: "roll@gmail.com")
+let zero = Mail.User(name: "Zero", email: "zero@gmail.com")
 
 let mail = Mail(
     from: drLight,
