@@ -92,8 +92,7 @@ public struct Mail {
     }
 
     private static func getAlternative(_ attachments: [Attachment]) -> (Attachment?, [Attachment]) {
-        let reversed: [Attachment] = attachments.reversed()
-        if let index = reversed.index(where: {( $0.isAlternative )}) {
+        if let index = attachments.index(where: {( $0.isAlternative )}) {
             var newAttachments = attachments
             return (newAttachments.remove(at: index), newAttachments)
         }
