@@ -14,6 +14,8 @@
  * limitations under the License.
  **/
 
+import Foundation
+
 /// Supported authentication methods for logging into the SMTP server.
 public enum AuthMethod: String {
     /// CRAM-MD5 authentication.

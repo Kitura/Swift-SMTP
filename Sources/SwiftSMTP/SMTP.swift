@@ -14,6 +14,8 @@
  * limitations under the License.
  **/
 
+import Foundation
+
 /// Used to connect to an SMTP server and send emails.
 public struct SMTP {
     private let hostname: String

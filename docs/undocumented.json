@@ -1,19 +1,6 @@
 {
   "warnings": [
-    {
-      "file": "/Users/quanvo/Projects/Swift-SMTP/Sources/SwiftSMTP/AuthMethod.swift",
-      "line": 18,
-      "symbol": "AuthMethod",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/quanvo/Projects/Swift-SMTP/Sources/SwiftSMTP/SMTP.swift",
-      "line": 18,
-      "symbol": "SMTP",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    }
+
   ],
   "source_directory": "/Users/quanvo/Projects/Swift-SMTP"
 }

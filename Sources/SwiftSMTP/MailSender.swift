@@ -20,7 +20,11 @@ import Foundation
     import Dispatch
 #endif
 
+/// (`Mail`, `Error`) callback after each `Mail` is sent. `Mail` is the mail sent and `Error` is the error if it failed.
 public typealias Progress = ((Mail, Error?) -> Void)?
+
+/// ([`Mail`], [(`Mail`, `Error`)]) callback after all `Mail`s have been attempted. [`Mail`] is an array of successfully
+///  sent `Mail`s. [(`Mail`, `Error`)] is an array of failed `Mail`s and their corresponding `Error`s.
 public typealias Completion = (([Mail], [(Mail, Error)]) -> Void)?
 
 class MailSender {

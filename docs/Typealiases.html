@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Structures  Reference</title>
+    <title>Type Aliases  Reference</title>
     <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="css/highlight.css" />
     <meta charset="utf-8">
@@ -15,7 +15,7 @@
   <body>
 
 
-    <a title="Structures  Reference"></a>
+    <a title="Type Aliases  Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -43,7 +43,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="index.html">SwiftSMTP Reference</a>
       <img class="carat" src="img/carat.png" />
-      Structures  Reference
+      Type Aliases  Reference
     </p>
 
     <div class="content-wrapper">
@@ -97,8 +97,8 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>Structures</h1>
-            <p>The following structures are available globally.</p>
+            <h1>Type Aliases</h1>
+            <p>The following type aliases are available globally.</p>
 
           </div>
         </section>
@@ -110,9 +110,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP10AttachmentV"></a>
-                    <a name="//apple_ref/swift/Struct/Attachment" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV">Attachment</a>
+                    <a name="/s:9SwiftSMTP8Progressa"></a>
+                    <a name="//apple_ref/swift/Alias/Progress" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP8Progressa">Progress</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -120,32 +120,26 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents a <code><a href="Structs/Mail.html">Mail</a></code>&lsquo;s attachment.
-Different SMTP servers have different attachment size limits.</p>
+                        <p>(<code><a href="Structs/Mail.html">Mail</a></code>, <code>Error</code>) callback after each <code><a href="Structs/Mail.html">Mail</a></code> is sent. <code><a href="Structs/Mail.html">Mail</a></code> is the mail sent and <code>Error</code> is the error if it failed.</p>
 
-                        <a href="Structs/Attachment.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Attachment</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Progress</span> <span class="o">=</span> <span class="p">((</span><span class="kt"><a href="Structs/Mail.html">Mail</a></span><span class="p">,</span> <span class="kt">Error</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP4MailV"></a>
-                    <a name="//apple_ref/swift/Struct/Mail" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP4MailV">Mail</a>
+                    <a name="/s:9SwiftSMTP10Completiona"></a>
+                    <a name="//apple_ref/swift/Alias/Completion" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP10Completiona">Completion</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -153,79 +147,15 @@ Different SMTP servers have different attachment size limits.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Represents an email that can be sent through an <code><a href="Structs/SMTP.html">SMTP</a></code> instance.</p>
+                        <p>([<code><a href="Structs/Mail.html">Mail</a></code>], [(<code><a href="Structs/Mail.html">Mail</a></code>, <code>Error</code>)]) callback after all <code><a href="Structs/Mail.html">Mail</a></code>s have been attempted. [<code><a href="Structs/Mail.html">Mail</a></code>] is an array of successfully
+ sent <code><a href="Structs/Mail.html">Mail</a></code>s. [(<code><a href="Structs/Mail.html">Mail</a></code>, <code>Error</code>)] is an array of failed <code><a href="Structs/Mail.html">Mail</a></code>s and their corresponding <code>Error</code>s.</p>
 
-                        <a href="Structs/Mail.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Mail</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9SwiftSMTP0B0V"></a>
-                    <a name="//apple_ref/swift/Struct/SMTP" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0V">SMTP</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Used to connect to an SMTP server and send emails.</p>
-
-                        <a href="Structs/SMTP.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SMTP</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9SwiftSMTP16TLSConfigurationV"></a>
-                    <a name="//apple_ref/swift/Struct/TLSConfiguration" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP16TLSConfigurationV">TLSConfiguration</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Configuration for connecting with TLS. For more info, see <a href="https://github.com/IBM-Swift/BlueSSLService">https://github.com/IBM-Swift/BlueSSLService</a>.</p>
-
-                        <a href="Structs/TLSConfiguration.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">TLSConfiguration</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Completion</span> <span class="o">=</span> <span class="p">(([</span><span class="kt"><a href="Structs/Mail.html">Mail</a></span><span class="p">],</span> <span class="p">[(</span><span class="kt"><a href="Structs/Mail.html">Mail</a></span><span class="p">,</span> <span class="kt">Error</span><span class="p">)])</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span></code></pre>
 
                         </div>
                       </div>

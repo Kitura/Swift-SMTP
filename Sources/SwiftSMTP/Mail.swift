@@ -108,7 +108,7 @@ public struct Mail {
         return (nil, attachments)
     }
 
-    var headersDictionary: [String: String] {
+    private var headersDictionary: [String: String] {
         var dictionary = [String: String]()
         dictionary["MESSAGE-ID"] = id
         dictionary["DATE"] = Date().smtpFormatted
@@ -148,10 +148,10 @@ public struct Mail {
 extension Mail {
     /// Represents a sender or receiver of an email.
     public struct User {
-        // The user's name that is displayed in an email. Optional.
+        /// The user's name that is displayed in an email. Optional.
         public let name: String?
 
-        // The user's email address.
+        /// The user's email address.
         public let email: String
 
         ///  Initializes a `User`.
