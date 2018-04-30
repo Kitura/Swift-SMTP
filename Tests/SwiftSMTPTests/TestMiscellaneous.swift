@@ -117,13 +117,13 @@ extension TestMiscellaneous {
 // User
 extension TestMiscellaneous {
     func testMimeNoName() {
-        let user = User(email: "bob@gmail.com")
+        let user = Mail.User(email: "bob@gmail.com")
         let expected = "bob@gmail.com"
         XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
     }
 
     func testMimeWithName() {
-        let user = User(name: "Bob", email: "bob@gmail.com")
+        let user = Mail.User(name: "Bob", email: "bob@gmail.com")
         let expected = "=?UTF-8?Q?Bob?= <bob@gmail.com>"
         XCTAssertEqual(user.mime, expected, "result: \(user.mime) != expected: \(expected)")
     }
