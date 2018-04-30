@@ -65,7 +65,7 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .invalidEmail(let email): return "Invalid email provided for User: \(email)."
         }
     }
-    
+
     init(_ error: SMTPError) {
         self = error
         Log.error(description)

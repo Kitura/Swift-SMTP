@@ -19,7 +19,7 @@ Swift SMTP client.
 
 ## Swift Version
 
-macOS & Linux: `Swift 4.0.3`
+macOS & Linux: `Swift 4.0.3` or `Swift 4.1`
 
 ## Migration Guide
 

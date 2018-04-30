@@ -187,6 +187,7 @@ extension Attachment {
 }
 
 extension Attachment: Equatable {
+    /// Returns `true` if the `Attachment`s are equal.
     public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
         return lhs.additionalHeaders == rhs.additionalHeaders &&
             lhs.hasRelated == rhs.hasRelated &&

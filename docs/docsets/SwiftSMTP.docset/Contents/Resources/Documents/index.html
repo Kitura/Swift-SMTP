@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           SwiftSMTP Docs
         </a>
-         (95% documented)
+         (100% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -70,13 +70,24 @@
                 <a class="nav-group-task-link" href="Structs/Mail.html">Mail</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/Mail/User.html">– User</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Structs/User.html">User</a>
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9SwiftSMTP10Completiona">Completion</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Typealiases.html#/s:9SwiftSMTP8Progressa">Progress</a>
               </li>
             </ul>
           </li>
@@ -108,7 +119,7 @@
 </ul>
 <h2 id='swift-version' class='heading'>Swift Version</h2>
 
-<p>macOS &amp; Linux: <code>Swift 4.0.3</code></p>
+<p>macOS &amp; Linux: <code>Swift 4.0.3</code> or <code>Swift 4.1</code></p>
 <h2 id='migration-guide' class='heading'>Migration Guide</h2>
 
 <p>Version <code>4.0.0</code> &amp; <code>3.0.0</code> bring breaking changes. See the quick migration guide <a href="https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md">here</a>.</p>
@@ -125,7 +136,7 @@
 </code></pre>
 <h3 id='tls' class='heading'>TLS</h3>
 
-<p>All parameters of <code><a href="Structs/SMTP.html">SMTP</a></code> struct:</p>
+<p>Additional parameters of <code><a href="Structs/SMTP.html">SMTP</a></code> struct:</p>
 <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
@@ -140,9 +151,9 @@
 <p>By default, the <code><a href="Structs/SMTP.html">SMTP</a></code> struct connects on port <code>465</code> and tries to connect using TLS. It also uses a <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code> that uses no backing certificates. Configure these to your needs. For more info on <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code>, view the <a href="https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html">docs</a>.</p>
 <h3 id='send-email' class='heading'>Send email</h3>
 
-<p>Create a <code><a href="Structs/Mail.html">Mail</a></code> object and use your <code><a href="Structs/SMTP.html">SMTP</a></code> handle to send it. To set the sender and receiver of an email, use the <code><a href="Structs/User.html">User</a></code> struct:</p>
-<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">drLight</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
-<span class="k">let</span> <span class="nv">megaman</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
+<p>Create a <code><a href="Structs/Mail.html">Mail</a></code> object and use your <code><a href="Structs/SMTP.html">SMTP</a></code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">drLight</span> <span class="o">=</span> <span class="kt">Mail</span><span class="o">.</span><span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Dr. Light"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"drlight@gmail.com"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">megaman</span> <span class="o">=</span> <span class="kt">Mail</span><span class="o">.</span><span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Megaman"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"megaman@gmail.com"</span><span class="p">)</span>
 
 <span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span>
     <span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
@@ -159,8 +170,8 @@
 </code></pre>
 
 <p>Add Cc and Bcc:</p>
-<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">roll</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Roll"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"roll@gmail.com"</span><span class="p">)</span>
-<span class="k">let</span> <span class="nv">zero</span> <span class="o">=</span> <span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Zero"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"zero@gmail.com"</span><span class="p">)</span>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">roll</span> <span class="o">=</span> <span class="kt">Mail</span><span class="o">.</span><span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Roll"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"roll@gmail.com"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">zero</span> <span class="o">=</span> <span class="kt">Mail</span><span class="o">.</span><span class="kt">User</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"Zero"</span><span class="p">,</span> <span class="nv">email</span><span class="p">:</span> <span class="s">"zero@gmail.com"</span><span class="p">)</span>
 
 <span class="k">let</span> <span class="nv">mail</span> <span class="o">=</span> <span class="kt">Mail</span><span class="p">(</span>
     <span class="nv">from</span><span class="p">:</span> <span class="n">drLight</span><span class="p">,</span>
@@ -179,7 +190,7 @@
 <pre class="highlight swift"><code><span class="c1">// Create a file `Attachment`</span>
 <span class="k">let</span> <span class="nv">fileAttachment</span> <span class="o">=</span> <span class="kt">Attachment</span><span class="p">(</span>
     <span class="nv">filePath</span><span class="p">:</span> <span class="s">"~/img.png"</span><span class="p">,</span>          
-    <span class="c1">// "CONTENT-ID" let's you reference this in another attachment</span>
+    <span class="c1">// "CONTENT-ID" lets you reference this in another attachment</span>
     <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="s">"CONTENT-ID"</span><span class="p">:</span> <span class="s">"img001"</span><span class="p">]</span>
 <span class="p">)</span>
 
@@ -233,7 +244,7 @@
 </code></pre>
 <h2 id='acknowledgements' class='heading'>Acknowledgements</h2>
 
-<p><code>Swift-SMTP</code> was inspired by two other Swift SMTP clients, <a href="https://github.com/onevcat/Hedwig">Hedwig</a> and <a href="https://github.com/PerfectlySoft/Perfect-SMTP">Perfect-SMTP</a>.</p>
+<p>Inspired by <a href="https://github.com/onevcat/Hedwig">Hedwig</a> and <a href="https://github.com/PerfectlySoft/Perfect-SMTP">Perfect-SMTP</a>.</p>
 <h2 id='license' class='heading'>License</h2>
 
 <p>Apache v2.0</p>
@@ -245,7 +256,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-23)</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-30)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
