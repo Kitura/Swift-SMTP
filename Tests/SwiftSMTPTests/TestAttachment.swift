@@ -23,7 +23,7 @@ class TestAttachment: XCTestCase {
             ("testDataAttachmentHeaders", testDataAttachmentHeaders),
             ("testFileAttachmentHeaders", testFileAttachmentHeaders),
             ("testHTMLAttachmentHeaders", testHTMLAttachmentHeaders),
-            ("testAlternativeAttachment", testAlternativeAttachment)
+            ("testGetAlternativeAttachment", testGetAlternativeAttachment)
         ]
     }
 
@@ -48,18 +48,21 @@ class TestAttachment: XCTestCase {
         XCTAssert(headers.contains("CONTENT-TYPE: text/html; charset=utf-8"))
         XCTAssert(headers.contains("CONTENT-DISPOSITION: inline"))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
-
     }
 
-    func testAlternativeAttachment() {
+    func testGetAlternativeAttachment() {
         let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
         let imgAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
-        let htmlAttachment = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>\(text)</html>", relatedAttachments: [imgAttachment])
+        let htmlAttachment1 = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>\(text)</html>", relatedAttachments: [imgAttachment])
         let jsonAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
-        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment, plus additional attachment", text: text, attachments: [htmlAttachment, jsonAttachment])
+        let htmlAttachment2 = Attachment(htmlContent: "<html>hello</html>")
+        let attachments = [htmlAttachment1, imgAttachment, jsonAttachment, htmlAttachment2]
+        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment, plus additional attachment", text: text, attachments: attachments)
 
-        XCTAssert(htmlAttachment.isAlternative)
+        XCTAssert(htmlAttachment1.isAlternative)
         XCTAssert(!jsonAttachment.isAlternative)
+        XCTAssertEqual(mail.attachments, [htmlAttachment1, imgAttachment, jsonAttachment])
         XCTAssert(mail.alternative!.isAlternative)
+        XCTAssertEqual(mail.alternative!, htmlAttachment2)
     }
 }
