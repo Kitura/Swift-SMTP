@@ -83,18 +83,18 @@ private extension SMTPSocket {
         guard !responsesArray.isEmpty else {
             throw SMTPError.badResponse(command: command.text, response: responses)
         }
-//        #if swift(>=4.1)
-//        return try responsesArray.compactMap { response in
-//            guard response != "" else {
-//                return nil
-//            }
-//            return Response(
-//                code: try getResponseCode(response, command: command),
-//                message: getResponseMessage(response),
-//                response: response
-//            )
-//        }
-//        #else
+        #if swift(>=4.1)
+        return try responsesArray.compactMap { response in
+            guard response != "" else {
+                return nil
+            }
+            return Response(
+                code: try getResponseCode(response, command: command),
+                message: getResponseMessage(response),
+                response: response
+            )
+        }
+        #else
         return try responsesArray.flatMap { response in
             guard response != "" else {
                 return nil
@@ -105,7 +105,7 @@ private extension SMTPSocket {
                 response: response
             )
         }
-//        #endif
+        #endif
     }
 
     func getResponseCode(_ response: String, command: Command) throws -> ResponseCode {
