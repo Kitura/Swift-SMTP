@@ -22,7 +22,8 @@ class TestAttachment: XCTestCase {
         return [
             ("testDataAttachmentHeaders", testDataAttachmentHeaders),
             ("testFileAttachmentHeaders", testFileAttachmentHeaders),
-            ("testHTMLAttachmentHeaders", testHTMLAttachmentHeaders)
+            ("testHTMLAttachmentHeaders", testHTMLAttachmentHeaders),
+            ("testGetAlternativeAttachment", testGetAlternativeAttachment)
         ]
     }
 
@@ -47,6 +48,21 @@ class TestAttachment: XCTestCase {
         XCTAssert(headers.contains("CONTENT-TYPE: text/html; charset=utf-8"))
         XCTAssert(headers.contains("CONTENT-DISPOSITION: inline"))
         XCTAssert(headers.contains("CONTENT-TRANSFER-ENCODING: BASE64"))
+    }
 
+    func testGetAlternativeAttachment() {
+        let data = "{\"key\": \"hello world\"}".data(using: .utf8)!
+        let imgAttachment = Attachment(filePath: imgFilePath, additionalHeaders: ["CONTENT-ID": "megaman-pic"])
+        let htmlAttachment1 = Attachment(htmlContent: "<html><img src=\"cid:megaman-pic\"/>\(text)</html>", relatedAttachments: [imgAttachment])
+        let jsonAttachment = Attachment(data: data, mime: "application/json", name: "file.json")
+        let htmlAttachment2 = Attachment(htmlContent: "<html>hello</html>")
+        let attachments = [htmlAttachment1, imgAttachment, jsonAttachment, htmlAttachment2]
+        let mail = Mail(from: from, to: [to], subject: "HTML with related attachment, plus additional attachment", text: text, attachments: attachments)
+
+        XCTAssert(htmlAttachment1.isAlternative)
+        XCTAssert(!jsonAttachment.isAlternative)
+        XCTAssertEqual(mail.attachments, [htmlAttachment1, imgAttachment, jsonAttachment])
+        XCTAssert(mail.alternative!.isAlternative)
+        XCTAssertEqual(mail.alternative!, htmlAttachment2)
     }
 }

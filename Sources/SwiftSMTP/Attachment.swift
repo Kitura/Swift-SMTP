@@ -185,3 +185,38 @@ extension Attachment {
         return false
     }
 }
+
+extension Attachment: Equatable {
+    public static func ==(lhs: Attachment, rhs: Attachment) -> Bool {
+        return lhs.additionalHeaders == rhs.additionalHeaders &&
+            lhs.hasRelated == rhs.hasRelated &&
+            lhs.headersDictionary == rhs.headersDictionary &&
+            lhs.isAlternative == rhs.isAlternative &&
+            lhs.relatedAttachments == rhs.relatedAttachments &&
+            lhs.type == rhs.type
+    }
+}
+
+extension Attachment.AttachmentType: Equatable {
+    static func ==(lhs: Attachment.AttachmentType, rhs: Attachment.AttachmentType) -> Bool {
+        switch (lhs, rhs) {
+        case (let .data(data1, mime1, name1, inline1), let .data(data2, mime2, name2, inline2)):
+            return data1 == data2 &&
+                mime1 == mime2 &&
+                name1 == name2 &&
+                inline1 == inline2
+        case (let .file(path1, mime1, name1, inline1), let .file(path2, mime2, name2, inline2)):
+            return path1 == path2 &&
+                mime1 == mime2 &&
+                name1 == name2 &&
+                inline1 == inline2
+        case (let .html(content1, characterSet1, alternative1),
+              let .html(content2, characterSet2, alternative2)):
+            return content1 == content2 &&
+                characterSet1 == characterSet2 &&
+                alternative1 == alternative2
+        default:
+            return false
+        }
+    }
+}
