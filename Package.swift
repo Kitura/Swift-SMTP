@@ -11,8 +11,8 @@ let package = Package(
             targets: ["SwiftSMTP"]),
         ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "0.12.0"),
-        .package(url: "https://github.com/IBM-Swift/BlueSSLService.git", from: "0.12.0"),
+        .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0"),
+        .package(url: "https://github.com/IBM-Swift/BlueSSLService.git", from: "1.0.0"),
         .package(url: "https://github.com/IBM-Swift/BlueCryptor.git", from: "1.0.0"),
         .package(url: "https://github.com/IBM-Swift/LoggerAPI.git", from: "1.7.0"),
         ],
