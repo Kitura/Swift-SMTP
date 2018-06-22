@@ -25,13 +25,13 @@ struct SMTPSocket {
          email: String,
          password: String,
          port: Int32,
-         useTLS: Bool,
+         tlsMode: SMTP.TLSMode,
          tlsConfiguration: TLSConfiguration?,
          authMethods: [String: AuthMethod],
          domainName: String,
          timeout: UInt) throws {
         socket = try Socket.create()
-        if useTLS {
+        if tlsMode == .requireTLS {
             if let tlsConfiguration = tlsConfiguration {
                 socket.delegate = try tlsConfiguration.makeSSLService()
             } else {
@@ -41,8 +41,12 @@ struct SMTPSocket {
         try socket.connect(to: hostname, port: port, timeout: timeout * 1000)
         try parseResponses(readFromSocket(), command: .connect)
         var serverOptions = try getServerOptions(domainName: domainName)
-        if (try doStarttls(serverOptions: serverOptions, tlsConfiguration:tlsConfiguration)) {
-            serverOptions = try getServerOptions(domainName: domainName)
+        if (tlsMode == .normal || tlsMode == .requireSTARTTLS) {
+            if (try doStarttls(serverOptions: serverOptions, tlsConfiguration:tlsConfiguration)) {
+                serverOptions = try getServerOptions(domainName: domainName)
+            } else if (tlsMode == .requireSTARTTLS) {
+                throw SMTPError.requireSTARTTLS
+            }
         }
         let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
         try login(authMethod: authMethod, email: email, password: password)

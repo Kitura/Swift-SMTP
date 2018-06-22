@@ -22,11 +22,23 @@ public struct SMTP {
     private let email: String
     private let password: String
     private let port: Int32
-    private let useTLS: Bool
+    private let tlsMode: TLSMode
     private let tlsConfiguration: TLSConfiguration?
     private let authMethods: [String: AuthMethod]
     private let domainName: String
     private let timeout: UInt
+
+    /// TLSMode enum for what form of connection security to enforce
+    public enum TLSMode {
+        /// Follow the requirements of the server with no enforced security. Initiated with no TLS
+        case normal
+        /// Do not use TLS. Ignore any commands to upgrade to TLS
+        case noTLS
+        /// Require TLS from the initial connection
+        case requireTLS
+        /// Enforce the connection upgrades to TLS
+        case requireSTARTTLS
+    }
 
     /// Initializes an `SMTP` instance.
     ///
@@ -35,8 +47,7 @@ public struct SMTP {
     ///     - email: Username to log in to server.
     ///     - password: Password to log in to server, or access token if using XOAUTH2 authorization method.
     ///     - port: Port to connect to the server on. Defaults to `465`.
-    ///     - useTLS: `Bool` indicating whether to connect with TLS. Your server must support the `STARTTLS` command.
-    ///       Defaults to `true`.
+    ///     - tlsMode: TLSMode `enum` indicating what form of connection security to use
     ///     - tlsConfiguration: `TLSConfiguration` used to connect with TLS. If nil, a configuration with no backing
     ///       certificates is used. See `TLSConfiguration` for other configuration options.
     ///     - authMethods: `AuthMethod`s to use to log in to the server. If blank, tries all supported methods.
@@ -50,8 +61,8 @@ public struct SMTP {
     public init(hostname: String,
                 email: String,
                 password: String,
-                port: Int32 = 465,
-                useTLS: Bool = true,
+                port: Int32 = 587,
+                tlsMode: TLSMode = .requireSTARTTLS,
                 tlsConfiguration: TLSConfiguration? = nil,
                 authMethods: [AuthMethod] = [],
                 domainName: String = "localhost",
@@ -60,7 +71,7 @@ public struct SMTP {
         self.email = email
         self.password = password
         self.port = port
-        self.useTLS = useTLS
+        self.tlsMode = tlsMode
         self.tlsConfiguration = tlsConfiguration
 
         let _authMethods = !authMethods.isEmpty ? authMethods : [
@@ -126,7 +137,7 @@ public struct SMTP {
                 email: email,
                 password: password,
                 port: port,
-                useTLS: useTLS,
+                tlsMode: tlsMode,
                 tlsConfiguration: tlsConfiguration,
                 authMethods: authMethods,
                 domainName: domainName,

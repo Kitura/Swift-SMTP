@@ -50,6 +50,9 @@ public enum SMTPError: Error, CustomStringConvertible {
     // User
     /// Invalid email provided for `User`.
     case invalidEmail(email: String)
+
+    /// STARTTLS was required but the server did not request it
+    case requireSTARTTLS
     
     /// Description of the `SMTPError`.
     public var description: String {
@@ -63,6 +66,7 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .badResponse(let command, let response): return "Bad response received for command. command: (\(command)), response: \(response)"
         case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
         case .invalidEmail(let email): return "Invalid email provided for User: \(email)."
+        case .requireSTARTTLS: return "STARTTLS was required but the server did not issue a STARTTLS command."
         }
     }
 
