@@ -28,8 +28,7 @@ let testDuration: Double = 15
 let hostname = "smtp.gmail.com"
 let myEmail: String? = nil
 let myPassword: String? = nil
-let port: Int32 = 465
-let useTLS = true
+let port: Int32 = 587
 let authMethods: [String: AuthMethod] = [
     AuthMethod.cramMD5.rawValue: .cramMD5,
     AuthMethod.login.rawValue: .login,
