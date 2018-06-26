@@ -77,9 +77,6 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SMTP/TLSMode.html">– TLSMode</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
             </ul>
@@ -120,37 +117,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP0B0V7TLSModeO"></a>
-                    <a name="//apple_ref/swift/Enum/TLSMode" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0V7TLSModeO">TLSMode</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>TLSMode enum for what form of connection security to enforce.</p>
-
-                        <a href="../Structs/SMTP/TLSMode.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">TLSMode</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAC7TLSModeO7tlsModeAA16TLSConfigurationVSg0I13ConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:tlsMode:tlsConfiguration:authMethods:domainName:timeout:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAC7TLSModeO7tlsModeAA16TLSConfigurationVSg0I13ConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:tlsMode:tlsConfiguration:authMethods:domainName:timeout:)</a>
+                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:domainName:timeout:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portSb6useTLSAA16TLSConfigurationVSg16tlsConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:useTLS:tlsConfiguration:authMethods:domainName:timeout:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -179,8 +148,8 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                           <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-            <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
-            <span class="nv">tlsMode</span><span class="p">:</span> <span class="kt"><a href="../Structs/SMTP/TLSMode.html">TLSMode</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">requireSTARTTLS</span><span class="p">,</span>
+            <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">465</span><span class="p">,</span>
+            <span class="nv">useTLS</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">tlsConfiguration</span><span class="p">:</span> <span class="kt"><a href="../Structs/TLSConfiguration.html">TLSConfiguration</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">authMethods</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/AuthMethod.html">AuthMethod</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nv">domainName</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"localhost"</span><span class="p">,</span>
@@ -243,12 +212,13 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                             <tr>
                               <td>
                                 <code>
-                                <em>tlsMode</em>
+                                <em>useTLS</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>TLSMode <code>enum</code> indicating what form of connection security to use.</p>
+                                  <p><code>Bool</code> indicating whether to connect with TLS. Your server must support the <code>STARTTLS</code> command.
+Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -464,7 +434,7 @@ corresponding <code>Error</code>s. (optional)</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-06-26)</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-30)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

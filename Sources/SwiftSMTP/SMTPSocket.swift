@@ -25,13 +25,13 @@ struct SMTPSocket {
          email: String,
          password: String,
          port: Int32,
-         tlsMode: SMTP.TLSMode,
+         useTLS: Bool,
          tlsConfiguration: TLSConfiguration?,
          authMethods: [String: AuthMethod],
          domainName: String,
          timeout: UInt) throws {
         socket = try Socket.create()
-        if tlsMode == .requireTLS {
+        if useTLS {
             if let tlsConfiguration = tlsConfiguration {
                 socket.delegate = try tlsConfiguration.makeSSLService()
             } else {
@@ -40,14 +40,7 @@ struct SMTPSocket {
         }
         try socket.connect(to: hostname, port: port, timeout: timeout * 1000)
         try parseResponses(readFromSocket(), command: .connect)
-        var serverOptions = try getServerOptions(domainName: domainName)
-        if tlsMode == .requireSTARTTLS || tlsMode == .normal {
-            if try doStarttls(serverOptions: serverOptions, tlsConfiguration: tlsConfiguration) {
-                serverOptions = try getServerOptions(domainName: domainName)
-            } else if tlsMode == .requireSTARTTLS {
-                throw SMTPError.requiredSTARTTLS
-            }
-        }
+        let serverOptions = try getServerOptions(domainName: domainName)
         let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
         try login(authMethod: authMethod, email: email, password: password)
     }
@@ -159,29 +152,7 @@ private extension SMTPSocket {
                 }
             }
         }
-        throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
-    }
-
-    func doStarttls(serverOptions: [Response], tlsConfiguration: TLSConfiguration?) throws -> Bool {
-        for option in serverOptions {
-            if option.message == "STARTTLS" {
-                try starttls(tlsConfiguration: tlsConfiguration)
-                return true
-            }
-        }
-        return false
-    }
-
-    func starttls(tlsConfiguration: TLSConfiguration?) throws {
-        try send(.starttls)
-        // Upgrade the socket to SSL/TLS
-        if let tlsConfiguration = tlsConfiguration {
-            socket.delegate = try tlsConfiguration.makeSSLService()
-        } else {
-            socket.delegate = try TLSConfiguration().makeSSLService()
-        }
-        try socket.delegate?.initialize(asServer: false)
-        try socket.delegate?.onConnect(socket: socket)
+        throw SMTPError.noSupportedAuthMethods(hostname: hostname)
     }
 
     func login(authMethod: AuthMethod, email: String, password: String) throws {

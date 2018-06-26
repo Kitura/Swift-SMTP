@@ -30,8 +30,8 @@ public enum SMTPError: Error, CustomStringConvertible {
     /// File not found at path while trying to send file `Attachment`.
     case fileNotFound(path: String)
 
-    /// The preferred `AuthMethod`s could not be found, or your server is sending back a STARTTLS command and requires a connection upgrade.
-    case noAuthMethodsOrRequiresTLS(hostname: String)
+    /// The preferred `AuthMethod`s could not be found. Connecting with `SSL` may be required.
+    case noSupportedAuthMethods(hostname: String)
     
     // Sender
     /// Mail has no recipients.
@@ -50,9 +50,6 @@ public enum SMTPError: Error, CustomStringConvertible {
     // User
     /// Invalid email provided for `User`.
     case invalidEmail(email: String)
-
-    /// STARTTLS was required but the server did not request it.
-    case requiredSTARTTLS
     
     /// Description of the `SMTPError`.
     public var description: String {
@@ -60,13 +57,12 @@ public enum SMTPError: Error, CustomStringConvertible {
         case .base64DecodeFail(let s): return "Error decoding string: \(s)."
         case .md5HashChallengeFail: return "Hashing server challenge with MD5 algorithm failed."
         case .fileNotFound(let p): return "File not found at path while trying to send file `Attachment`: \(p)."
-        case .noAuthMethodsOrRequiresTLS(let hostname): return "The preferred authorization methods could not be found on \(hostname), or your server is sending back a STARTTLS command and requires a connection upgrade."
+        case .noSupportedAuthMethods(let hostname): return "The preferred authorization methods could not be found on \(hostname). Connecting with SSL may be required."
         case .noRecipients: return "An email requires at least one recipient."
         case .createEmailRegexFailed: return "Failed to create RegularExpression that can check if an email is valid."
         case .badResponse(let command, let response): return "Bad response received for command. command: (\(command)), response: \(response)"
         case .convertDataUTF8Fail(let buf): return "Error converting Data read from socket to a String: \(buf)."
         case .invalidEmail(let email): return "Invalid email provided for User: \(email)."
-        case .requiredSTARTTLS: return "STARTTLS was required but the server did not issue a STARTTLS command."
         }
     }
 
