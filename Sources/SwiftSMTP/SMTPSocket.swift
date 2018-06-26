@@ -41,10 +41,10 @@ struct SMTPSocket {
         try socket.connect(to: hostname, port: port, timeout: timeout * 1000)
         try parseResponses(readFromSocket(), command: .connect)
         var serverOptions = try getServerOptions(domainName: domainName)
-        if (tlsMode == .requireSTARTTLS || tlsMode == .normal) {
-            if (try doStarttls(serverOptions: serverOptions, tlsConfiguration:tlsConfiguration)) {
+        if tlsMode == .requireSTARTTLS || tlsMode == .normal {
+            if try doStarttls(serverOptions: serverOptions, tlsConfiguration: tlsConfiguration) {
                 serverOptions = try getServerOptions(domainName: domainName)
-            } else if (tlsMode == .requireSTARTTLS) {
+            } else if tlsMode == .requireSTARTTLS {
                 throw SMTPError.requiredSTARTTLS
             }
         }
@@ -159,20 +159,22 @@ private extension SMTPSocket {
                 }
             }
         }
-        throw SMTPError.noSupportedAuthMethods(hostname: hostname)
+        throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
     }
+
     func doStarttls(serverOptions: [Response], tlsConfiguration: TLSConfiguration?) throws -> Bool {
         for option in serverOptions {
             if option.message == "STARTTLS" {
-                try starttls(tlsConfiguration:tlsConfiguration)
+                try starttls(tlsConfiguration: tlsConfiguration)
                 return true
             }
         }
         return false
     }
+
     func starttls(tlsConfiguration: TLSConfiguration?) throws {
         try send(.starttls)
-        //Upgrade the socket to SSL/TLS
+        // Upgrade the socket to SSL/TLS
         if let tlsConfiguration = tlsConfiguration {
             socket.delegate = try tlsConfiguration.makeSSLService()
         } else {
