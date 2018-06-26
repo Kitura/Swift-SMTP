@@ -41,11 +41,11 @@ struct SMTPSocket {
         try socket.connect(to: hostname, port: port, timeout: timeout * 1000)
         try parseResponses(readFromSocket(), command: .connect)
         var serverOptions = try getServerOptions(domainName: domainName)
-        if (tlsMode == .normal || tlsMode == .requireSTARTTLS) {
+        if (tlsMode == .requireSTARTTLS || tlsMode == .normal) {
             if (try doStarttls(serverOptions: serverOptions, tlsConfiguration:tlsConfiguration)) {
                 serverOptions = try getServerOptions(domainName: domainName)
             } else if (tlsMode == .requireSTARTTLS) {
-                throw SMTPError.requireSTARTTLS
+                throw SMTPError.requiredSTARTTLS
             }
         }
         let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)

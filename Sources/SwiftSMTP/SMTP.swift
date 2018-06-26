@@ -30,13 +30,16 @@ public struct SMTP {
 
     /// TLSMode enum for what form of connection security to enforce
     public enum TLSMode {
-        /// Follow the requirements of the server with no enforced security. Initiated with no TLS
+        /// Upgrades the connection to TLS if STARTLS command is received, else sends mail without security.
         case normal
-        /// Do not use TLS. Ignore any commands to upgrade to TLS
-        case noTLS
-        /// Require TLS from the initial connection
+
+        /// Send mail over plaintext and ignore STARTTLS commands and TLS options. Could throw an error if server requires TLS.
+        case ignoreTLS
+
+        /// Only send mail after an initial successful TLS connection. Connection will fail if a TLS connection cannot be established.
         case requireTLS
-        /// Enforce the connection upgrades to TLS
+
+        /// Expect a STARTTLS command from the server and require the connection is upgraded to TLS. Will throw if the server does not issue a STARTTLS command
         case requireSTARTTLS
     }
 
