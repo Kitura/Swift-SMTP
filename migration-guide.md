@@ -1,26 +1,3 @@
-# 5.0.0 Migration Guide
-
-- The default port is now `587`.
-
-- The `SMTP` struct is now initialized with a `TLSMode` enum instead of a `useTLS` Bool, allowing more configuration options:
-
-```swift
-/// TLSMode enum for what form of connection security to enforce.
-    public enum TLSMode {
-        /// Upgrades the connection to TLS if STARTLS command is received, else sends mail without security.
-        case normal
-
-        /// Send mail over plaintext and ignore STARTTLS commands and TLS options. Could throw an error if server requires TLS.
-        case ignoreTLS
-
-        /// Only send mail after an initial successful TLS connection. Connection will fail if a TLS connection cannot be established. The default port, 587, will likely need to be adjusted depending on your server.
-        case requireTLS
-
-        /// Expect a STARTTLS command from the server and require the connection is upgraded to TLS. Will throw if the server does not issue a STARTTLS command.
-        case requireSTARTTLS
-    }
-```
-
 # 4.0.0 Migration Guide
 
 - `User` struct now nested in `Mail` struct to avoid namespace issues [(69)](https://github.com/IBM-Swift/Swift-SMTP/pull/69). Create a user like so:

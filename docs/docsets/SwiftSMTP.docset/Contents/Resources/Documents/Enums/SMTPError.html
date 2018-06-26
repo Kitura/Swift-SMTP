@@ -77,9 +77,6 @@
                 <a class="nav-group-task-link" href="../Structs/SMTP.html">SMTP</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/SMTP/TLSMode.html">– TLSMode</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/TLSConfiguration.html">TLSConfiguration</a>
               </li>
             </ul>
@@ -213,9 +210,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP9SMTPErrorO26noAuthMethodsOrRequiresTLSACSS8hostname_tcACmF"></a>
-                    <a name="//apple_ref/swift/Element/noAuthMethodsOrRequiresTLS" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP9SMTPErrorO26noAuthMethodsOrRequiresTLSACSS8hostname_tcACmF">noAuthMethodsOrRequiresTLS</a>
+                    <a name="/s:9SwiftSMTP9SMTPErrorO22noSupportedAuthMethodsACSS8hostname_tcACmF"></a>
+                    <a name="//apple_ref/swift/Element/noSupportedAuthMethods" class="dashAnchor"></a>
+                    <a class="token" href="#/s:9SwiftSMTP9SMTPErrorO22noSupportedAuthMethodsACSS8hostname_tcACmF">noSupportedAuthMethods</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -223,14 +220,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The preferred <code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s could not be found, or your server is sending back a STARTTLS command and requires a connection upgrade.</p>
+                        <p>The preferred <code><a href="../Enums/AuthMethod.html">AuthMethod</a></code>s could not be found. Connecting with <code>SSL</code> may be required.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">noAuthMethodsOrRequiresTLS</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight"><code><span class="k">case</span> <span class="nf">noSupportedAuthMethods</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -399,37 +396,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP9SMTPErrorO16requiredSTARTTLSA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/requiredSTARTTLS" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP9SMTPErrorO16requiredSTARTTLSA2CmF">requiredSTARTTLS</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>STARTTLS was required but the server did not request it.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="k">case</span> <span class="n">requiredSTARTTLS</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:9SwiftSMTP9SMTPErrorO11descriptionSSvp"></a>
                     <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
                     <a class="token" href="#/s:9SwiftSMTP9SMTPErrorO11descriptionSSvp">description</a>
@@ -462,7 +428,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-06-26)</p>
+      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-04-30)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

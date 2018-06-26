@@ -23,7 +23,7 @@ macOS & Linux: `Swift 4.0.3` or `Swift 4.1`
 
 ## Migration Guide
 
-Version `5.0.0` brings breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
+Version `4.0.0` & `3.0.0` bring breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
 
 ## Usage
 
@@ -47,15 +47,15 @@ Additional parameters of `SMTP` struct:
 public init(hostname: String,
             email: String,
             password: String,
-            port: Int32 = 587,
-            tlsMode: TLSMode = .requireSTARTTLS,
+            port: Int32 = 465,
+            useTLS: Bool = true,
             tlsConfiguration: TLSConfiguration? = nil,
             authMethods: [AuthMethod] = [],
             domainName: String = "localhost",
             timeout: UInt = 10)
 ```
 
-By default, the `SMTP` struct connects on port `587` and sends mail only if a TLS connection can be established. It also uses a `TLSConfiguration` that uses no backing certificates. View the [docs](https://ibm-swift.github.io/Swift-SMTP/) for more configuration options.
+By default, the `SMTP` struct connects on port `465` and tries to connect using TLS. It also uses a `TLSConfiguration` that uses no backing certificates. Configure these to your needs. For more info on `TLSConfiguration`, view the [docs](https://ibm-swift.github.io/Swift-SMTP/Structs/TLSConfiguration.html).
 
 ### Send email
 
