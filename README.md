@@ -21,6 +21,38 @@ Swift SMTP client.
 
 macOS & Linux: `Swift 4.0.3`, `Swift 4.1` and `Swift 4.1.2`
 
+## Installation
+
+You can add `SwiftSMTP` to your project using [Swift Package Manager](https://swift.org/package-manager/). If your project does not have a `Package.swift` file, create one by running `swift package init` in the root directory of your project. Then open `Package.swift` and add `SwiftSMTP` as a dependency. Be sure to add it to your desired targets as well:
+
+```swift
+// swift-tools-version:4.0
+
+import PackageDescription
+
+let package = Package(
+    name: "MyProject",
+    products: [
+        .library(
+            name: "MyProject",
+            targets: ["MyProject"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/IBM-Swift/Swift-SMTP", .upToNextMinor(from: "5.1.0")),    // add the dependency
+    ],
+    targets: [
+        .target(
+            name: "MyProject",
+            dependencies: ["SwiftSMTP"]),                                                           // add targets
+        .testTarget(                                                                                // note "SwiftSMTP" (NO HYPHEN)
+            name: "MyProjectTests",
+            dependencies: ["MyProject"]),
+    ]
+)
+```
+
+After adding the dependency and saving, run `swift package generate-xcodeproj` in the root directory of your project. This will fetch dependencies and create an Xcode project which you can open and begin editing.
+
 ## Migration Guide
 
 Version `5.0.0` brings breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
