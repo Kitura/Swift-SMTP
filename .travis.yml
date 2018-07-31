@@ -8,8 +8,20 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
+      env: SWIFT_SNAPSHOT=4.0.3
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: SWIFT_SNAPSHOT=4.1.2
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: SWIFT_SNAPSHOT=swift-4.2-DEVELOPMENT-SNAPSHOT-2018-06-29-a
     - os: osx
-      osx_image: xcode9.1
+      osx_image: xcode9.2
+      sudo: required
+    - os: osx
+      osx_image: xcode9.4
       sudo: required
 
 before_install:
