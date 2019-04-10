@@ -58,7 +58,11 @@ public struct Mail {
     /// Hostname from the email address.
     public var hostname: String {
         let fullEmail = from.email
+#if swift(>=4.2)
+        let atIndex = fullEmail.firstIndex(of: "@")
+#else
         let atIndex = fullEmail.index(of: "@")
+#endif
         let hostStart = fullEmail.index(after: atIndex!)
         return String(fullEmail[hostStart...])
     }
@@ -102,7 +106,12 @@ public struct Mail {
 
     private static func getAlternative(_ attachments: [Attachment]) -> (Attachment?, [Attachment]) {
         var reversed: [Attachment] = attachments.reversed()
-        if let index = reversed.index(where: { $0.isAlternative }) {
+#if swift(>=4.2)
+        let index = reversed.firstIndex(where: { $0.isAlternative })
+#else
+        let index = reversed.index(where: { $0.isAlternative })
+#endif
+        if let index = index {
             return (reversed.remove(at: index), reversed.reversed())
         }
         return (nil, attachments)
