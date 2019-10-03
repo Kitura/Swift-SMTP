@@ -110,9 +110,9 @@ extension DataSender {
         try send(attachmentHeader)
 
         switch attachment.type {
-        case .data(let data): try sendData(data.data)
-        case .file(let file): try sendFile(at: file.path)
-        case .html(let html): try sendHTML(html.content)
+        case .data(let data, _, _, _): try sendData(data)
+        case .file(let path, _, _, _): try sendFile(at: path)
+        case .html(let content, _, _): try sendHTML(content)
         }
 
         try send("")

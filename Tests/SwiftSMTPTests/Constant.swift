@@ -58,12 +58,21 @@ let password: String = {
 }()
 
 let senderEmailDomain: String = {
-	if let atIndex = email.index(of: "@") {
-		let domainStart = email.index(after: atIndex)
+#if swift(>=5)
+    if let atIndex = email.firstIndex(of: "@") {
+        let domainStart = email.index(after: atIndex)
         return String(email[domainStart...])
     } else {
         return "gmail.com"
     }
+#else
+    if let atIndex = email.index(of: "@") {
+        let domainStart = email.index(after: atIndex)
+        return String(email[domainStart...])
+    } else {
+        return "gmail.com"
+    }
+#endif
 }()
 
 let testsDir: String = {
