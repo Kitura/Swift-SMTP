@@ -131,24 +131,24 @@ extension Attachment {
         var dictionary = [String: String]()
         switch type {
 
-        case .data(let data):
-            dictionary["CONTENT-TYPE"] = data.mime
-            var attachmentDisposition = data.inline ? "inline" : "attachment"
-            if let mime = data.name.mimeEncoded {
-                attachmentDisposition.append("; filename=\"\(mime)\"")
+        case .data(_, let mime, let name, let inline):
+            dictionary["CONTENT-TYPE"] = mime
+            var attachmentDisposition = inline ? "inline" : "attachment"
+            if let mimeName = name.mimeEncoded {
+                attachmentDisposition.append("; filename=\"\(mimeName)\"")
             }
             dictionary["CONTENT-DISPOSITION"] = attachmentDisposition
 
-        case .file(let file):
-            dictionary["CONTENT-TYPE"] = file.mime
-            var attachmentDisposition = file.inline ? "inline" : "attachment"
-            if let mime = file.name.mimeEncoded {
-                attachmentDisposition.append("; filename=\"\(mime)\"")
+        case .file(_, let mime, let name, let inline):
+            dictionary["CONTENT-TYPE"] = mime
+            var attachmentDisposition = inline ? "inline" : "attachment"
+            if let mimeName = name.mimeEncoded {
+                attachmentDisposition.append("; filename=\"\(mimeName)\"")
             }
             dictionary["CONTENT-DISPOSITION"] = attachmentDisposition
 
-        case .html(let html):
-            dictionary["CONTENT-TYPE"] = "text/html; charset=\(html.characterSet)"
+        case .html(_, let characterSet, _):
+            dictionary["CONTENT-TYPE"] = "text/html; charset=\(characterSet)"
             dictionary["CONTENT-DISPOSITION"] = "inline"
         }
 
@@ -179,8 +179,8 @@ extension Attachment {
     }
 
     var isAlternative: Bool {
-        if case .html(let html) = type, html.alternative {
-            return true
+        if case .html(_, _, let alternative) = type {
+            return alternative
         }
         return false
     }
