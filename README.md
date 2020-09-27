@@ -1,10 +1,10 @@
 # Swift-SMTP
 
-![Swift-SMTP bird](https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png?raw=true)
+![Swift-SMTP bird](https://github.com/Kitura/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png?raw=true)
 
 Swift SMTP client.
 
-![Build Status](https://travis-ci.org/IBM-Swift/Swift-SMTP.svg?branch=master)
+![Build Status](https://travis-ci.org/Kitura/Swift-SMTP.svg?branch=master)
 ![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
 ![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
 ![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
@@ -15,7 +15,7 @@ Swift SMTP client.
 - Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2
 - Send emails with local file, HTML, and raw data attachments
 - Add custom headers
-- [Documentation](https://ibm-swift.github.io/Swift-SMTP/)
+- [Documentation](https://kitura.github.io/Swift-SMTP/)
 
 ## Swift Version
 
@@ -38,7 +38,7 @@ let package = Package(
             targets: ["MyProject"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/Swift-SMTP", .upToNextMinor(from: "5.1.0")),    // add the dependency
+        .package(url: "https://github.com/Kitura/Swift-SMTP", .upToNextMinor(from: "5.1.0")),    // add the dependency
     ],
     targets: [
         .target(
@@ -55,7 +55,7 @@ After adding the dependency and saving, run `swift package generate-xcodeproj` i
 
 ## Migration Guide
 
-Version `5.0.0` brings breaking changes. See the quick migration guide [here](https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md).
+Version `5.0.0` brings breaking changes. See the quick migration guide [here](https://github.com/Kitura/Swift-SMTP/blob/master/migration-guide.md).
 
 ## Usage
 
@@ -87,7 +87,7 @@ public init(hostname: String,
             timeout: UInt = 10)
 ```
 
-By default, the `SMTP` struct connects on port `587` and sends mail only if a TLS connection can be established. It also uses a `TLSConfiguration` that uses no backing certificates. View the [docs](https://ibm-swift.github.io/Swift-SMTP/) for more configuration options.
+By default, the `SMTP` struct connects on port `587` and sends mail only if a TLS connection can be established. It also uses a `TLSConfiguration` that uses no backing certificates. View the [docs](https://kitura.github.io/Swift-SMTP/) for more configuration options.
 
 ### Send email
 
