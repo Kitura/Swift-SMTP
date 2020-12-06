@@ -17,7 +17,7 @@
 import Foundation
 import SSLService
 
-/// Configuration for connecting with TLS. For more info, see https://github.com/IBM-Swift/BlueSSLService.
+/// Configuration for connecting with TLS. For more info, see https://github.com/Kitura/BlueSSLService.
 public struct TLSConfiguration {
     private let configuration: SSLService.Configuration
 

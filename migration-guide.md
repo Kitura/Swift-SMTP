@@ -23,7 +23,7 @@
 
 # 4.0.0 Migration Guide
 
-- `User` struct now nested in `Mail` struct to avoid namespace issues [(69)](https://github.com/IBM-Swift/Swift-SMTP/pull/69). Create a user like so:
+- `User` struct now nested in `Mail` struct to avoid namespace issues [(69)](https://github.com/Kitura/Swift-SMTP/pull/69). Create a user like so:
 
 ```swift
 let sender = Mail.User(name: "Sloth", email: "sloth@gmail.com")
@@ -42,7 +42,7 @@ let smtp = SMTP(
 )
 ```
 
-- Fixed a bug where the wrong `Attachment` was used an an alternative to text content when a `Mail` was initialized with multiple `Attachment`s [(67)](https://github.com/IBM-Swift/Swift-SMTP/pull/67)
+- Fixed a bug where the wrong `Attachment` was used an an alternative to text content when a `Mail` was initialized with multiple `Attachment`s [(67)](https://github.com/Kitura/Swift-SMTP/pull/67)
 
 # 3.0.0 Migration Guide
 

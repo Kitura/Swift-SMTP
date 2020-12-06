@@ -1,6 +1,6 @@
 module: SwiftSMTP
-author: IBM
-github_url: https://github.com/IBM-Swift/Swift-SMTP/
+author: IBM and Kitura project contributors
+github_url: https://github.com/Kitura/Swift-SMTP/
 
 theme: fullwidth
 clean: true
@@ -11,4 +11,4 @@ readme: README.md
 skip_undocumented: false
 hide_documentation_coverage: false
 
-xcodebuild_arguments: [-project, SwiftSMTP.xcodeproj, -target, SwiftSMTP, LIBRARY_SEARCH_PATHS=.build/debug]
+xcodebuild_arguments: [-target, SwiftSMTP, LIBRARY_SEARCH_PATHS=.build/debug]
