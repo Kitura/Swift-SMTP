@@ -11,4 +11,4 @@ readme: README.md
 skip_undocumented: false
 hide_documentation_coverage: false
 
-xcodebuild_arguments: [-target, SwiftSMTP, LIBRARY_SEARCH_PATHS=.build/debug]
+xcodebuild_arguments: []

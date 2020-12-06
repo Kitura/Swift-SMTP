@@ -33,7 +33,7 @@
       </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="https://github.com/IBM-Swift/Swift-SMTP/">
+          <a class="header-link" href="https://github.com/Kitura/Swift-SMTP/">
             <img class="header-icon" src="../img/gh.png"/>
             View on GitHub
           </a>
@@ -100,11 +100,13 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>Attachment</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Attachment</span></code></pre>
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Attachment</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Attachment</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                 </div>
               </div>
@@ -121,9 +123,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP10AttachmentVAC10Foundation4DataV4data_SS4mimeSS4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentV4data4mime4name6inline17additionalHeaders18relatedAttachmentsAC10Foundation4DataV_S2SSbSDyS2SGSayACGtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(data:mime:name:inline:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVAC10Foundation4DataV4data_SS4mimeSS4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(data:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV4data4mime4name6inline17additionalHeaders18relatedAttachmentsAC10Foundation4DataV_S2SSbSDyS2SGSayACGtcfc">init(data:<wbr>mime:<wbr>name:<wbr>inline:<wbr>additionalHeaders:<wbr>relatedAttachments:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -138,7 +140,7 @@ Different SMTP servers have different attachment size limits.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">,</span>
             <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
@@ -239,9 +241,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP10AttachmentVACSS8filePath_SS4mimeSSSg4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentV8filePath4mime4name6inline17additionalHeaders18relatedAttachmentsACSS_S2SSgSbSDyS2SGSayACGtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(filePath:mime:name:inline:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVACSS8filePath_SS4mimeSSSg4nameSb6inlines10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(filePath:mime:name:inline:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV8filePath4mime4name6inline17additionalHeaders18relatedAttachmentsACSS_S2SSgSbSDyS2SGSayACGtcfc">init(filePath:<wbr>mime:<wbr>name:<wbr>inline:<wbr>additionalHeaders:<wbr>relatedAttachments:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -256,7 +258,7 @@ Different SMTP servers have different attachment size limits.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filePath</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">mime</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"application/octet-stream"</span><span class="p">,</span>
             <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">inline</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
@@ -357,9 +359,9 @@ Different SMTP servers have different attachment size limits.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP10AttachmentVACSS11htmlContent_SS12characterSetSb11alternatives10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentV11htmlContent12characterSet11alternative17additionalHeaders18relatedAttachmentsACSS_SSSbSDyS2SGSayACGtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(htmlContent:characterSet:alternative:additionalHeaders:relatedAttachments:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP10AttachmentVACSS11htmlContent_SS12characterSetSb11alternatives10DictionaryVyS2SG17additionalHeadersSayACG18relatedAttachmentstcfc">init(htmlContent:characterSet:alternative:additionalHeaders:relatedAttachments:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV11htmlContent12characterSet11alternative17additionalHeaders18relatedAttachmentsACSS_SSSbSDyS2SGSayACGtcfc">init(htmlContent:<wbr>characterSet:<wbr>alternative:<wbr>additionalHeaders:<wbr>relatedAttachments:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -374,7 +376,7 @@ Different SMTP servers have different attachment size limits.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">htmlContent</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">htmlContent</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">characterSet</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"utf-8"</span><span class="p">,</span>
             <span class="nv">alternative</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">additionalHeaders</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[:],</span>
@@ -457,16 +459,12 @@ Different SMTP servers have different attachment size limits.</p>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP10AttachmentV2eeoiSbAC_ACtFZ"></a>
+                    <a name="/s:9SwiftSMTP10AttachmentV2eeoiySbAC_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV2eeoiSbAC_ACtFZ">==(_:_:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP10AttachmentV2eeoiySbAC_ACtFZ">==(_:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -481,7 +479,7 @@ Different SMTP servers have different attachment size limits.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span><span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">Attachment</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">Attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">Attachment</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">Attachment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
 
                         </div>
                       </div>
@@ -496,8 +494,8 @@ Different SMTP servers have different attachment size limits.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-06-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external">IBM and Kitura project contributors</a>. All rights reserved. (Last updated: 2020-12-06)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
