@@ -26,7 +26,7 @@ let CRLF = "\r\n"
 
 extension String {
     var base64Encoded: String {
-        return Data(utf8).base64EncodedString()
+        return Data(utf8).base64EncodedString(options: .lineLength76Characters)
     }
 
     var mimeEncoded: String? {

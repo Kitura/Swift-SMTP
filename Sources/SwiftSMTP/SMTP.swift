@@ -99,13 +99,13 @@ public struct SMTP {
     ///     - mail: `Mail` object to send.
     ///     - completion: Callback when sending finishes. `Error` is nil on success. (optional)
     public func send(_ mail: Mail, completion: ((Error?) -> Void)? = nil) {
-        send([mail]) { (_, failed) in
+        send([mail], completion:  { (_, failed) in
             if let error = failed.first?.1 {
                 completion?(error)
             } else {
                 completion?(nil)
             }
-        }
+        })
     }
 
     /// Send multiple emails.
