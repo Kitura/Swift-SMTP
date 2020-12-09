@@ -33,7 +33,7 @@
       </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="https://github.com/IBM-Swift/Swift-SMTP/">
+          <a class="header-link" href="https://github.com/Kitura/Swift-SMTP/">
             <img class="header-icon" src="../img/gh.png"/>
             View on GitHub
           </a>
@@ -100,11 +100,12 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             <h1>SMTP</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SMTP</span></code></pre>
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">SMTP</span></code></pre>
 
                 </div>
               </div>
@@ -138,7 +139,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">TLSMode</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">TLSMode</span></code></pre>
 
                         </div>
                       </div>
@@ -148,9 +149,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAC7TLSModeO7tlsModeAA16TLSConfigurationVSg0I13ConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc"></a>
+                    <a name="/s:9SwiftSMTP0B0V8hostname5email8password4port7tlsMode0G13Configuration11authMethods10domainName7timeoutACSS_S2Ss5Int32VAC7TLSModeOAA16TLSConfigurationVSgSayAA10AuthMethodOGSSSutcfc"></a>
                     <a name="//apple_ref/swift/Method/init(hostname:email:password:port:tlsMode:tlsConfiguration:authMethods:domainName:timeout:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0VACSS8hostname_SS5emailSS8passwords5Int32V4portAC7TLSModeO7tlsModeAA16TLSConfigurationVSg0I13ConfigurationSayAA10AuthMethodOG11authMethodsSS10domainNameSu7timeouttcfc">init(hostname:email:password:port:tlsMode:tlsConfiguration:authMethods:domainName:timeout:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V8hostname5email8password4port7tlsMode0G13Configuration11authMethods10domainName7timeoutACSS_S2Ss5Int32VAC7TLSModeOAA16TLSConfigurationVSgSayAA10AuthMethodOGSSSutcfc">init(hostname:<wbr>email:<wbr>password:<wbr>port:<wbr>tlsMode:<wbr>tlsConfiguration:<wbr>authMethods:<wbr>domainName:<wbr>timeout:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -176,7 +177,7 @@ IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">hostname</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">email</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">password</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">port</span><span class="p">:</span> <span class="kt">Int32</span> <span class="o">=</span> <span class="mi">587</span><span class="p">,</span>
@@ -310,9 +311,9 @@ certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSCo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF"></a>
+                    <a name="/s:9SwiftSMTP0B0V4send_10completionyAA4MailV_ys5Error_pSgcSgtF"></a>
                     <a name="//apple_ref/swift/Method/send(_:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendyAA4MailV_ys5Error_pSgcSg10completiontF">send(_:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4send_10completionyAA4MailV_ys5Error_pSgcSgtF">send(_:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -327,7 +328,7 @@ certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSCo
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mail</span><span class="p">:</span> <span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">((</span><span class="kt">Error</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mail</span><span class="p">:</span> <span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">,</span> <span class="nv">completion</span><span class="p">:</span> <span class="p">((</span><span class="kt">Error</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -368,9 +369,9 @@ certificates is used. See <code><a href="../Structs/TLSConfiguration.html">TLSCo
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF"></a>
+                    <a name="/s:9SwiftSMTP0B0V4send_8progress10completionySayAA4MailVG_yAH_s5Error_pSgtcSgyAI_SayAH_sAJ_ptGtcSgtF"></a>
                     <a name="//apple_ref/swift/Method/send(_:progress:completion:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:9SwiftSMTP0B0V4sendySayAA4MailVG_yAF_s5Error_pSgtcSg8progressyAG_SayAF_sAH_ptGtcSg10completiontF">send(_:progress:completion:)</a>
+                    <a class="token" href="#/s:9SwiftSMTP0B0V4send_8progress10completionySayAA4MailVG_yAH_s5Error_pSgtcSgyAI_SayAH_sAJ_ptGtcSgtF">send(_:<wbr>progress:<wbr>completion:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -401,7 +402,7 @@ in separate calls to <code>send</code>.</li>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mails</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">],</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="n">_</span> <span class="nv">mails</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Mail.html">Mail</a></span><span class="p">],</span>
                  <span class="nv">progress</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9SwiftSMTP8Progressa">Progress</a></span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
                  <span class="nv">completion</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:9SwiftSMTP10Completiona">Completion</a></span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
@@ -464,8 +465,8 @@ corresponding <code>Error</code>s. (optional)</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-06-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external">IBM and Kitura project contributors</a>. All rights reserved. (Last updated: 2020-12-06)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>

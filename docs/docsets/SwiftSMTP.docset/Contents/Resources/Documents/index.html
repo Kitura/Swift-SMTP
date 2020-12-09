@@ -32,7 +32,7 @@
       </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="https://github.com/IBM-Swift/Swift-SMTP/">
+          <a class="header-link" href="https://github.com/Kitura/Swift-SMTP/">
             <img class="header-icon" src="img/gh.png"/>
             View on GitHub
           </a>
@@ -99,15 +99,15 @@
       <article class="main-content">
 
         <section class="section">
-          <div class="section-content">
+          <div class="section-content top-matter">
             
             <h1 id='swift-smtp' class='heading'>Swift-SMTP</h1>
 
-<p><img src="https://github.com/IBM-Swift/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png?raw=true" alt="Swift-SMTP bird"></p>
+<p><img src="https://github.com/Kitura/Swift-SMTP/blob/master/Assets/swift-smtp-bird.png?raw=true" alt="Swift-SMTP bird"></p>
 
 <p>Swift SMTP client.</p>
 
-<p><img src="https://travis-ci.org/IBM-Swift/Swift-SMTP.svg?branch=master" alt="Build Status">
+<p><img src="https://travis-ci.org/Kitura/Swift-SMTP.svg?branch=master" alt="Build Status">
 <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
 <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
 <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2"></p>
@@ -118,14 +118,43 @@
 <li>Authenticate with CRAM-MD5, LOGIN, PLAIN, or XOAUTH2</li>
 <li>Send emails with local file, HTML, and raw data attachments</li>
 <li>Add custom headers</li>
-<li><a href="https://ibm-swift.github.io/Swift-SMTP/">Documentation</a></li>
+<li><a href="https://kitura.github.io/Swift-SMTP/">Documentation</a></li>
 </ul>
 <h2 id='swift-version' class='heading'>Swift Version</h2>
 
-<p>macOS &amp; Linux: <code>Swift 4.0.3</code> or <code>Swift 4.1</code></p>
+<p>macOS &amp; Linux: <code>Swift 4.0.3</code>, <code>Swift 4.1</code> and <code>Swift 4.1.2</code></p>
+<h2 id='installation' class='heading'>Installation</h2>
+
+<p>You can add <code>SwiftSMTP</code> to your project using <a href="https://swift.org/package-manager/">Swift Package Manager</a>. If your project does not have a <code>Package.swift</code> file, create one by running <code>swift package init</code> in the root directory of your project. Then open <code>Package.swift</code> and add <code>SwiftSMTP</code> as a dependency. Be sure to add it to your desired targets as well:</p>
+<pre class="highlight swift"><code><span class="c1">// swift-tools-version:4.0</span>
+
+<span class="kd">import</span> <span class="kt">PackageDescription</span>
+
+<span class="k">let</span> <span class="nv">package</span> <span class="o">=</span> <span class="kt">Package</span><span class="p">(</span>
+    <span class="nv">name</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+    <span class="nv">products</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">library</span><span class="p">(</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+            <span class="nv">targets</span><span class="p">:</span> <span class="p">[</span><span class="s">"MyProject"</span><span class="p">]),</span>
+    <span class="p">],</span>
+    <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/Kitura/Swift-SMTP"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMinor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"5.1.0"</span><span class="p">)),</span>    <span class="c1">// add the dependency</span>
+    <span class="p">],</span>
+    <span class="nv">targets</span><span class="p">:</span> <span class="p">[</span>
+        <span class="o">.</span><span class="nf">target</span><span class="p">(</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"MyProject"</span><span class="p">,</span>
+            <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="s">"SwiftSMTP"</span><span class="p">]),</span>                                                           <span class="c1">// add targets</span>
+        <span class="o">.</span><span class="nf">testTarget</span><span class="p">(</span>                                                                                <span class="c1">// note "SwiftSMTP" (NO HYPHEN)</span>
+            <span class="nv">name</span><span class="p">:</span> <span class="s">"MyProjectTests"</span><span class="p">,</span>
+            <span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span><span class="s">"MyProject"</span><span class="p">]),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</code></pre>
+
+<p>After adding the dependency and saving, run <code>swift package generate-xcodeproj</code> in the root directory of your project. This will fetch dependencies and create an Xcode project which you can open and begin editing.</p>
 <h2 id='migration-guide' class='heading'>Migration Guide</h2>
 
-<p>Version <code>5.0.0</code> brings breaking changes. See the quick migration guide <a href="https://github.com/IBM-Swift/Swift-SMTP/blob/master/migration-guide.md">here</a>.</p>
+<p>Version <code>5.0.0</code> brings breaking changes. See the quick migration guide <a href="https://github.com/Kitura/Swift-SMTP/blob/master/migration-guide.md">here</a>.</p>
 <h2 id='usage' class='heading'>Usage</h2>
 
 <p>Initialize an <code><a href="Structs/SMTP.html">SMTP</a></code> instance:</p>
@@ -151,7 +180,7 @@
             <span class="nv">timeout</span><span class="p">:</span> <span class="kt">UInt</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
 </code></pre>
 
-<p>By default, the <code><a href="Structs/SMTP.html">SMTP</a></code> struct connects on port <code>587</code> and sends mail only if a TLS connection can be established. It also uses a <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code> that uses no backing certificates. View the <a href="https://ibm-swift.github.io/Swift-SMTP/">docs</a> for more configuration options.</p>
+<p>By default, the <code><a href="Structs/SMTP.html">SMTP</a></code> struct connects on port <code>587</code> and sends mail only if a TLS connection can be established. It also uses a <code><a href="Structs/TLSConfiguration.html">TLSConfiguration</a></code> that uses no backing certificates. View the <a href="https://kitura.github.io/Swift-SMTP/">docs</a> for more configuration options.</p>
 <h3 id='send-email' class='heading'>Send email</h3>
 
 <p>Create a <code><a href="Structs/Mail.html">Mail</a></code> object and use your <code><a href="Structs/SMTP.html">SMTP</a></code> handle to send it. To set the sender and receiver of an email, use the <code>User</code> struct:</p>
@@ -259,8 +288,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2018 <a class="link" href="" target="_blank" rel="external">IBM</a>. All rights reserved. (Last updated: 2018-06-26)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.0</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2020 <a class="link" href="" target="_blank" rel="external">IBM and Kitura project contributors</a>. All rights reserved. (Last updated: 2020-12-06)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
 </div>
