@@ -63,10 +63,10 @@ class TestMailSender: XCTestCase {
         defer { waitForExpectations(timeout: testDuration) }
 
         let mail = Mail(from: from, to: [to], subject: #function, text: text)
-        smtp.send([mail]) { _, failed in
+        smtp.send([mail], completion:  { _, failed in
             XCTAssert(failed.isEmpty)
             x.fulfill()
-        }
+        })
     }
 
     func testSendMailNoRecipient() {
@@ -150,7 +150,7 @@ class TestMailSender: XCTestCase {
         let badUser = Mail.User(email: "")
         let badMail = Mail(from: from, to: [badUser])
         let goodMail = Mail(from: from, to: [to], subject: "Send multiple mails with fail")
-        smtp.send([badMail, goodMail]) { (sent, failed) in
+        smtp.send([badMail, goodMail], completion:  { (sent, failed) in
             guard sent.count == 1 && failed.count == 1 else {
                 XCTFail("Send did not complete with 1 mail sent and 1 mail failed.")
                 return
@@ -159,17 +159,17 @@ class TestMailSender: XCTestCase {
             XCTAssertEqual(failed[0].0.id, badMail.id, "Invalid email returned does not match the invalid email sent.")
             XCTAssertNotNil(failed[0].1, "Invalid email did not return an error when sending.")
             x.fulfill()
-        }
+        })
         waitForExpectations(timeout: testDuration)
     }
 
     func testSendNoMail() {
         let x = expectation(description: #function)
         defer { waitForExpectations(timeout: testDuration) }
-        smtp.send([]) { (sent, failed) in
+        smtp.send([], completion:  { (sent, failed) in
             XCTAssert(sent.isEmpty)
             XCTAssert(failed.isEmpty)
             x.fulfill()
-        }
+        })
     }
 }

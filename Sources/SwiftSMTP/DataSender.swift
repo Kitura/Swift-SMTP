@@ -135,7 +135,7 @@ extension DataSender {
             }
         #endif
 
-        let encodedData = data.base64EncodedData()
+        let encodedData = data.base64EncodedData(options: .lineLength76Characters)
         try send(encodedData)
 
         #if os(macOS)
@@ -162,7 +162,7 @@ extension DataSender {
             throw SMTPError.fileNotFound(path: path)
         }
 
-        let data = file.readDataToEndOfFile().base64EncodedData()
+        let data = file.readDataToEndOfFile().base64EncodedData(options: .lineLength76Characters)
         try send(data)
         file.closeFile()
 

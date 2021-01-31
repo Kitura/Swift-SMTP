@@ -45,7 +45,7 @@ struct AuthEncoder {
 
 extension String {
     func base64Decoded() throws -> String {
-        guard let data = Data(base64Encoded: self),
+        guard let data = Data(base64Encoded: self, options: .ignoreUnknownCharacters),
             let base64Decoded = String(data: data, encoding: .utf8) else {
                 throw SMTPError.base64DecodeFail(string: self)
         }

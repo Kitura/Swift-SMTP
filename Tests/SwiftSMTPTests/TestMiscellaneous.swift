@@ -35,8 +35,8 @@ class TestMiscellaneous: XCTestCase {
 // Common
 extension TestMiscellaneous {
     func testBase64Encoded() {
-        let result1 = randomText1.base64Encoded
-        XCTAssertEqual(result1, randomText1Encoded, "result: \(result1) != expected: \(randomText1Encoded)")
+        let result1 = randomText1.data(using: .utf8)?.base64EncodedString(options: .lineLength76Characters) ?? ""
+        XCTAssertEqual(result1, randomText1Encoded, "\n\nResult: \(result1)\nExpected: \(randomText1Encoded)\n\nLength: \(result1.count) -> \(randomText1Encoded.count) -> \(result1 == randomText1Encoded)\n\(zip(result1, randomText1Encoded).filter{ $0 != $1 })")
 
         let result2 = randomText2.base64Encoded
         XCTAssertEqual(result2, randomText2Encoded, "result: \(result2) != expected: \(randomText2Encoded)")
