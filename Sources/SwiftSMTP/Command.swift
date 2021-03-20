@@ -44,8 +44,8 @@ enum Command {
             }
         case .authUser(let user): return user
         case .authPassword(let password): return password
-        case .mail(let from): return "MAIL FROM: <\(from)>"
-        case .rcpt(let to): return "RCPT TO: <\(to)>"
+        case .mail(let from): return "MAIL FROM:<\(from)>"
+        case .rcpt(let to): return "RCPT TO:<\(to)>"
         case .data: return "DATA"
         case .dataEnd: return "\(CRLF)."
         case .quit: return "QUIT"
