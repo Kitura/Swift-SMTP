@@ -122,13 +122,13 @@ public struct Mail {
         dictionary["MESSAGE-ID"] = id
         dictionary["DATE"] = Date().smtpFormatted
         dictionary["FROM"] = from.mime
-        dictionary["TO"] = to.map { $0.mime }.joined(separator: ", ")
+        dictionary["TO"] = (to.map { $0.mime }.joined(separator: ", ")).wrap()
 
         if !cc.isEmpty {
-            dictionary["CC"] = cc.map { $0.mime }.joined(separator: ", ")
+            dictionary["CC"] = (cc.map { $0.mime }.joined(separator: ", ")).wrap()
         }
 
-        dictionary["SUBJECT"] = subject.mimeEncoded ?? ""
+        dictionary["SUBJECT"] = (subject.mimeEncoded ?? "").wrap()
         dictionary["MIME-VERSION"] = "1.0 (Swift-SMTP)"
 
         for (key, value) in additionalHeaders {
@@ -136,7 +136,7 @@ public struct Mail {
             if  keyUppercased != "CONTENT-TYPE" &&
                 keyUppercased != "CONTENT-DISPOSITION" &&
                 keyUppercased != "CONTENT-TRANSFER-ENCODING" {
-                dictionary[keyUppercased] = value
+                dictionary[keyUppercased] = value.wrap()
             }
         }
 
