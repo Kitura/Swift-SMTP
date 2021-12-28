@@ -192,7 +192,7 @@ extension DataSender {
         #if os(macOS)
             cache.setObject(encodedHTML as AnyObject, forKey: html as AnyObject)
         #else
-            cache.setObject(NSString(string: encodedHTML) as AnyObject, forKey: NSString(string: html) as AnyObject)
+            cache.setObject(NSData(data: encodedHTML) as AnyObject, forKey: NSString(string: html) as AnyObject)
         #endif
     }
 }
