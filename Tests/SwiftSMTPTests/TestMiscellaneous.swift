@@ -35,8 +35,8 @@ class TestMiscellaneous: XCTestCase {
 // Common
 extension TestMiscellaneous {
     func testBase64Encoded() {
-        let result1 = randomText1.data(using: .utf8)?.base64EncodedString(options: .lineLength76Characters) ?? ""
-        XCTAssertEqual(result1, randomText1Encoded, "\n\nResult: \(result1)\nExpected: \(randomText1Encoded)\n\nLength: \(result1.count) -> \(randomText1Encoded.count) -> \(result1 == randomText1Encoded)\n\(zip(result1, randomText1Encoded).filter{ $0 != $1 })")
+        let result1 = randomText1.base64Encoded
+        XCTAssertEqual(result1, randomText1Encoded, "result: \(result1) != expected: \(randomText1Encoded)")
 
         let result2 = randomText2.base64Encoded
         XCTAssertEqual(result2, randomText2Encoded, "result: \(result2) != expected: \(randomText2Encoded)")
@@ -44,6 +44,18 @@ extension TestMiscellaneous {
         let result3 = randomText3.base64Encoded
         XCTAssertEqual(result3, randomText3Encoded, "result: \(result3) != expected: \(randomText3Encoded)")
     }
+
+    func testBase64EncodedWithLineLimit() {
+        let result1 = randomText1.base64EncodedWithLineLimit
+        XCTAssertEqual(result1, randomText1EncodedWithLineLimit, "result: \(result1) != expected: \(randomText1Encoded)")
+
+        let result2 = randomText2.base64EncodedWithLineLimit
+        XCTAssertEqual(result2, randomText2EncodedWithLineLimit, "result: \(result2) != expected: \(randomText2Encoded)")
+
+        let result3 = randomText3.base64EncodedWithLineLimit
+        XCTAssertEqual(result3, randomText3EncodedWithLineLimit, "result: \(result3) != expected: \(randomText3Encoded)")
+    }
+
 
     func testMimeEncoded() {
         let result = "Water you up to?".mimeEncoded

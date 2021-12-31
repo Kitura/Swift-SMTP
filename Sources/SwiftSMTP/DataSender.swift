@@ -186,13 +186,13 @@ extension DataSender {
             }
         #endif
 
-        let encodedHTML = html.base64Encoded
+        let encodedHTML = html.data(using: .utf8)?.base64EncodedData(options: .lineLength76Characters) ?? Data()
         try send(encodedHTML)
 
         #if os(macOS)
             cache.setObject(encodedHTML as AnyObject, forKey: html as AnyObject)
         #else
-            cache.setObject(NSString(string: encodedHTML) as AnyObject, forKey: NSString(string: html) as AnyObject)
+            cache.setObject(NSData(data: encodedHTML) as AnyObject, forKey: NSString(string: html) as AnyObject)
         #endif
     }
 }
@@ -200,11 +200,13 @@ extension DataSender {
 private extension DataSender {
     // Write `text` to the socket.
     func send(_ text: String) throws {
+        print("SEND: \(text)")
         try socket.write(text)
     }
 
     // Write `data` to the socket.
     func send(_ data: Data) throws {
+        print("SEND: data \(data.count) bytes")
         try socket.write(data)
     }
 }
