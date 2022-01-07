@@ -89,17 +89,19 @@ class TestHeaderFolding: XCTestCase {
     func testAbsurdEmail() throws {
         let allHeaders = mailMessage.headersString.split(separator: "\r\n")
         var foundCC = false
+        var testEncountered = false
         for header in allHeaders {
             if foundCC {
                 // we are now at the first line *after* the CC: line
                 XCTAssertEqual(header, " <unfortunate_joe_1234567890_123456789_123456783_123456784_123456785_123456786@dumbster.local>")
+                testEncountered = true
                 break
-            } else  if header.hasPrefix("CC:") {
+            } else if header.hasPrefix("CC:") {
                 foundCC = true
                 XCTAssertEqual(header, "CC: \("Unfortunate Joe".mimeEncoded!) ")
-                continue
             }
         }
+        XCTAssertTrue(testEncountered, "The CC line did not get folded!")
     }
 
     // This test looks at what happens when a header value does not
@@ -116,7 +118,7 @@ class TestHeaderFolding: XCTestCase {
         // consumers of the library can have some help figuring out why their
         // mail message was rejected by a remote SMTP server.
         guard let currentLogger = currentLogger else {
-            return
+            throw XCTSkip("There is no logger installed!")
         }
         XCTAssert(!currentLogger.messages
                     .filter({ $0.hasPrefix("[ERROR] Header line length") })

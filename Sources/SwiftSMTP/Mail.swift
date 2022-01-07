@@ -145,8 +145,11 @@ public struct Mail {
     }
 
     private func foldHeaderValue(key: String, value: String) -> String {
+        let suggestedLineLength = 78
+        let maximumLineLength = 998
+
         let initialHeader = "\(key): \(value)"
-        if initialHeader.count < 79 {
+        if initialHeader.count <= suggestedLineLength {
             return value
         }
         // if we're here, it means that RFC 5322 SUGGESTS that we fold this header
@@ -159,32 +162,35 @@ public struct Mail {
             register.append(char)
             // this test is to detect the end of a token, mid-stream
             if let _ = String(char).rangeOfCharacter(from: foldableCharacters) {
-                if linePosition > 1 && (register.count + linePosition > 78) {
-                    // we already have stuff on the line and the register is too long
+                if linePosition > 1 && (register.count + linePosition > suggestedLineLength) {
+                    // We already have stuff on the line and the register is too long
                     // to continue on the current line. So we fold and start a new line.
                     foldedHeader.append("\r\n ")
                     linePosition = 1
                 }
                 // now, register contains a complete token, so we put it up to the line
                 linePosition += register.count
-                if linePosition > 998 {
+                if linePosition > maximumLineLength {
                     Log.error("Header line length exceeds the specified maximum (998 chars) - see RFC 5322 section 2.2.3")
                 }
                 foldedHeader.append(register)
                 register = ""
             }
         }
-        // we have the last of the value characters in register, so we put them up
+        // We have the last of the value characters in register, so we put them up
         // to the line. We still want to apply the same logic as that inside the loop
         // though, and apply folding if it's appropriate.
-        if linePosition > 1 && (register.count + linePosition > 78) {
+        if linePosition > 1 && (register.count + linePosition > suggestedLineLength) {
             foldedHeader.append("\r\n ")
+            linePosition = 1
         }
-        if register.count > 997 {
+        if (register.count + linePosition) > maximumLineLength {
             Log.error("Header line length exceeds the specified maximum (998 chars) - see RFC 5322 section 2.2.3")
         }
         foldedHeader.append(register)
 
+        // Here is where we remove "\(key): " from the beginning of the folded header,
+        // so we only return the value.
         let valueIndex = foldedHeader.index(foldedHeader.startIndex, offsetBy: key.count + 2)
         return String(foldedHeader.suffix(from: valueIndex))
     }
