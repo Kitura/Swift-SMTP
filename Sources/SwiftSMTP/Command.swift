@@ -62,6 +62,7 @@ enum Command {
             case .login: return [.containingChallenge]
             case .plain: return [.authSucceeded]
             case .xoauth2: return [.authSucceeded]
+            case .none: return [.commandOK]
             }
         case .authUser: return [.containingChallenge]
         case .authPassword: return [.authSucceeded]

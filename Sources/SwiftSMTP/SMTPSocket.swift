@@ -49,7 +49,9 @@ struct SMTPSocket {
             }
         }
         let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
-        try login(authMethod: authMethod, email: email, password: password)
+        if authMethod != .none {
+            try login(authMethod: authMethod, email: email, password: password)
+        }
     }
 
     func write(_ text: String) throws {
@@ -148,9 +150,11 @@ private extension SMTPSocket {
     }
 
     func getAuthMethod(authMethods: [String: AuthMethod], serverOptions: [Response], hostname: String) throws -> AuthMethod {
+        var requiresAuth = false
         for option in serverOptions {
             let components = option.message.components(separatedBy: " ")
             if components.first == "AUTH" {
+                requiresAuth = true
                 let _authMethods = components.dropFirst()
                 for authMethod in _authMethods {
                     if let matchingAuthMethod = authMethods[authMethod] {
@@ -159,7 +163,13 @@ private extension SMTPSocket {
                 }
             }
         }
-        throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
+        if requiresAuth {
+            // the server supports AUTH, but no matching methods were found
+            throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
+        } else {
+            // the server does not want to hear about AUTH. It's an open relay.
+            return .none
+        }
     }
 
     func doStarttls(serverOptions: [Response], tlsConfiguration: TLSConfiguration?) throws -> Bool {
@@ -194,6 +204,9 @@ private extension SMTPSocket {
             try loginPlain(email: email, password: password)
         case .xoauth2:
             try loginXOAuth2(email: email, accessToken: password)
+        case .none:
+            // don't do anything
+            return
         }
     }
 

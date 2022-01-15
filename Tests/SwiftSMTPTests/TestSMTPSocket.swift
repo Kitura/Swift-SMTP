@@ -19,6 +19,7 @@ import XCTest
 
 class TestSMTPSocket: XCTestCase {
     static var allTests = [
+        ("testNoAuth", testNoAuth),
         ("testBadCredentials", testBadCredentials),
         ("testBadPort", testBadPort),
         ("testLogin", testLogin),
@@ -26,6 +27,33 @@ class TestSMTPSocket: XCTestCase {
         ("testPort0", testPort0),
         ("testSSL", testSSL)
     ]
+
+    func testNoAuth() throws {
+        if let noAuthHost = noAuthHost {
+            let x = expectation(description: #function)
+            defer { waitForExpectations(timeout: testDuration) }
+
+            do {
+                _ = try SMTPSocket(
+                    hostname: noAuthHost,
+                    email: email,
+                    password: "don't care",
+                    port: noAuthPort,
+                    tlsMode: .ignoreTLS,
+                    tlsConfiguration: nil,
+                    authMethods: [String: AuthMethod](),
+                    domainName: domainName,
+                    timeout: timeout
+                )
+                x.fulfill()
+            } catch {
+                XCTFail(String(describing: error))
+                x.fulfill()
+            }
+        } else {
+            throw XCTSkip("No no-auth SMTP server configured")
+        }
+    }
 
     func testBadCredentials() throws {
         let x = expectation(description: #function)

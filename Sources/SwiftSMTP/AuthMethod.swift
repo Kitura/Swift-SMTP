@@ -26,4 +26,6 @@ public enum AuthMethod: String {
     case plain = "PLAIN"
     /// XOAUTH2 authentication. Requires a valid access token.
     case xoauth2 = "XOAUTH2"
+    /// No authentication at all
+    case none = "NONE"
 }
