@@ -29,7 +29,7 @@ let noAuthHost: String? = "localhost"
 let noAuthPort: Int32 = 1081
 
 let hostname = "mail.kitura.dev"
-let myEmail: String? = "tester@local"
+let myEmail: String? = nil
 let myPassword: String? = nil
 let portTLS: Int32 = 465
 let portPlain: Int32 = 2525
