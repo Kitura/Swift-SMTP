@@ -36,12 +36,9 @@ class TestSMTPSocket: XCTestCase {
             do {
                 _ = try SMTPSocket(
                     hostname: noAuthHost,
-                    email: email,
-                    password: "don't care",
                     port: noAuthPort,
                     tlsMode: .ignoreTLS,
                     tlsConfiguration: nil,
-                    authMethods: [String: AuthMethod](),
                     domainName: domainName,
                     timeout: timeout
                 )

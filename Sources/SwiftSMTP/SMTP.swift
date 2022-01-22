@@ -93,6 +93,39 @@ public struct SMTP {
         self.timeout = timeout
     }
 
+    /// Initializes an `SMTP` instance, specifically for use when communicating with an SMTP
+    /// host which does not perform authentication.
+    ///
+    /// - Parameters:
+    ///     - hostname: Hostname of the SMTP server to connect to, i.e. `smtp.example.com`.
+    ///     - port: Port to connect to the server on. Defaults to `465`.
+    ///     - tlsMode: TLSMode `enum` indicating what form of connection security to use.
+    ///     - tlsConfiguration: `TLSConfiguration` used to connect with TLS. If nil, a configuration with no backing
+    ///       certificates is used. See `TLSConfiguration` for other configuration options.
+    ///     - domainName: Client domain name used when communicating with the server. Defaults to `localhost`.
+    ///     - timeout: How long to try connecting to the server to before returning an error. Defaults to `10` seconds.
+    ///
+    /// - Note:
+    ///     - You may need to enable access for less secure apps for your account on the SMTP server.
+    ///     - Some servers like Gmail support IPv6, and if your network does  not, you will first attempt to connect via
+    ///       IPv6, then timeout, and fall back to IPv4. You can avoid this by disabling IPv6 on your machine.
+    public init(hostname: String,
+                port: Int32 = 587,
+                tlsMode: TLSMode = .requireSTARTTLS,
+                tlsConfiguration: TLSConfiguration? = nil,
+                domainName: String = "localhost",
+                timeout: UInt = 10) {
+        self.hostname = hostname
+        self.email = ""
+        self.password = ""
+        self.port = port
+        self.tlsMode = tlsMode
+        self.tlsConfiguration = tlsConfiguration
+        self.authMethods = [String: AuthMethod]()
+        self.domainName = domainName
+        self.timeout = timeout
+    }
+
     /// Send an email.
     ///
     /// - Parameters:

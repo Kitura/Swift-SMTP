@@ -31,6 +31,40 @@ struct SMTPSocket {
          domainName: String,
          timeout: UInt) throws {
         socket = try Socket.create()
+        let serverOptions = try setupSocket(hostname: hostname,
+                                            port: port,
+                                            tlsMode: tlsMode,
+                                            tlsConfiguration: tlsConfiguration,
+                                            domainName: domainName,
+                                            timeout: timeout)
+        let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
+        try login(authMethod: authMethod, email: email, password: password)
+    }
+
+
+    /// Initializer for an SMTPSocket when you want to connect to a server that does not
+    /// require authentication to send messages.
+    init(hostname: String,
+         port: Int32,
+         tlsMode: SMTP.TLSMode,
+         tlsConfiguration: TLSConfiguration?,
+         domainName: String,
+         timeout: UInt) throws {
+        socket = try Socket.create()
+        _ = try setupSocket(hostname: hostname,
+                            port: port,
+                            tlsMode: tlsMode,
+                            tlsConfiguration: tlsConfiguration,
+                            domainName: domainName,
+                            timeout: timeout)
+    }
+
+    private func setupSocket(hostname: String,
+                             port: Int32,
+                             tlsMode: SMTP.TLSMode,
+                             tlsConfiguration: TLSConfiguration?,
+                             domainName: String,
+                             timeout: UInt) throws -> [Response] {
         if tlsMode == .requireTLS {
             if let tlsConfiguration = tlsConfiguration {
                 socket.delegate = try tlsConfiguration.makeSSLService()
@@ -48,10 +82,7 @@ struct SMTPSocket {
                 throw SMTPError.requiredSTARTTLS
             }
         }
-        let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
-        if authMethod != .none {
-            try login(authMethod: authMethod, email: email, password: password)
-        }
+        return serverOptions
     }
 
     func write(_ text: String) throws {
