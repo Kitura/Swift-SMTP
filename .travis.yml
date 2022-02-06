@@ -12,20 +12,20 @@ branches:
 matrix:
   include:
     - os: linux
-      dist: xenial
-      sudo: required
-      services: docker
-      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu16.04:5.2.5 DOCKER_ENVIRONMENT="EMAIL PASSWORD"
-    - os: linux
       dist: bionic
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu18.04:5.4 DOCKER_ENVIRONMENT="EMAIL PASSWORD"
+      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu18.04:5.2.5 DOCKER_ENVIRONMENT="EMAIL PASSWORD"
     - os: linux
-      dist: xenial
+      dist: focal
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu18.04:latest SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="EMAIL PASSWORD"
+      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu20.04:5.4 DOCKER_ENVIRONMENT="EMAIL PASSWORD"
+    - os: linux
+      dist: focal
+      sudo: required
+      services: docker
+      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu20.04:latest SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="EMAIL PASSWORD"
     - os: osx
       osx_image: xcode12.2
       sudo: required
