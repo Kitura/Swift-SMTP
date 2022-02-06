@@ -25,7 +25,7 @@ matrix:
       dist: focal
       sudo: required
       services: docker
-      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu20.04:latest SWIFT_SNAPSHOT=$SWIFT_DEVELOPMENT_SNAPSHOT DOCKER_ENVIRONMENT="EMAIL PASSWORD"
+      env: DOCKER_IMAGE=docker.kitura.net/kitura/swift-ci-ubuntu20.04:latest USE_SWIFT_DEVELOPMENT_SNAPSHOT=1 DOCKER_ENVIRONMENT="EMAIL PASSWORD"
     - os: osx
       osx_image: xcode12.2
       sudo: required
