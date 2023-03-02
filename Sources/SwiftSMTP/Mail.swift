@@ -124,6 +124,10 @@ public struct Mail {
         dictionary["FROM"] = from.mime
         dictionary["TO"] = to.map { $0.mime }.joined(separator: ", ")
 
+        if !bcc.isEmpty {
+            dictionary["BCC"] = bcc.map { $0.mime }.joined(separator: ", ")
+        }
+        
         if !cc.isEmpty {
             dictionary["CC"] = cc.map { $0.mime }.joined(separator: ", ")
         }
