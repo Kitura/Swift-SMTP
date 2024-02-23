@@ -31,6 +31,40 @@ struct SMTPSocket {
          domainName: String,
          timeout: UInt) throws {
         socket = try Socket.create()
+        let serverOptions = try setupSocket(hostname: hostname,
+                                            port: port,
+                                            tlsMode: tlsMode,
+                                            tlsConfiguration: tlsConfiguration,
+                                            domainName: domainName,
+                                            timeout: timeout)
+        let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
+        try login(authMethod: authMethod, email: email, password: password)
+    }
+
+
+    /// Initializer for an SMTPSocket when you want to connect to a server that does not
+    /// require authentication to send messages.
+    init(hostname: String,
+         port: Int32,
+         tlsMode: SMTP.TLSMode,
+         tlsConfiguration: TLSConfiguration?,
+         domainName: String,
+         timeout: UInt) throws {
+        socket = try Socket.create()
+        _ = try setupSocket(hostname: hostname,
+                            port: port,
+                            tlsMode: tlsMode,
+                            tlsConfiguration: tlsConfiguration,
+                            domainName: domainName,
+                            timeout: timeout)
+    }
+
+    private func setupSocket(hostname: String,
+                             port: Int32,
+                             tlsMode: SMTP.TLSMode,
+                             tlsConfiguration: TLSConfiguration?,
+                             domainName: String,
+                             timeout: UInt) throws -> [Response] {
         if tlsMode == .requireTLS {
             if let tlsConfiguration = tlsConfiguration {
                 socket.delegate = try tlsConfiguration.makeSSLService()
@@ -48,8 +82,7 @@ struct SMTPSocket {
                 throw SMTPError.requiredSTARTTLS
             }
         }
-        let authMethod = try getAuthMethod(authMethods: authMethods, serverOptions: serverOptions, hostname: hostname)
-        try login(authMethod: authMethod, email: email, password: password)
+        return serverOptions
     }
 
     func write(_ text: String) throws {
@@ -148,9 +181,11 @@ private extension SMTPSocket {
     }
 
     func getAuthMethod(authMethods: [String: AuthMethod], serverOptions: [Response], hostname: String) throws -> AuthMethod {
+        var requiresAuth = false
         for option in serverOptions {
             let components = option.message.components(separatedBy: " ")
             if components.first == "AUTH" {
+                requiresAuth = true
                 let _authMethods = components.dropFirst()
                 for authMethod in _authMethods {
                     if let matchingAuthMethod = authMethods[authMethod] {
@@ -159,7 +194,13 @@ private extension SMTPSocket {
                 }
             }
         }
-        throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
+        if requiresAuth {
+            // the server supports AUTH, but no matching methods were found
+            throw SMTPError.noAuthMethodsOrRequiresTLS(hostname: hostname)
+        } else {
+            // the server does not want to hear about AUTH. It's an open relay.
+            return .none
+        }
     }
 
     func doStarttls(serverOptions: [Response], tlsConfiguration: TLSConfiguration?) throws -> Bool {
@@ -194,6 +235,9 @@ private extension SMTPSocket {
             try loginPlain(email: email, password: password)
         case .xoauth2:
             try loginXOAuth2(email: email, accessToken: password)
+        case .none:
+            // don't do anything
+            return
         }
     }
 

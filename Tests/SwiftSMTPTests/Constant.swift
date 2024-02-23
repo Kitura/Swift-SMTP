@@ -25,6 +25,9 @@ let testDuration: Double = 15
 
 // 📧📧📧 Fill in your own SMTP login info for local testing
 // ⚠️⚠️⚠️ DO NOT CHECK IN YOUR EMAIL CREDENTALS!!!
+let noAuthHost: String? = "localhost"
+let noAuthPort: Int32 = 1081
+
 let hostname = "mail.kitura.dev"
 let myEmail: String? = nil
 let myPassword: String? = nil

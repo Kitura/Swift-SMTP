@@ -57,6 +57,23 @@ class TestMailSender: XCTestCase {
             x.fulfill()
         }
     }
+
+    func testSendMailNoAuth() throws {
+        let x = expectation(description: #function)
+        defer { waitForExpectations(timeout: testDuration) }
+
+        let mail = Mail(from: from, to: [to], subject: #function, text: text)
+        if let theHost = noAuthHost {
+            let noAuthSMTP = SMTP(hostname: theHost, port: noAuthPort, tlsMode: .ignoreTLS,
+                                  tlsConfiguration: .none)
+            noAuthSMTP.send(mail) { (err) in
+                XCTAssertNil(err, String(describing: err))
+                x.fulfill()
+            }
+        } else {
+            throw XCTSkip("No no-auth SMTP server configured")
+        }
+    }
     
     func testSendMailInArray() {
         let x = expectation(description: #function)
