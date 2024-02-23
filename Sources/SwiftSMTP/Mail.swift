@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import LoggerAPI
 
 /// Represents an email that can be sent through an `SMTP` instance.
 public struct Mail {
@@ -122,13 +123,13 @@ public struct Mail {
         dictionary["MESSAGE-ID"] = id
         dictionary["DATE"] = Date().smtpFormatted
         dictionary["FROM"] = from.mime
-        dictionary["TO"] = to.map { $0.mime }.joined(separator: ", ")
+        dictionary["TO"] = foldHeaderValue(key: "TO", value: to.map { $0.mime }.joined(separator: ", "))
 
         if !cc.isEmpty {
-            dictionary["CC"] = cc.map { $0.mime }.joined(separator: ", ")
+            dictionary["CC"] = foldHeaderValue(key: "CC", value: cc.map { $0.mime }.joined(separator: ", "))
         }
 
-        dictionary["SUBJECT"] = subject.mimeEncoded ?? ""
+        dictionary["SUBJECT"] = foldHeaderValue(key: "SUBJECT", value: (subject.mimeEncoded ?? ""))
         dictionary["MIME-VERSION"] = "1.0 (Swift-SMTP)"
 
         for (key, value) in additionalHeaders {
@@ -136,11 +137,62 @@ public struct Mail {
             if  keyUppercased != "CONTENT-TYPE" &&
                 keyUppercased != "CONTENT-DISPOSITION" &&
                 keyUppercased != "CONTENT-TRANSFER-ENCODING" {
-                dictionary[keyUppercased] = value
+                dictionary[keyUppercased] = foldHeaderValue(key: key, value: value)
             }
         }
 
         return dictionary
+    }
+
+    private func foldHeaderValue(key: String, value: String) -> String {
+        let suggestedLineLength = 78
+        let maximumLineLength = 998
+
+        let initialHeader = "\(key): \(value)"
+        if initialHeader.count <= suggestedLineLength {
+            return value
+        }
+        // if we're here, it means that RFC 5322 SUGGESTS that we fold this header
+        var foldedHeader = ""
+        var register = "\(key): "
+        var linePosition = 0
+        let foldableCharacters = CharacterSet(charactersIn: " ,")
+        for char in value {
+            // append the character to the register
+            register.append(char)
+            // this test is to detect the end of a token, mid-stream
+            if let _ = String(char).rangeOfCharacter(from: foldableCharacters) {
+                if linePosition > 1 && (register.count + linePosition > suggestedLineLength) {
+                    // We already have stuff on the line and the register is too long
+                    // to continue on the current line. So we fold and start a new line.
+                    foldedHeader.append("\r\n ")
+                    linePosition = 1
+                }
+                // now, register contains a complete token, so we put it up to the line
+                linePosition += register.count
+                if linePosition > maximumLineLength {
+                    Log.error("Header line length exceeds the specified maximum (998 chars) - see RFC 5322 section 2.2.3")
+                }
+                foldedHeader.append(register)
+                register = ""
+            }
+        }
+        // We have the last of the value characters in register, so we put them up
+        // to the line. We still want to apply the same logic as that inside the loop
+        // though, and apply folding if it's appropriate.
+        if linePosition > 1 && (register.count + linePosition > suggestedLineLength) {
+            foldedHeader.append("\r\n ")
+            linePosition = 1
+        }
+        if (register.count + linePosition) > maximumLineLength {
+            Log.error("Header line length exceeds the specified maximum (998 chars) - see RFC 5322 section 2.2.3")
+        }
+        foldedHeader.append(register)
+
+        // Here is where we remove "\(key): " from the beginning of the folded header,
+        // so we only return the value.
+        let valueIndex = foldedHeader.index(foldedHeader.startIndex, offsetBy: key.count + 2)
+        return String(foldedHeader.suffix(from: valueIndex))
     }
 
     var headersString: String {
