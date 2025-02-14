@@ -15,6 +15,7 @@
  **/
 
 import Foundation
+import LoggerAPI
 
 // Used to send the content of an email--headers, text, and attachments.
 // Should only be invoked after sending the `DATA` command to the server.
@@ -200,13 +201,13 @@ extension DataSender {
 private extension DataSender {
     // Write `text` to the socket.
     func send(_ text: String) throws {
-        print("SEND: \(text)")
+        Log.debug("SEND: \(text)")
         try socket.write(text)
     }
 
     // Write `data` to the socket.
     func send(_ data: Data) throws {
-        print("SEND: data \(data.count) bytes")
+        Log.debug("SEND: data \(data.count) bytes")
         try socket.write(data)
     }
 }
